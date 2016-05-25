@@ -4,10 +4,10 @@
 #include <Urho3D/Input/InputEvents.h>
 
 using namespace Urho3D;
-class MyApp : public Application
+class TestApp : public Application
 {
 public:
-	MyApp(Context* context) :
+	TestApp(Context* context) :
 			Application(context)
 	{
 	}
@@ -18,7 +18,7 @@ public:
 	virtual void Start()
 	{
 // Called after engine initialization. Setup application & subscribe to events here
-		SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(MyApp, HandleKeyDown));
+		SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(TestApp, HandleKeyDown));
 	}
 	virtual void Stop()
 	{
@@ -33,4 +33,4 @@ public:
 			engine_->Exit();
 	}
 };
-URHO3D_DEFINE_APPLICATION_MAIN(MyApp)
+URHO3D_DEFINE_APPLICATION_MAIN(TestApp)
