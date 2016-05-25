@@ -1,4 +1,3 @@
-#include <iostream>
 #include <Urho3D/Engine/Application.h>
 #include <Urho3D/Engine/Engine.h>
 #include <Urho3D/Input/InputEvents.h>

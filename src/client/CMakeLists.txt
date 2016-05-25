@@ -8,6 +8,7 @@ else ()
     find_package(OpenGL REQUIRED)
     set (CLIENT_LIBRARIES
             Urho3D
+            dl
             ${X11_LIBRARIES}
             ${OPENGL_LIBRARIES}
     )
