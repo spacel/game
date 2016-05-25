@@ -1,6 +1,12 @@
-set(client_sources
-        main.cpp
-)
+# Client recipe
+
+set(URHO3D_HOME ${CMAKE_CURRENT_SOURCE_DIR}/../../lib/Urho3D/build)
+set(URHO3D_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../assets)
+
+# Find Urho3D library
+include (Urho3D-CMake-common)
+find_package (Urho3D REQUIRED)
+include_directories (${URHO3D_INCLUDE_DIRS})
 
 if (WIN32)
 else ()
@@ -13,6 +19,10 @@ else ()
             ${OPENGL_LIBRARIES}
     )
 endif()
+
+set(client_sources
+        main.cpp
+)
 
 link_directories(${URHO3D_HOME}/lib)
 add_executable(${PROJECT_NAME} ${client_sources})
