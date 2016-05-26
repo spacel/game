@@ -1,0 +1,19 @@
+language: cpp
+compiler:
+  - gcc
+  - clang
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - libasound2-dev
+      - libxrandr-dev
+
+dist: trusty
+before_install: ./util/travis/before_install.sh
+script: ./util/travis/script.sh
+sudo: required
+notifications:
+  email: false
+

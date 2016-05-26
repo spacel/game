@@ -2,6 +2,8 @@
 
 The Spacel Game repository
 
+[![Build Status](https://travis-ci.org/spacel/game.svg?branch=master)](https://travis-ci.org/spacel/game)
+
 ## Licence
 
 This program is under the GPLv3 licence.
