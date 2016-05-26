@@ -13,7 +13,7 @@ You should look at LICENCE file for more informations
 First you need to clone the repository and its dependencies
 
 ```
-git clone https://github.com/spacelgame/game.git spacelgame
+git clone https://github.com/spacel/game.git spacelgame
 cd spacelgame
 git submodule sync --recursive && git submodule update --init --recursive
 ```
