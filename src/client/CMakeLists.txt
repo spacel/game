@@ -6,7 +6,10 @@ set(URHO3D_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../assets)
 # Find Urho3D library
 include(Urho3D-CMake-common)
 find_package(Urho3D REQUIRED)
-include_directories(${URHO3D_INCLUDE_DIRS})
+include_directories(
+		${URHO3D_INCLUDE_DIRS}
+		..
+)
 
 set(CLIENT_LIBRARIES
 	${PROJECT_NAME}lib
@@ -22,13 +25,18 @@ else ()
 		dl
 		${X11_LIBRARIES}
 		${OPENGL_LIBRARIES}
+		${JSONCPP_LIBRARY}
 		)
 endif ()
 
 set(client_sources
 	main.cpp
+	settings.cpp
 	)
 
 link_directories(${URHO3D_HOME}/lib)
 add_executable(${PROJECT_NAME} ${client_sources})
+
+add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}lib)
+
 target_link_libraries(${PROJECT_NAME} ${CLIENT_LIBRARIES})

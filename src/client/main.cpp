@@ -1,3 +1,22 @@
+/*
+ * This file is part of Spacel game.
+ *
+ * Copyright 2016, Loic Blot <loic.blot@unix-experience.fr>
+ *
+ * Spacel is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Spacel is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Spacel.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include <Urho3D/Audio/Sound.h>
 #include <Urho3D/Audio/SoundSource.h>
 #include <Urho3D/Core/CoreEvents.h>
@@ -23,6 +42,9 @@
 #include <Urho3D/UI/UIEvents.h>
 #include <Urho3D/UI/Window.h>
 
+#include <common/porting.h>
+#include "settings.h"
+
 using namespace Urho3D;
 
 namespace spacel {
@@ -34,22 +56,26 @@ public:
 	SharedPtr<Scene> scene_;
 	SharedPtr<Node> cameraNode_;
 
-	const uint space_button = 20;
+	static const uint8_t space_button = 20;
 
-	App(Context* context) :
-			Application(context)
+	App(Context* context): Application(context)
 	{
 	}
 
 	virtual void Setup()
 	{
-		// Called before engine initialization. engineParameters_ member variable can be modified here
+		m_config = new ClientSettings(context_);
+
+		m_config->load(fs::path_config + DIR_DELIM + "client.json");
+
+		// Called before engine initialization. engineParameters_ member
+		// variable can be modified here
 		engineParameters_["WindowTitle"] = "Spacel Game";
-		engineParameters_["FullScreen"]=false;
-		engineParameters_["WindowWidth"]=1280;
-		engineParameters_["WindowHeight"]=720;
-		engineParameters_["WindowResizable"]=true;
-		engineParameters_["Sound"] = true;
+		engineParameters_["FullScreen"] = m_config->getBool(BSETTING_FULLSCREEN);
+		engineParameters_["WindowWidth"] = m_config->getU32(U32SETTING_WINDOW_WIDTH);
+		engineParameters_["WindowHeight"] = m_config->getU32(U32SETTING_WINDOW_HEIGHT);
+		engineParameters_["WindowResizable"] = m_config->getBool(BSETTING_RESIZABLE_WINDOW);
+		engineParameters_["Sound"] = m_config->getBool(BSETTING_ENABLE_SOUND);
 		GetSubsystem<Input>()->SetMouseVisible(!GetSubsystem<Input>()->IsMouseVisible());
 	}
 
@@ -66,7 +92,7 @@ public:
 		// Let's create some text to display.
 		text_=new Text(context_);
 		// Text will be updated later in the E_UPDATE handler. Keep readin'.
-		text_->SetText("Spacel Game.");
+		text_->SetText("Spacel Game");
 		text_->SetFont(cache->GetResource<Font>("Fonts/Anonymous Pro.ttf"),40);
 		text_->SetColor(Color(.3,0,.3));
 		text_->SetHorizontalAlignment(HA_CENTER);
@@ -180,7 +206,8 @@ public:
 
 	virtual void Stop()
 	{
-		// Perform optional cleanup after main loop has terminated
+		m_config->save(fs::path_config + DIR_DELIM + "client.json");
+		delete m_config;
 	}
 
 	void HandleKeyDown(StringHash eventType, VariantMap& eventData)
@@ -196,7 +223,10 @@ public:
 	{
 		engine_->Exit();
 	}
+private:
+	ClientSettings* m_config;
 };
+
 }
 
 URHO3D_DEFINE_APPLICATION_MAIN(spacel::App)

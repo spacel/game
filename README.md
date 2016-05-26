@@ -20,7 +20,7 @@ cd spacelgame
 git submodule sync --recursive && git submodule update --init --recursive
 ```
 
-You will also need a C++14 compatible compiler toolchain, like GCC 5.3 or Clang 3.7 and cmake
+You will also need a C++11 compatible compiler toolchain, like GCC 5.3 or Clang 3.7 and cmake
 
 Before compiling Spacel Game you will need to compile Urho3D as a standalone library
 

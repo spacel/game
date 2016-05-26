@@ -8,13 +8,13 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Foobar is distributed in the hope that it will be useful,
+ * Spacel is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Spacel.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #pragma once
@@ -22,13 +22,25 @@
 #include <vector>
 #include <cstdint>
 #include <cassert>
+#include <string>
+#include <Urho3D/Core/Context.h>
 
 namespace spacel {
 
 class Config
 {
 public:
-	Config();
+	Config() {}
+	Config(Urho3D::Context* context, uint32_t b_size, uint32_t u32_size, uint32_t f_size);
+
+	bool load(const std::string &f);
+	bool save(const std::string &f);
+
+	inline void registerBool(const uint32_t idx, const bool v, const std::string &name)
+	{
+		setBool(idx, v);
+		m_bool_names[idx] = name;
+	}
 
 	inline void setBool(const uint32_t idx, const bool v)
 	{
@@ -42,8 +54,52 @@ public:
 		return m_bool_settings[idx];
 	}
 
+	inline void registerU32(const uint32_t idx, const uint32_t v, const std::string &name)
+	{
+		setU32(idx, v);
+		m_u32_names[idx] = name;
+	}
+
+	inline void setU32(const uint32_t idx, const uint32_t v)
+	{
+		assert(idx < m_u32_settings.size());
+		m_u32_settings[idx] = v;
+	}
+
+	inline const uint32_t getU32(const uint32_t idx) const
+	{
+		assert(idx < m_u32_settings.size());
+		return m_u32_settings[idx];
+	}
+
+	inline void registerFloat(const uint32_t idx, const float v, const std::string &name)
+	{
+		setFloat(idx, v);
+		m_float_names[idx] = name;
+	}
+
+	inline void setFloat(const uint32_t idx, const float v)
+	{
+		assert(idx < m_float_settings.size());
+		m_float_settings[idx] = v;
+	}
+
+	inline const float getFloat(const uint32_t idx) const
+	{
+		assert(idx < m_float_settings.size());
+		return m_float_settings[idx];
+	}
+
 private:
+	virtual void init() = 0;
+
+	Urho3D::Context* m_context = nullptr;
 	std::vector<bool> m_bool_settings;
+	std::vector<std::string> m_bool_names;
+	std::vector<uint32_t> m_u32_settings;
+	std::vector<std::string> m_u32_names;
+	std::vector<float> m_float_settings;
+	std::vector<std::string> m_float_names;
 };
 
 }
