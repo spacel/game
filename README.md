@@ -36,6 +36,6 @@ And now you can compile the game
 cd <PROJECT_ROOT>
 mkdir build
 cd build
-cmake ..
+cmake -D URHO3D_HOME=$(pwd)/../lib/Urho3D/build/
 make
 ```

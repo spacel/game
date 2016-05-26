@@ -19,6 +19,10 @@
 
 #pragma once
 
+#include <vector>
+#include <cstdint>
+#include <cassert>
+
 namespace spacel {
 
 class Config
