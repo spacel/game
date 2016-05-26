@@ -2,3 +2,6 @@ build/*
 .idea/*
 *.tmp
 *.swap
+*.user
+*.autosave
+*.log
