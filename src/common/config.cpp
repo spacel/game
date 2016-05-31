@@ -33,14 +33,6 @@ namespace spacel
 Config::Config(Urho3D::Context* context, uint32_t b_size, uint32_t u32_size,
 		uint32_t f_size): m_context(context)
 {
-	m_bool_settings.clear();
-	m_u32_settings.clear();
-	m_float_settings.clear();
-
-	m_bool_names.clear();
-	m_u32_names.clear();
-	m_float_names.clear();
-
 	m_bool_settings.resize(b_size);
 	m_u32_settings.resize(u32_size);
 	m_float_settings.resize(f_size);
