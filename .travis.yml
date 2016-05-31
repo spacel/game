@@ -12,7 +12,7 @@ addons:
 
 dist: trusty
 before_install: ./util/travis/before_install.sh
-script: ./util/travis/script.sh
+script: python ./util/travis/checkstyle.py && ./util/travis/script.sh
 sudo: required
 notifications:
   email: false
