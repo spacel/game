@@ -42,7 +42,7 @@ Config::Config(Urho3D::Context* context, uint32_t b_size, uint32_t u32_size,
 	m_float_names.resize(f_size);
 }
 
-bool Config::load(const std::string &f)
+bool Config::load(const std::string &&f)
 {
 	Json::Value root;
 
@@ -89,7 +89,7 @@ bool Config::load(const std::string &f)
 	}
 }
 
-bool Config::save(const std::string &f)
+bool Config::save(const std::string &&f)
 {
 	Json::Value root;
 
