@@ -31,7 +31,7 @@ class Config
 {
 public:
 	Config() {}
-	Config(Urho3D::Context* context, uint32_t b_size, uint32_t u32_size, uint32_t f_size);
+	Config(Urho3D::Context *context, uint32_t b_size, uint32_t u32_size, uint32_t f_size);
 
 	bool load(const std::string &&f);
 	bool save(const std::string &&f);
@@ -93,7 +93,7 @@ public:
 private:
 	virtual void init() = 0;
 
-	Urho3D::Context* m_context = nullptr;
+	Urho3D::Context *m_context = nullptr;
 	std::vector<bool> m_bool_settings;
 	std::vector<std::string> m_bool_names;
 	std::vector<uint32_t> m_u32_settings;

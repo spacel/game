@@ -15,7 +15,7 @@ class SpacelGame : public Application
 	URHO3D_OBJECT(SpacelGame, Application);
 
 public:
-	SpacelGame(Context *context);
+	SpacelGame(Context *context): Application(context) {}
 	virtual void Setup();
 	virtual void Start();
 	virtual void Stop();
@@ -28,7 +28,7 @@ protected:
 	SharedPtr<Log>		log_;
 
 private:
-	void MusicMenu(bool active);
+	void MusicMenu(const bool active);
 	ClientSettings *m_config;
 };
 }

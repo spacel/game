@@ -18,12 +18,6 @@ URHO3D_DEFINE_APPLICATION_MAIN(spacel::SpacelGame)
 
 namespace spacel {
 
-SpacelGame::SpacelGame(Context *context) :
-	Application(context)
-{
-
-}
-
 void SpacelGame::Setup()
 {
 	m_config = new ClientSettings(context_);
@@ -40,7 +34,7 @@ void SpacelGame::Setup()
 	engineParameters_["TripleBuffer"] = m_config->getBool(BSETTING_TRIPLEBUFFER);
 	engineParameters_["LogLevel"] = LOG_DEBUG;
 	engineParameters_["LogQuiet"] = m_config->getBool(BSETTING_LOGQUIET);
-	engineParameters_["LogName"] = GetSubsystem<FileSystem>()->GetAppPreferencesDir("urho3d", "logs") + GetTypeName() + ".log";
+	engineParameters_["LogName"] = GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "logs") + GetTypeName() + ".log";
 	GetSubsystem<Input>()->SetMouseVisible(!GetSubsystem<Input>()->IsMouseVisible());
 	//if (!engineParameters_.Contains("ResourcePrefixPaths"))
 			//engineParameters_["ResourcePrefixPaths"] = ";./bin";
