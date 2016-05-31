@@ -75,7 +75,7 @@ void SpacelGame::HandleKeyDown(StringHash eventType, VariantMap &eventData)
 			MusicMenu(false);*/
 }
 
-void SpacelGame::HandleClosePressed(StringHash eventType,VariantMap &eventData)
+void SpacelGame::HandleClosePressed(StringHash eventType, VariantMap &eventData)
 {
 	engine_->Exit();
 }
