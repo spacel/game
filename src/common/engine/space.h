@@ -71,38 +71,83 @@ enum SolarType
 	SOLAR_TYPE_MAX,
 };
 
-// Stellar objects
+/**
+ * Stellar objects
+ */
+
+/*
+ * Moons
+ */
 struct Moon: public StellarObject
 {
 	PlanetType type;
 	double distance_to_parent;
 };
 
+/*
+ * Planets
+ */
 struct Planet: public Moon
 {
+	~Planet();
 	std::vector<Moon*> moons;
 };
 
+/*
+ * Solar systems
+ */
+struct Galaxy; // Predefine for circular dep
+
 struct SolarSystem: public StellarPositionnedObject
 {
+	~SolarSystem();
 	SolarType type;
 	std::vector<Planet*> planets;
+	Galaxy* galaxy = nullptr;
 };
 typedef std::unordered_map<uint64_t, SolarSystem*> SolarSystemMap;
 
+/*
+ * Galaxies
+ */
 struct Galaxy: public StellarPositionnedObject
 {
+	~Galaxy();
 	SolarSystemMap solar_systems;
 };
 typedef std::unordered_map<uint64_t, Galaxy*> GalaxyMap;
 
+/*
+ * The whole universe
+ */
 class Universe
 {
 public:
 	Universe() {}
-	~Universe() {}
+	~Universe();
+
+	void CreateGalaxy();
+	bool RemoveGalaxy(const uint64_t id);
+
+	void CreateSolarSystem(const uint64_t galaxy_id);
+	bool RemoveSolarSystem(const uint64_t id);
+
+	inline static Universe *instance()
+	{
+		if (!Universe::s_universe) {
+			Universe::s_universe = new Universe();
+		}
+
+		return Universe::s_universe;
+	}
 private:
+	SolarSystemMap m_solar_systems;
 	GalaxyMap m_galaxies;
+
+	uint64_t m_next_solarsystem_id = 1;
+	uint64_t m_next_galaxy_id = 1;
+
+	static Universe *s_universe;
 };
 
 }

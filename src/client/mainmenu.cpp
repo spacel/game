@@ -14,7 +14,8 @@ using namespace Urho3D;
 namespace spacel {
 
 MainMenu::MainMenu(Context *context) :
-		UIElement(context) {
+		UIElement(context)
+{
 	cache = GetSubsystem<ResourceCache>();
 	uiElem = GetSubsystem<UI>()->GetRoot();
 	uiElem->SetDefaultStyle(cache->GetResource<XMLFile>("UI/MainMenuStyle.xml"));
@@ -22,14 +23,16 @@ MainMenu::MainMenu(Context *context) :
 	m_title = new Text(context_);
 }
 
-void MainMenu::Start() {
+void MainMenu::Start()
+{
 	Background();
 	Title();
 	Menu();
 	Music(true);
 }
 
-void MainMenu::Background() {
+void MainMenu::Background()
+{
 	Texture2D *logoTexture = cache->GetResource<Texture2D>("Textures/cwd_up.png");
 
 	if (!logoTexture) {
@@ -43,16 +46,18 @@ void MainMenu::Background() {
 	backgroundSprite_->SetPriority(-100);
 }
 
-void MainMenu::Title() {
+void MainMenu::Title()
+{
 	m_title->SetStyle("Title");
-	m_title->SetText("Spacel Game.");
+	m_title->SetText("Spacel Game");
 	m_title->SetHorizontalAlignment(HA_CENTER);
 	m_title->SetVerticalAlignment(VA_TOP);
 	uiElem->AddChild(m_title);
 }
 
-void MainMenu::Menu() {
-	m_title->SetText("Spacel Game.");
+void MainMenu::Menu()
+{
+	m_title->SetText("Spacel Game");
 	uiElem->AddChild(m_window_menu);
 	m_window_menu->SetStyle("Window");
 	m_window_menu->SetName("Menu principal");
@@ -110,12 +115,14 @@ void MainMenu::Menu() {
 	SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(MainMenu, HandleUpdate));
 }
 
-void MainMenu::HandleClosePressed(StringHash eventType, VariantMap &eventData) {
+void MainMenu::HandleClosePressed(StringHash eventType, VariantMap &eventData)
+{
 	//TODO : Quitter proprement
 	engine_->Exit();
 }
 
-void MainMenu::HandleSettingsPressed(StringHash eventType, VariantMap &eventData) {
+void MainMenu::HandleSettingsPressed(StringHash eventType, VariantMap &eventData)
+{
 	m_window_menu->RemoveAllChildren();
 	m_title->SetText("Spacel Settings.");
 
@@ -199,17 +206,20 @@ void MainMenu::HandleSoundsPressed(StringHash eventType, VariantMap &eventData)
 	SubscribeToEvent(exit, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSettingsPressed));
 }
 
-void MainMenu::HandleExitPressed(StringHash eventType, VariantMap &eventData) {
+void MainMenu::HandleExitPressed(StringHash eventType, VariantMap &eventData)
+{
 	m_window_menu->RemoveAllChildren();
 	Menu();
 }
 
-void MainMenu::HandleUpdate(StringHash eventType, VariantMap &eventData) {
+void MainMenu::HandleUpdate(StringHash eventType, VariantMap &eventData)
+{
 	backgroundSprite_->SetSize(GetSubsystem<UI>()->GetRoot()->GetSize().x_,
 							   GetSubsystem<UI>()->GetRoot()->GetSize().y_);
 }
 
-void MainMenu::Music(const bool active) {
+void MainMenu::Music(const bool active)
+{
 	Button *music = new Button(context_);
 	// Note, must be part of the UI system before SetSize calls!
 	GetSubsystem<UI>()->GetRoot()->AddChild(music);

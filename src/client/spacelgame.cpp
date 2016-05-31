@@ -9,6 +9,7 @@
 #include <Urho3D/UI/UI.h>
 
 #include <common/porting.h>
+#include <common/engine/space.h>
 #include "mainmenu.h"
 #include "spacelgame.h"
 
@@ -17,6 +18,8 @@ using namespace Urho3D;
 URHO3D_DEFINE_APPLICATION_MAIN(spacel::SpacelGame)
 
 namespace spacel {
+
+engine::Universe* engine::Universe::s_universe = nullptr;
 
 void SpacelGame::Setup()
 {
@@ -47,12 +50,8 @@ void SpacelGame::Start()
 
 	MainMenu *mainMenu = new MainMenu(context_);
 	UI *ui = GetSubsystem<UI>();
-	int i = 1;
-	if (i == 1) {
-		ui->GetRoot()->AddChild(mainMenu);
-		mainMenu->Start();
-		i = 0;
-	}
+	ui->GetRoot()->AddChild(mainMenu);
+	mainMenu->Start();
 }
 
 void SpacelGame::Stop()
