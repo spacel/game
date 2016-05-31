@@ -17,6 +17,22 @@
 	<attribute name="Image Rect" value="144 0 160 16" />
 	<attribute name="Focus Mode" value="NotFocusable" />
     </element>
+    <element type="SoundButton" style="Button" auto="false">    <!-- non-auto style is shown explicitly in the Editor's style drop down list for user selection -->
+	<attribute name="Min Size" value="16 16" />
+	<attribute name="Max Size" value="32 32" />
+	<attribute name="Image Rect" value="208 64 224 80" />
+	<attribute name="Hover Image Offset" value="0 0" />
+	<attribute name="Pressed Child Offset" value="0 0" />
+	<attribute name="Focus Mode" value="NotFocusable" />
+    </element>
+    <element type="SoundButtonOff" style="Button" auto="false">    <!-- non-auto style is shown explicitly in the Editor's style drop down list for user selection -->
+	<attribute name="Min Size" value="16 16" />
+	<attribute name="Max Size" value="32 32" />
+	<attribute name="Image Rect" value="224 64 240 80" />
+	<attribute name="Hover Image Offset" value="0 0" />
+	<attribute name="Pressed Child Offset" value="0 0" />
+	<attribute name="Focus Mode" value="NotFocusable" />
+    </element>
     <element type="Window" style="BorderImage">
 	<attribute name="Size" value="500 400" />
 	<attribute name="Image Rect" value="48 0 64 16" />

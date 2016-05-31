@@ -1,0 +1,52 @@
+<elements>
+    <element type="BorderImage" >
+	<attribute name="Texture" value="Texture2D;Textures/UI.png" />
+    </element>
+    <element type="Button" style="BorderImage">
+	<attribute name="Size" value="300 50" />
+	<attribute name="Image Rect" value="16 0 32 16" />
+	<attribute name="Border" value="4 4 4 4" />
+	<attribute name="Pressed Image Offset" value="16 0" />
+	<attribute name="Hover Image Offset" value="0 16" />
+	<attribute name="Pressed Child Offset" value="-1 1" />
+	<attribute name="Color" value="1 1 0" />
+	<attribute name="Horizontal Alignment" value="1 1 0" />
+    </element>
+    <element type="SoundButton" style="Button" auto="false">    <!-- non-auto style is shown explicitly in the Editor's style drop down list for user selection -->
+	<attribute name="Min Size" value="16 16" />
+	<attribute name="Max Size" value="32 32" />
+	<attribute name="Image Rect" value="208 64 224 80" />
+	<attribute name="Hover Image Offset" value="0 0" />
+	<attribute name="Pressed Child Offset" value="0 0" />
+	<attribute name="Focus Mode" value="NotFocusable" />
+    </element>
+    <element type="SoundButtonOff" style="Button" auto="false">    <!-- non-auto style is shown explicitly in the Editor's style drop down list for user selection -->
+	<attribute name="Min Size" value="16 16" />
+	<attribute name="Max Size" value="32 32" />
+	<attribute name="Image Rect" value="224 64 240 80" />
+	<attribute name="Hover Image Offset" value="0 0" />
+	<attribute name="Pressed Child Offset" value="0 0" />
+	<attribute name="Focus Mode" value="NotFocusable" />
+    </element>
+    <element type="Window" style="BorderImage">
+	<attribute name="Size" value="500 400" />
+	<attribute name="Image Rect" value="48 0 64 16" />
+	<attribute name="Border" value="4 4 4 4" />
+	<attribute name="Resize Border" value="8 8 8 8" />
+	<attribute name="Horiz Alignment" value="Center" />
+	<attribute name="Vert Alignment" value="Center" />
+    </element>
+    <element type="Text">
+	<attribute name="Font" value="Font;Fonts/Anonymous Pro.ttf" />
+    </element>
+    <element type="TextButton" style="Text">
+	<attribute name="Font Size" value="25" />
+	<attribute name="Color" value="1 1 0.85" />
+	<attribute name="Horiz Alignment" value="Center" />
+	<attribute name="Vert Alignment" value="Center" />
+    </element>
+    <element type="Title" style="Text">
+	<attribute name="Font Size" value="40" />
+	<attribute name="Color" value="0.3 0 0.3" />
+    </element>
+</elements>

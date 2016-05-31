@@ -30,8 +30,9 @@ else ()
 endif ()
 
 set(client_sources
-	main.cpp
+	mainmenu.cpp
 	settings.cpp
+	spacelgame.cpp
 	)
 
 link_directories(${URHO3D_HOME}/lib)

@@ -36,6 +36,8 @@ static BoolSettingDefault s_bsettings[BSETTINGS_MAX] = {
 		{ "enable_sound", true },
 		{ "fullscreen", false },
 		{ "resizable_window", true },
+		{ "triple_buffer", true },
+		{ "log_quiet", false },
 };
 
 static U32SettingDefault s_u32settings[U32SETTINGS_MAX] = {
