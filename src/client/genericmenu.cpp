@@ -26,7 +26,8 @@ using namespace Urho3D;
 namespace spacel {
 
 GenericMenu::GenericMenu(Context *context): UIElement(context),
-		m_l10n(GetSubsystem<Localization>())
+		m_l10n(GetSubsystem<Localization>()),
+		m_engine(GetSubsystem<Engine>())
 {
 }
 

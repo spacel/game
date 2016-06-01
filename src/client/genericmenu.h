@@ -23,7 +23,8 @@
 #include <Urho3D/Core/Context.h>
 #include <Urho3D/UI/UIElement.h>
 #include <Urho3D/Resource/Localization.h>
-#include "genericmenu.h"
+#include <Urho3D/Engine/Engine.h>
+#include <Urho3D/IO/Log.h>
 
 namespace spacel {
 
@@ -35,5 +36,7 @@ protected:
 			const Urho3D::String &style = "TextButton") const;
 
 	Urho3D::Localization *m_l10n;
+	Urho3D::SharedPtr<Urho3D::Engine> m_engine;
+	Urho3D::SharedPtr<Urho3D::Log> m_log;
 };
 }

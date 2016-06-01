@@ -21,8 +21,6 @@
 #pragma once
 
 #include <Urho3D/Engine/Application.h>
-#include <Urho3D/Engine/Engine.h>
-#include <Urho3D/IO/Log.h>
 #include <Urho3D/Resource/Localization.h>
 #include <Urho3D/UI/Sprite.h>
 #include <Urho3D/UI/Text.h>
@@ -41,11 +39,6 @@ public:
 	MainMenu(Context *context);
 	~MainMenu() {}
 	void Start();
-
-protected:
-	SharedPtr<Engine> engine_;
-	SharedPtr<Log> m_log;
-	SharedPtr<Sprite> backgroundSprite_;
 
 private:
 	void HandleClosePressed(StringHash eventType, VariantMap &eventData);
@@ -67,6 +60,7 @@ private:
 	Window *m_window_menu;
 	Text *m_title;
 	bool m_music_active;
+	SharedPtr<Sprite> m_menu_background;
 };
 
 }

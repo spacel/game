@@ -74,10 +74,10 @@ void MainMenu::Background()
 		return;
 	}
 
-	backgroundSprite_ = m_ui_elem->CreateChild<Sprite>();
-	backgroundSprite_->SetTexture(logoTexture);
-	backgroundSprite_->SetSize(m_ui_elem->GetSize().x_, m_ui_elem->GetSize().y_);
-	backgroundSprite_->SetPriority(-100);
+	m_menu_background = m_ui_elem->CreateChild<Sprite>();
+	m_menu_background->SetTexture(logoTexture);
+	m_menu_background->SetSize(m_ui_elem->GetSize().x_, m_ui_elem->GetSize().y_);
+	m_menu_background->SetPriority(-100);
 }
 
 void MainMenu::Title()
@@ -144,20 +144,20 @@ void MainMenu::HandleMasterMenu(StringHash, VariantMap &)
 
 void MainMenu::HandleClosePressed(StringHash, VariantMap &eventData)
 {
-	engine_->Exit();
+	m_engine->Exit();
 }
 
 void MainMenu::HandleKeyDown(StringHash, VariantMap &eventData)
 {
 	using namespace KeyDown;
-	// Check for pressing ESC. Note the engine_ member variable for convenience access to the Engine object
+	// Check for pressing ESC. Note the m_engine member variable for convenience access to the Engine object
 	int key = eventData[P_KEY].GetInt();
 
 	switch (key) {
 		case KEY_ESC:
 			switch (m_menu_id) {
 				case MAINMENUID_MASTER:
-					engine_->Exit();
+					m_engine->Exit();
 					break;
 				case MAINMENUID_SETTINGS:
 					HandleMasterMenu(StringHash(), eventData);
@@ -244,7 +244,7 @@ void MainMenu::HandleSoundsPressed(StringHash, VariantMap &eventData)
 
 void MainMenu::HandleUpdate(StringHash, VariantMap &eventData)
 {
-	backgroundSprite_->SetSize(GetSubsystem<UI>()->GetRoot()->GetSize().x_,
+	m_menu_background->SetSize(GetSubsystem<UI>()->GetRoot()->GetSize().x_,
 		GetSubsystem<UI>()->GetRoot()->GetSize().y_);
 }
 
