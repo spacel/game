@@ -26,13 +26,13 @@
 #include <Urho3D/UI/Text.h>
 #include <Urho3D/UI/Window.h>
 
-#include "spacelgame.h"
+#include "genericmenu.h"
 
 using namespace Urho3D;
 
 namespace spacel {
 
-class MainMenu : public UIElement {
+class MainMenu: public GenericMenu  {
 URHO3D_OBJECT(MainMenu, UIElement);
 
 public:

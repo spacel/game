@@ -30,6 +30,7 @@ else ()
 endif ()
 
 set(client_sources
+	genericmenu.cpp
 	mainmenu.cpp
 	settings.cpp
 	spacelgame.cpp
