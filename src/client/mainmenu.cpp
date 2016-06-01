@@ -38,6 +38,7 @@ using namespace Urho3D;
 
 enum MainMenuIds {
 	MAINMENUID_MASTER = 0,
+	MAINMENUID_SINGLEPLAYER,
 	MAINMENUID_SETTINGS,
 	MAINMENUID_SETTINGS_GRAPHICS,
 	MAINMENUID_SETTINGS_SOUND,
@@ -97,39 +98,21 @@ void MainMenu::HandleMasterMenu(StringHash, VariantMap &)
 	m_title->SetText(PROJECT_LABEL);
 	m_ui_elem->AddChild(m_window_menu);
 	m_window_menu->SetStyle("Window");
-	m_window_menu->SetName("Menu principal");
+	m_window_menu->SetName("Main Menu");
 	m_window_menu->SetAlignment(HA_CENTER, VA_CENTER);
-	m_window_menu->SetOpacity(0.75f);
+	m_window_menu->SetOpacity(0.55f);
 
-	Button *singleplayer = new Button(context_);
-	singleplayer->SetStyle("Button");
+	Button *singleplayer = CreateMainMenuButton("Play");
 	singleplayer->SetPosition(0, m_window_menu->GetPosition().y_ + singleplayer->GetSize().y_ + 65);
-	singleplayer->SetHorizontalAlignment(HA_CENTER);
-	m_window_menu->AddChild(singleplayer);
-	CreateButtonLabel(singleplayer, "Play");
 
-	Button *multiplayer = new Button(context_);
-	// Note, must be part of the UI system before SetSize calls!
-	multiplayer->SetStyle("Button");
-	multiplayer->SetPosition(0, singleplayer->GetPosition().y_ + singleplayer->GetSize().y_ + s_space_button);
-	multiplayer->SetHorizontalAlignment(HA_CENTER);
-	m_window_menu->AddChild(multiplayer);
-	CreateButtonLabel(multiplayer, "Multiplayer");
+	Button *multiplayer = CreateMainMenuButton("Multiplayer");
+	multiplayer->SetPosition(0, singleplayer->GetPosition().y_ + singleplayer->GetSize().y_ + s_mainmenu_button_space);
 
-	Button *settings = new Button(context_);
-	// Note, must be part of the UI system before SetSize calls!
-	settings->SetStyle("Button");
-	settings->SetPosition(0, multiplayer->GetPosition().y_ + multiplayer->GetSize().y_ + s_space_button);
-	settings->SetHorizontalAlignment(HA_CENTER);
-	m_window_menu->AddChild(settings);
-	CreateButtonLabel(settings, "Settings");
+	Button *settings = CreateMainMenuButton("Settings");
+	settings->SetPosition(0, multiplayer->GetPosition().y_ + multiplayer->GetSize().y_ + s_mainmenu_button_space);
 
-	Button *exit = new Button(context_);
-	exit->SetStyle("Button");
-	exit->SetPosition(0, settings->GetPosition().y_ + settings->GetSize().y_ + s_space_button);
-	exit->SetHorizontalAlignment(HA_CENTER);
-	m_window_menu->AddChild(exit);
-	CreateButtonLabel(exit, "Exit");
+	Button *exit = CreateMainMenuButton("Exit");
+	exit->SetPosition(0, settings->GetPosition().y_ + settings->GetSize().y_ + s_mainmenu_button_space);
 
 	Button *music = new Button(context_);
 	m_ui_elem->AddChild(music);
@@ -138,6 +121,7 @@ void MainMenu::HandleMasterMenu(StringHash, VariantMap &)
 
 	SubscribeToEvent(music, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleMusicPressed));
 	SubscribeToEvent(exit, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleClosePressed));
+	SubscribeToEvent(singleplayer, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSingleplayerPressed));
 	SubscribeToEvent(settings, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSettingsPressed));
 	SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(MainMenu, HandleUpdate));
 }
@@ -160,6 +144,7 @@ void MainMenu::HandleKeyDown(StringHash, VariantMap &eventData)
 					m_engine->Exit();
 					break;
 				case MAINMENUID_SETTINGS:
+				case MAINMENUID_SINGLEPLAYER:
 					HandleMasterMenu(StringHash(), eventData);
 					break;
 				case MAINMENUID_SETTINGS_GRAPHICS:
@@ -174,34 +159,40 @@ void MainMenu::HandleKeyDown(StringHash, VariantMap &eventData)
 	}
 }
 
+void MainMenu::HandleSingleplayerPressed(StringHash eventType, VariantMap &eventData)
+{
+	m_menu_id = MAINMENUID_SINGLEPLAYER;
+	m_window_menu->RemoveAllChildren();
+	SetTitle("Singleplayer");
+
+	Button *newgame = CreateMainMenuButton("New game");
+	newgame->SetPosition(0, m_window_menu->GetPosition().y_ + newgame->GetSize().y_ + 65);
+
+	Button *loadgame = CreateMainMenuButton("Load game");
+	loadgame->SetPosition(0, newgame->GetPosition().y_ + loadgame->GetSize().y_ + s_mainmenu_button_space);
+
+	Button *back = CreateMainMenuButton("Back");
+	back->SetPosition(0, loadgame->GetPosition().y_ + back->GetSize().y_ + s_mainmenu_button_space);
+
+	//SubscribeToEvent(newgame, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleNewGamePressed ));
+	//SubscribeToEvent(loadgame, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleLoadGamePressed));
+	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleMasterMenu));
+}
+
 void MainMenu::HandleSettingsPressed(StringHash, VariantMap &eventData)
 {
 	m_menu_id = MAINMENUID_SETTINGS;
 	m_window_menu->RemoveAllChildren();
-	m_title->SetText(PROJECT_LABEL_SHORT + m_l10n->Get("Settings"));
+	SetTitle("Settings");
 
-	Button *graphics = new Button(context_);
-	graphics->SetStyle("Button");
+	Button *graphics = CreateMainMenuButton("Graphics");
 	graphics->SetPosition(0, m_window_menu->GetPosition().y_ + graphics->GetSize().y_ + 65);
-	graphics->SetHorizontalAlignment(HA_CENTER);
-	m_window_menu->AddChild(graphics);
-	CreateButtonLabel(graphics, "Graphics");
 
-	Button *sound = new Button(context_);
-	// Note, must be part of the UI system before SetSize calls!
-	sound->SetStyle("Button");
-	sound->SetPosition(0, graphics->GetPosition().y_ + graphics->GetSize().y_ + s_space_button);
-	sound->SetHorizontalAlignment(HA_CENTER);
-	m_window_menu->AddChild(sound);
-	CreateButtonLabel(sound, "Sound");
+	Button *sound = CreateMainMenuButton("Sound");
+	sound->SetPosition(0, graphics->GetPosition().y_ + graphics->GetSize().y_ + s_mainmenu_button_space);
 
-	Button *back = new Button(context_);
-	// Note, must be part of the UI system before SetSize calls!
-	back->SetStyle("Button");
-	back->SetPosition(0, sound->GetPosition().y_ + sound->GetSize().y_ + s_space_button);
-	back->SetHorizontalAlignment(HA_CENTER);
-	m_window_menu->AddChild(back);
-	CreateButtonLabel(back, "Back");
+	Button *back = CreateMainMenuButton("Back");
+	back->SetPosition(0, sound->GetPosition().y_ + sound->GetSize().y_ + s_mainmenu_button_space);
 
 	SubscribeToEvent(graphics, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleGraphicsPressed));
 	SubscribeToEvent(sound, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSoundsPressed));
@@ -212,15 +203,10 @@ void MainMenu::HandleGraphicsPressed(StringHash, VariantMap &eventData)
 {
 	m_menu_id = MAINMENUID_SETTINGS_GRAPHICS;
 	m_window_menu->RemoveAllChildren();
-	m_title->SetText(PROJECT_LABEL_SHORT + m_l10n->Get("Graphics"));
+	SetTitle("Graphics");
 
-	Button *back = new Button(context_);
-	// Note, must be part of the UI system before SetSize calls!
-	back->SetStyle("Button");
+	Button *back = CreateMainMenuButton("Back");
 	back->SetPosition(0,  m_window_menu->GetPosition().y_ + back->GetSize().y_ + 65);
-	back->SetHorizontalAlignment(HA_CENTER);
-	m_window_menu->AddChild(back);
-	CreateButtonLabel(back, "Back");
 
 	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSettingsPressed));
 }
@@ -229,15 +215,10 @@ void MainMenu::HandleSoundsPressed(StringHash, VariantMap &eventData)
 {
 	m_menu_id = MAINMENUID_SETTINGS_SOUND;
 	m_window_menu->RemoveAllChildren();
-	m_title->SetText(PROJECT_LABEL_SHORT + m_l10n->Get("Sound"));
+	SetTitle("Sound");
 
-	Button *back = new Button(context_);
-	// Note, must be part of the UI system before SetSize calls!
-	back->SetStyle("Button");
-	back->SetPosition(0,  m_window_menu->GetPosition().y_ + back->GetSize().y_ + 65);
-	back->SetHorizontalAlignment(HA_CENTER);
-	m_window_menu->AddChild(back);
-	CreateButtonLabel(back, "Back");
+	Button *back = CreateMainMenuButton("Back");
+	back->SetPosition(0, m_window_menu->GetPosition().y_ + back->GetSize().y_ + 65);
 
 	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSettingsPressed));
 }
@@ -251,6 +232,23 @@ void MainMenu::HandleUpdate(StringHash, VariantMap &eventData)
 void MainMenu::HandleMusicPressed(StringHash, VariantMap &eventData)
 {
 	m_music_active = !m_music_active;
+}
+
+inline void MainMenu::SetTitle(const String &t)
+{
+	m_title->SetText(m_l10n->Get(t));
+}
+
+Button *MainMenu::CreateMainMenuButton(const String &label)
+{
+	Button *b = new Button(context_);
+	// Note, must be part of the UI system before SetSize calls!
+	b->SetStyle("Button");
+	b->SetHorizontalAlignment(HA_CENTER);
+	m_window_menu->AddChild(b);
+	CreateButtonLabel(b, label);
+
+	return b;
 }
 
 }
