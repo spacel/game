@@ -55,7 +55,8 @@ void MainMenu::Start()
 	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(MainMenu, HandleKeyDown));
 	Background();
 	Title();
-	Menu();
+	VariantMap v;
+	HandleMasterMenu(StringHash(), v);
 }
 
 void MainMenu::Background()
@@ -82,8 +83,10 @@ void MainMenu::Title()
 	m_ui_elem->AddChild(m_title);
 }
 
-void MainMenu::Menu()
+void MainMenu::HandleMasterMenu(StringHash, VariantMap &)
 {
+	m_window_menu->RemoveAllChildren();
+
 	m_title->SetText(PROJECT_LABEL);
 	m_ui_elem->AddChild(m_window_menu);
 	m_window_menu->SetStyle("Window");
@@ -147,7 +150,7 @@ void MainMenu::HandleKeyDown(StringHash, VariantMap &eventData)
 			if (!isMain()) {
 				m_window_menu->RemoveAllChildren();
 				m_is_master_menu = true;
-				Menu();
+				HandleMasterMenu(Urho3D::StringHash(), eventData);
 			}
 			break;
 		default:
@@ -186,7 +189,7 @@ void MainMenu::HandleSettingsPressed(StringHash, VariantMap &eventData)
 
 	SubscribeToEvent(graphics, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleGraphicsPressed));
 	SubscribeToEvent(sound, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSoundsPressed));
-	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleExitPressed));
+	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleMasterMenu));
 }
 
 void MainMenu::HandleGraphicsPressed(StringHash, VariantMap &eventData)
@@ -221,13 +224,6 @@ void MainMenu::HandleSoundsPressed(StringHash, VariantMap &eventData)
 	CreateButtonLabel(back, "Back");
 
 	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSettingsPressed));
-}
-
-void MainMenu::HandleExitPressed(StringHash, VariantMap &eventData)
-{
-	m_window_menu->RemoveAllChildren();
-	m_is_master_menu = true;
-	Menu();
 }
 
 void MainMenu::HandleUpdate(StringHash, VariantMap &eventData)

@@ -54,12 +54,12 @@ private:
 	void HandleSettingsPressed(StringHash eventType, VariantMap &eventData);
 	void HandleGraphicsPressed(StringHash eventType, VariantMap &eventData);
 	void HandleSoundsPressed(StringHash eventType, VariantMap &eventData);
-	void HandleExitPressed(StringHash eventType, VariantMap &eventData);
+
 	void HandleUpdate(StringHash eventType, VariantMap &eventData);
 	void HandleMusicPressed(StringHash eventType, VariantMap &eventData);
 	void Background();
 	void Title();
-	void Menu();
+	void HandleMasterMenu(StringHash, VariantMap &);
 
 	ResourceCache *m_cache;
 	UIElement *m_ui_elem;
