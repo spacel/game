@@ -43,8 +43,6 @@ public:
 	virtual void Start();
 	virtual void Stop();
 
-protected:
-	void HandleKeyDown(StringHash eventType, VariantMap &eventData);
 private:
 	void InitLocales();
 
