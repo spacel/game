@@ -48,6 +48,10 @@ bool Config::load(const String &f)
 
 	try {
 		std::ifstream cfg_file(f.CString(), std::ifstream::binary);
+		if (!cfg_file.good()) {
+			return false;
+		}
+
 		cfg_file >> root;
 		cfg_file.close();
 
@@ -107,6 +111,10 @@ bool Config::save(const String &f)
 
 	try {
 		std::ofstream cfg_file(f.CString(), std::ofstream::binary);
+		if (!cfg_file.good()) {
+			return false;
+		}
+
 		cfg_file << root;
 		cfg_file.close();
 		return true;
