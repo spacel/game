@@ -31,6 +31,7 @@
 #include <Urho3D/UI/Window.h>
 
 #include "mainmenu.h"
+#include <project_defines.h>
 #include "spacelgame.h"
 
 using namespace Urho3D;
@@ -55,7 +56,6 @@ void MainMenu::Start()
 	Background();
 	Title();
 	Menu();
-	Music(true);
 }
 
 void MainMenu::Background()
@@ -76,7 +76,7 @@ void MainMenu::Background()
 void MainMenu::Title()
 {
 	m_title->SetStyle("Title");
-	m_title->SetText("Spacel Game");
+	m_title->SetText(PROJECT_LABEL);
 	m_title->SetHorizontalAlignment(HA_CENTER);
 	m_title->SetVerticalAlignment(VA_TOP);
 	m_ui_elem->AddChild(m_title);
@@ -84,7 +84,7 @@ void MainMenu::Title()
 
 void MainMenu::Menu()
 {
-	m_title->SetText("Spacel Game");
+	m_title->SetText(PROJECT_LABEL);
 	m_ui_elem->AddChild(m_window_menu);
 	m_window_menu->SetStyle("Window");
 	m_window_menu->SetName("Menu principal");
@@ -132,12 +132,12 @@ void MainMenu::Menu()
 	SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(MainMenu, HandleUpdate));
 }
 
-void MainMenu::HandleClosePressed(StringHash eventType, VariantMap &eventData)
+void MainMenu::HandleClosePressed(StringHash, VariantMap &eventData)
 {
 	engine_->Exit();
 }
 
-void MainMenu::HandleKeyDown(StringHash eventType, VariantMap &eventData)
+void MainMenu::HandleKeyDown(StringHash, VariantMap &eventData)
 {
 	using namespace KeyDown;
 	UI *ui = GetSubsystem<UI>();
@@ -156,10 +156,10 @@ void MainMenu::HandleKeyDown(StringHash eventType, VariantMap &eventData)
 	}
 }
 
-void MainMenu::HandleSettingsPressed(StringHash eventType, VariantMap &eventData)
+void MainMenu::HandleSettingsPressed(StringHash, VariantMap &eventData)
 {
 	m_window_menu->RemoveAllChildren();
-	m_title->SetText("Spacel " + m_l10n->Get("Settings"));
+	m_title->SetText(PROJECT_LABEL_SHORT + m_l10n->Get("Settings"));
 	m_is_master_menu = false;
 
 	Button *graphics = new Button(context_);
@@ -190,10 +190,10 @@ void MainMenu::HandleSettingsPressed(StringHash eventType, VariantMap &eventData
 	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleExitPressed));
 }
 
-void MainMenu::HandleGraphicsPressed(StringHash eventType, VariantMap &eventData)
+void MainMenu::HandleGraphicsPressed(StringHash, VariantMap &eventData)
 {
 	m_window_menu->RemoveAllChildren();
-	m_title->SetText("Spacel " + m_l10n->Get("Graphics"));
+	m_title->SetText(PROJECT_LABEL_SHORT + m_l10n->Get("Graphics"));
 	m_is_master_menu = false;
 
 	Button *back = new Button(context_);
@@ -207,10 +207,10 @@ void MainMenu::HandleGraphicsPressed(StringHash eventType, VariantMap &eventData
 	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSettingsPressed));
 }
 
-void MainMenu::HandleSoundsPressed(StringHash eventType, VariantMap &eventData)
+void MainMenu::HandleSoundsPressed(StringHash, VariantMap &eventData)
 {
 	m_window_menu->RemoveAllChildren();
-	m_title->SetText("Spacel " + m_l10n->Get("Sound"));
+	m_title->SetText(PROJECT_LABEL_SHORT + m_l10n->Get("Sound"));
 	m_is_master_menu = false;
 
 	Button *back = new Button(context_);
@@ -224,31 +224,22 @@ void MainMenu::HandleSoundsPressed(StringHash eventType, VariantMap &eventData)
 	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSettingsPressed));
 }
 
-void MainMenu::HandleExitPressed(StringHash eventType, VariantMap &eventData)
+void MainMenu::HandleExitPressed(StringHash, VariantMap &eventData)
 {
 	m_window_menu->RemoveAllChildren();
 	m_is_master_menu = true;
 	Menu();
 }
 
-void MainMenu::HandleUpdate(StringHash eventType, VariantMap &eventData)
+void MainMenu::HandleUpdate(StringHash, VariantMap &eventData)
 {
 	backgroundSprite_->SetSize(GetSubsystem<UI>()->GetRoot()->GetSize().x_,
 		GetSubsystem<UI>()->GetRoot()->GetSize().y_);
 }
 
-void MainMenu::HandleMusicPressed(StringHash eventType, VariantMap &eventData)
+void MainMenu::HandleMusicPressed(StringHash, VariantMap &eventData)
 {
-	if (m_music_active)
-		Music(false);
-	else
-		Music(true);
-}
-
-void MainMenu::Music(const bool active)
-{
-	m_music_active = active;
-	log_->WriteRaw("Changement état de la musique");
+	m_music_active = !m_music_active;
 }
 
 }

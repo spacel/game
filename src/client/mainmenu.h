@@ -57,7 +57,6 @@ private:
 	void HandleExitPressed(StringHash eventType, VariantMap &eventData);
 	void HandleUpdate(StringHash eventType, VariantMap &eventData);
 	void HandleMusicPressed(StringHash eventType, VariantMap &eventData);
-	void Music(const bool active);
 	void Background();
 	void Title();
 	void Menu();

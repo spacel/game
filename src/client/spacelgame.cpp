@@ -31,6 +31,7 @@
 
 #include <common/porting.h>
 #include <common/engine/space.h>
+#include <project_defines.h>
 #include "spacelgame.h"
 
 using namespace Urho3D;
@@ -48,7 +49,7 @@ void SpacelGame::Setup()
 		"client.json");
 
 	// Called before engine initialization. engineParameters_ member variable can be modified here
-	engineParameters_["WindowTitle"] = "Spacel Game";
+	engineParameters_["WindowTitle"] = PROJECT_LABEL;
 	engineParameters_["FullScreen"] = m_config->getBool(BSETTING_FULLSCREEN);;
 	engineParameters_["WindowWidth"] = m_config->getU32(U32SETTING_WINDOW_WIDTH);
 	engineParameters_["WindowHeight"] = m_config->getU32(U32SETTING_WINDOW_HEIGHT);
