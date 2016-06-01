@@ -46,9 +46,6 @@ public:
 protected:
 	void HandleClosePressed(StringHash eventType,VariantMap &eventData);
 	void HandleKeyDown(StringHash eventType, VariantMap &eventData);
-
-	SharedPtr<Engine>	engine_;
-
 private:
 	void InitLocales();
 
