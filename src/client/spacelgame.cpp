@@ -32,6 +32,7 @@
 #include <common/porting.h>
 #include <common/engine/space.h>
 #include <project_defines.h>
+#include <iostream>
 #include "spacelgame.h"
 
 using namespace Urho3D;
@@ -69,9 +70,6 @@ void SpacelGame::Setup()
 
 void SpacelGame::Start()
 {
-	// Called after engine initialization. Setup application & subscribe to events here
-	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(SpacelGame, HandleKeyDown));
-
 	m_mainMenu = new MainMenu(context_);
 	GetSubsystem<UI>()->GetRoot()->AddChild(m_mainMenu);
 	m_mainMenu->Start();
@@ -82,26 +80,6 @@ void SpacelGame::Stop()
 	m_config->save(GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "config") +
 		"client.json");
 	delete m_config;
-}
-
-void SpacelGame::HandleKeyDown(StringHash eventType, VariantMap &eventData)
-{
-	using namespace KeyDown;
-	// Check for pressing ESC. Note the engine_ member variable for convenience access to the Engine object
-	int key = eventData[P_KEY].GetInt();
-	switch (key) {
-		case KEY_ESC:
-			if (m_mainMenu->isMain())
-				engine_->Exit();
-			break;
-		default:
-			break;
-	}
-}
-
-void SpacelGame::HandleClosePressed(StringHash eventType, VariantMap &eventData)
-{
-	engine_->Exit();
 }
 
 inline void SpacelGame::InitLocales()

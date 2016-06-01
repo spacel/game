@@ -36,12 +36,18 @@
 
 using namespace Urho3D;
 
+enum MainMenuIds {
+	MAINMENUID_MASTER = 0,
+	MAINMENUID_SETTINGS,
+	MAINMENUID_SETTINGS_GRAPHICS,
+	MAINMENUID_SETTINGS_SOUND,
+};
+
 namespace spacel {
 
 MainMenu::MainMenu(Context *context) :
 		GenericMenu(context),
 		m_cache(GetSubsystem<ResourceCache>()),
-		m_is_master_menu(true),
 		m_music_active(true)
 {
 	m_ui_elem = GetSubsystem<UI>()->GetRoot();
@@ -64,7 +70,7 @@ void MainMenu::Background()
 	Texture2D *logoTexture = m_cache->GetResource<Texture2D>("Textures/cwd_up.png");
 
 	if (!logoTexture) {
-		log_->Write(LOG_ERROR, "Background texture not loaded");
+		m_log->Write(LOG_ERROR, "Background texture not loaded");
 		return;
 	}
 
@@ -85,6 +91,7 @@ void MainMenu::Title()
 
 void MainMenu::HandleMasterMenu(StringHash, VariantMap &)
 {
+	m_menu_id = MAINMENUID_MASTER;
 	m_window_menu->RemoveAllChildren();
 
 	m_title->SetText(PROJECT_LABEL);
@@ -145,12 +152,21 @@ void MainMenu::HandleKeyDown(StringHash, VariantMap &eventData)
 	using namespace KeyDown;
 	// Check for pressing ESC. Note the engine_ member variable for convenience access to the Engine object
 	int key = eventData[P_KEY].GetInt();
+
 	switch (key) {
 		case KEY_ESC:
-			if (!isMain()) {
-				m_window_menu->RemoveAllChildren();
-				m_is_master_menu = true;
-				HandleMasterMenu(Urho3D::StringHash(), eventData);
+			switch (m_menu_id) {
+				case MAINMENUID_MASTER:
+					engine_->Exit();
+					break;
+				case MAINMENUID_SETTINGS:
+					HandleMasterMenu(StringHash(), eventData);
+					break;
+				case MAINMENUID_SETTINGS_GRAPHICS:
+				case MAINMENUID_SETTINGS_SOUND:
+					HandleSettingsPressed(StringHash(), eventData);
+					break;
+				default: break;
 			}
 			break;
 		default:
@@ -160,9 +176,9 @@ void MainMenu::HandleKeyDown(StringHash, VariantMap &eventData)
 
 void MainMenu::HandleSettingsPressed(StringHash, VariantMap &eventData)
 {
+	m_menu_id = MAINMENUID_SETTINGS;
 	m_window_menu->RemoveAllChildren();
 	m_title->SetText(PROJECT_LABEL_SHORT + m_l10n->Get("Settings"));
-	m_is_master_menu = false;
 
 	Button *graphics = new Button(context_);
 	graphics->SetStyle("Button");
@@ -194,9 +210,9 @@ void MainMenu::HandleSettingsPressed(StringHash, VariantMap &eventData)
 
 void MainMenu::HandleGraphicsPressed(StringHash, VariantMap &eventData)
 {
+	m_menu_id = MAINMENUID_SETTINGS_GRAPHICS;
 	m_window_menu->RemoveAllChildren();
 	m_title->SetText(PROJECT_LABEL_SHORT + m_l10n->Get("Graphics"));
-	m_is_master_menu = false;
 
 	Button *back = new Button(context_);
 	// Note, must be part of the UI system before SetSize calls!
@@ -211,9 +227,9 @@ void MainMenu::HandleGraphicsPressed(StringHash, VariantMap &eventData)
 
 void MainMenu::HandleSoundsPressed(StringHash, VariantMap &eventData)
 {
+	m_menu_id = MAINMENUID_SETTINGS_SOUND;
 	m_window_menu->RemoveAllChildren();
 	m_title->SetText(PROJECT_LABEL_SHORT + m_l10n->Get("Sound"));
-	m_is_master_menu = false;
 
 	Button *back = new Button(context_);
 	// Note, must be part of the UI system before SetSize calls!

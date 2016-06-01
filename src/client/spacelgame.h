@@ -44,7 +44,6 @@ public:
 	virtual void Stop();
 
 protected:
-	void HandleClosePressed(StringHash eventType,VariantMap &eventData);
 	void HandleKeyDown(StringHash eventType, VariantMap &eventData);
 private:
 	void InitLocales();
