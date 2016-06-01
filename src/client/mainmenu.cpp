@@ -140,7 +140,6 @@ void MainMenu::HandleClosePressed(StringHash, VariantMap &eventData)
 void MainMenu::HandleKeyDown(StringHash, VariantMap &eventData)
 {
 	using namespace KeyDown;
-	UI *ui = GetSubsystem<UI>();
 	// Check for pressing ESC. Note the engine_ member variable for convenience access to the Engine object
 	int key = eventData[P_KEY].GetInt();
 	switch (key) {
