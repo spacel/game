@@ -41,7 +41,7 @@ public:
 	MainMenu(Context *context);
 	~MainMenu() {}
 	void Start();
-	inline const bool isMain() const { return m_main; };
+	inline const bool isMain() const { return m_is_master_menu; };
 
 protected:
 	SharedPtr<Engine> engine_;
@@ -64,11 +64,10 @@ private:
 
 	ResourceCache *m_cache;
 	UIElement *m_ui_elem;
-	Localization *m_l10n ;
 	static const uint s_space_button = 20;
 	Window *m_window_menu;
 	Text *m_title;
-	bool m_main;
+	bool m_is_master_menu;
 	bool m_music_active;
 };
 

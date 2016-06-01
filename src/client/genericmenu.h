@@ -22,16 +22,18 @@
 #include <Urho3D/UI/Button.h>
 #include <Urho3D/Core/Context.h>
 #include <Urho3D/UI/UIElement.h>
+#include <Urho3D/Resource/Localization.h>
 #include "genericmenu.h"
 
 namespace spacel {
 
 class GenericMenu: public Urho3D::UIElement {
 public:
-	GenericMenu(Urho3D::Context *context): Urho3D::UIElement(context)
-	{}
+	GenericMenu(Urho3D::Context *context);
 protected:
 	void CreateButtonLabel(Urho3D::Button *b, const Urho3D::String &text,
 			const Urho3D::String &style = "TextButton") const;
+
+	Urho3D::Localization *m_l10n;
 };
 }

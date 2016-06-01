@@ -70,7 +70,6 @@ void SpacelGame::Start()
 {
 	// Called after engine initialization. Setup application & subscribe to events here
 	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(SpacelGame, HandleKeyDown));
-	Localization *l10n = GetSubsystem<Localization>();
 
 	m_mainMenu = new MainMenu(context_);
 	UI *ui = GetSubsystem<UI>();
@@ -88,12 +87,16 @@ void SpacelGame::Stop()
 void SpacelGame::HandleKeyDown(StringHash eventType, VariantMap &eventData)
 {
 	using namespace KeyDown;
-	UI *ui = GetSubsystem<UI>();
 	// Check for pressing ESC. Note the engine_ member variable for convenience access to the Engine object
 	int key = eventData[P_KEY].GetInt();
-	if (key == KEY_ESC)
-		if (m_mainMenu->isMain())
-			engine_->Exit();
+	switch (key) {
+		case KEY_ESC:
+			if (m_mainMenu->isMain())
+				engine_->Exit();
+			break;
+		default:
+			break;
+	}
 }
 
 void SpacelGame::HandleClosePressed(StringHash eventType, VariantMap &eventData)

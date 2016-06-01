@@ -25,12 +25,20 @@ using namespace Urho3D;
 
 namespace spacel {
 
+GenericMenu::GenericMenu(Context *context): UIElement(context),
+		m_l10n(GetSubsystem<Localization>())
+{
+}
+
+/*
+ * This function translate the label
+ */
 void GenericMenu::CreateButtonLabel(Button *b, const String &text,
 		const String &style) const
 {
 	Text *t = new Text(context_);
 	b->AddChild(t);
 	t->SetStyle(style);
-	t->SetText(text);
+	t->SetText(m_l10n->Get(text));
 }
 }
