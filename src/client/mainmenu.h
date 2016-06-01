@@ -2,6 +2,7 @@
  * This file is part of Spacel game.
  *
  * Copyright 2016, Loic Blot <loic.blot@unix-experience.fr>
+ * Copyright 2016, Jeremy Lomoro <jeremy.lomoro@tuxsrv.fr>
  *
  * Spacel is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +23,7 @@
 #include <Urho3D/Engine/Application.h>
 #include <Urho3D/Engine/Engine.h>
 #include <Urho3D/IO/Log.h>
+#include <Urho3D/Resource/Localization.h>
 #include <Urho3D/UI/Sprite.h>
 #include <Urho3D/UI/Text.h>
 #include <Urho3D/UI/Window.h>
@@ -33,12 +35,13 @@ using namespace Urho3D;
 namespace spacel {
 
 class MainMenu: public GenericMenu  {
-URHO3D_OBJECT(MainMenu, UIElement);
+URHO3D_OBJECT(MainMenu, GenericMenu);
 
 public:
 	MainMenu(Context *context);
 	~MainMenu() { };
 	void Start();
+	bool isMain() { return (main) ? true : false; };
 
 protected:
 	SharedPtr<Engine> engine_;
@@ -47,11 +50,13 @@ protected:
 
 private:
 	void HandleClosePressed(StringHash eventType, VariantMap &eventData);
+	void HandleKeyDown(StringHash eventType, VariantMap &eventData);
 	void HandleSettingsPressed(StringHash eventType, VariantMap &eventData);
 	void HandleGraphicsPressed(StringHash eventType, VariantMap &eventData);
 	void HandleSoundsPressed(StringHash eventType, VariantMap &eventData);
 	void HandleExitPressed(StringHash eventType, VariantMap &eventData);
 	void HandleUpdate(StringHash eventType, VariantMap &eventData);
+	void HandleMusicPressed(StringHash eventType, VariantMap &eventData);
 	void Music(const bool active);
 	void Background();
 	void Title();
@@ -59,10 +64,12 @@ private:
 
 	ResourceCache *cache;
 	UIElement *uiElem;
+	Localization *l10n ;
 	static const uint space_button = 20;
 	Window *m_window_menu;
 	Text *m_title;
+	bool main;
+	bool musicActive;
 };
 
 }
-

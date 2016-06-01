@@ -89,7 +89,7 @@ bool Config::load(const std::string &&f)
 	}
 }
 
-bool Config::save(const std::string &&f)
+bool Config::save(const char *&&f)
 {
 	Json::Value root;
 

@@ -2,6 +2,7 @@
  * This file is part of Spacel game.
  *
  * Copyright 2016, Loic Blot <loic.blot@unix-experience.fr>
+ * Copyright 2016, Jeremy Lomoro <jeremy.lomoro@tuxsrv.fr>
  *
  * Spacel is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +18,11 @@
  * along with Spacel.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <Urho3D/Audio/Sound.h>
+#include <Urho3D/Audio/SoundSource.h>
 #include <Urho3D/Core/CoreEvents.h>
 #include <Urho3D/Graphics/Texture2D.h>
+#include <Urho3D/Input/InputEvents.h>
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/UI/Button.h>
 #include <Urho3D/UI/Font.h>
@@ -27,23 +31,28 @@
 #include <Urho3D/UI/Window.h>
 
 #include "mainmenu.h"
+#include "spacelgame.h"
 
 using namespace Urho3D;
 
 namespace spacel {
 
 MainMenu::MainMenu(Context *context) :
-		GenericMenu(context)
+		GenericMenu(context),
+		main(true),
+		musicActive(true)
 {
 	cache = GetSubsystem<ResourceCache>();
 	uiElem = GetSubsystem<UI>()->GetRoot();
 	uiElem->SetDefaultStyle(cache->GetResource<XMLFile>("UI/MainMenuStyle.xml"));
+	l10n = GetSubsystem<Localization>();
 	m_window_menu = new Window(context_);
 	m_title = new Text(context_);
 }
 
 void MainMenu::Start()
 {
+	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(MainMenu, HandleKeyDown));
 	Background();
 	Title();
 	Menu();
@@ -76,6 +85,8 @@ void MainMenu::Title()
 
 void MainMenu::Menu()
 {
+	Localization *l10n = GetSubsystem<Localization>();
+
 	m_title->SetText("Spacel Game");
 	uiElem->AddChild(m_window_menu);
 	m_window_menu->SetStyle("Window");
@@ -88,7 +99,7 @@ void MainMenu::Menu()
 	singleplayer->SetPosition(0, m_window_menu->GetPosition().y_ + singleplayer->GetSize().y_ + 65);
 	singleplayer->SetHorizontalAlignment(HA_CENTER);
 	m_window_menu->AddChild(singleplayer);
-	CreateButtonLabel(singleplayer, "Play");
+	CreateButtonLabel(singleplayer, l10n->Get("Play"));
 
 	Button *multiplayer = new Button(context_);
 	// Note, must be part of the UI system before SetSize calls!
@@ -96,7 +107,7 @@ void MainMenu::Menu()
 	multiplayer->SetPosition(0, singleplayer->GetPosition().y_ + singleplayer->GetSize().y_ + space_button);
 	multiplayer->SetHorizontalAlignment(HA_CENTER);
 	m_window_menu->AddChild(multiplayer);
-	CreateButtonLabel(multiplayer, "Multiplayer");
+	CreateButtonLabel(multiplayer, l10n->Get("Multiplayer"));
 
 	Button *settings = new Button(context_);
 	// Note, must be part of the UI system before SetSize calls!
@@ -104,15 +115,24 @@ void MainMenu::Menu()
 	settings->SetPosition(0, multiplayer->GetPosition().y_ + multiplayer->GetSize().y_ + space_button);
 	settings->SetHorizontalAlignment(HA_CENTER);
 	m_window_menu->AddChild(settings);
-	CreateButtonLabel(settings, "Options");
+	CreateButtonLabel(settings, l10n->Get("Settings"));
 
 	Button *exit = new Button(context_);
 	exit->SetStyle("Button");
 	exit->SetPosition(0, settings->GetPosition().y_ + settings->GetSize().y_ + space_button);
 	exit->SetHorizontalAlignment(HA_CENTER);
 	m_window_menu->AddChild(exit);
-	CreateButtonLabel(exit, "Exit");
+	CreateButtonLabel(exit, l10n->Get("Exit"));
 
+	Button *music = new Button(context_);
+	uiElem->AddChild(music);
+	if (musicActive)
+		music->SetStyle("SoundButton");
+	else
+		music->SetStyle("SoundButtonOff");
+	music->SetAlignment(HA_RIGHT, VA_BOTTOM);
+
+	SubscribeToEvent(music, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleMusicPressed));
 	SubscribeToEvent(exit, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleClosePressed));
 	SubscribeToEvent(settings, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSettingsPressed));
 	SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(MainMenu, HandleUpdate));
@@ -120,21 +140,37 @@ void MainMenu::Menu()
 
 void MainMenu::HandleClosePressed(StringHash eventType, VariantMap &eventData)
 {
-	//TODO : Exit properly
 	engine_->Exit();
+}
+
+void MainMenu::HandleKeyDown(StringHash eventType, VariantMap &eventData)
+{
+	using namespace KeyDown;
+	UI *ui = GetSubsystem<UI>();
+	// Check for pressing ESC. Note the engine_ member variable for convenience access to the Engine object
+	int key = eventData[P_KEY].GetInt();
+	switch (key) {
+		case KEY_ESC:
+		if (!isMain()) {
+			m_window_menu->RemoveAllChildren();
+			main = true;
+			Menu();
+		}
+	}
 }
 
 void MainMenu::HandleSettingsPressed(StringHash eventType, VariantMap &eventData)
 {
 	m_window_menu->RemoveAllChildren();
-	m_title->SetText("Spacel Settings");
+	m_title->SetText("Spacel " + l10n->Get("Settings"));
+	main = false;
 
 	Button *graphics = new Button(context_);
 	graphics->SetStyle("Button");
 	graphics->SetPosition(0, m_window_menu->GetPosition().y_ + graphics->GetSize().y_ + 65);
 	graphics->SetHorizontalAlignment(HA_CENTER);
 	m_window_menu->AddChild(graphics);
-	CreateButtonLabel(graphics, "Graphics");
+	CreateButtonLabel(graphics, l10n->Get("Graphics"));
 
 	Button *sound = new Button(context_);
 	// Note, must be part of the UI system before SetSize calls!
@@ -142,7 +178,7 @@ void MainMenu::HandleSettingsPressed(StringHash eventType, VariantMap &eventData
 	sound->SetPosition(0, graphics->GetPosition().y_ + graphics->GetSize().y_ + space_button);
 	sound->SetHorizontalAlignment(HA_CENTER);
 	m_window_menu->AddChild(sound);
-	CreateButtonLabel(sound, "Sound");
+	CreateButtonLabel(sound, l10n->Get("Sound"));
 
 	Button *back = new Button(context_);
 	// Note, must be part of the UI system before SetSize calls!
@@ -150,7 +186,7 @@ void MainMenu::HandleSettingsPressed(StringHash eventType, VariantMap &eventData
 	back->SetPosition(0, sound->GetPosition().y_ + sound->GetSize().y_ + space_button);
 	back->SetHorizontalAlignment(HA_CENTER);
 	m_window_menu->AddChild(back);
-	CreateButtonLabel(back, "Back");
+	CreateButtonLabel(back, l10n->Get("Back"));
 
 	SubscribeToEvent(graphics, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleGraphicsPressed));
 	SubscribeToEvent(sound, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSoundsPressed));
@@ -160,7 +196,8 @@ void MainMenu::HandleSettingsPressed(StringHash eventType, VariantMap &eventData
 void MainMenu::HandleGraphicsPressed(StringHash eventType, VariantMap &eventData)
 {
 	m_window_menu->RemoveAllChildren();
-	m_title->SetText("Spacel Graphics.");
+	m_title->SetText("Spacel " + l10n->Get("Graphics"));
+	main = false;
 
 	Button *back = new Button(context_);
 	// Note, must be part of the UI system before SetSize calls!
@@ -168,7 +205,7 @@ void MainMenu::HandleGraphicsPressed(StringHash eventType, VariantMap &eventData
 	back->SetPosition(0,  m_window_menu->GetPosition().y_ + back->GetSize().y_ + 65);
 	back->SetHorizontalAlignment(HA_CENTER);
 	m_window_menu->AddChild(back);
-	CreateButtonLabel(back, "Back");
+	CreateButtonLabel(back, l10n->Get("Back"));
 
 	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSettingsPressed));
 }
@@ -176,7 +213,8 @@ void MainMenu::HandleGraphicsPressed(StringHash eventType, VariantMap &eventData
 void MainMenu::HandleSoundsPressed(StringHash eventType, VariantMap &eventData)
 {
 	m_window_menu->RemoveAllChildren();
-	m_title->SetText("Spacel Sounds.");
+	m_title->SetText("Spacel " + l10n->Get("Sound"));
+	main = false;
 
 	Button *back = new Button(context_);
 	// Note, must be part of the UI system before SetSize calls!
@@ -184,7 +222,7 @@ void MainMenu::HandleSoundsPressed(StringHash eventType, VariantMap &eventData)
 	back->SetPosition(0,  m_window_menu->GetPosition().y_ + back->GetSize().y_ + 65);
 	back->SetHorizontalAlignment(HA_CENTER);
 	m_window_menu->AddChild(back);
-	CreateButtonLabel(back, "Back");
+	CreateButtonLabel(back, l10n->Get("Back"));
 
 	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSettingsPressed));
 }
@@ -192,6 +230,7 @@ void MainMenu::HandleSoundsPressed(StringHash eventType, VariantMap &eventData)
 void MainMenu::HandleExitPressed(StringHash eventType, VariantMap &eventData)
 {
 	m_window_menu->RemoveAllChildren();
+	main = true;
 	Menu();
 }
 
@@ -201,13 +240,18 @@ void MainMenu::HandleUpdate(StringHash eventType, VariantMap &eventData)
 							   GetSubsystem<UI>()->GetRoot()->GetSize().y_);
 }
 
+void MainMenu::HandleMusicPressed(StringHash eventType, VariantMap &eventData)
+{
+	if (musicActive)
+		Music(false);
+	else
+		Music(true);
+}
+
 void MainMenu::Music(const bool active)
 {
-	Button *music = new Button(context_);
-	// Note, must be part of the UI system before SetSize calls!
-	GetSubsystem<UI>()->GetRoot()->AddChild(music);
-	music->SetStyle("SoundButton");
-	music->SetAlignment(HA_RIGHT, VA_BOTTOM);
+	musicActive = active;
+	log_->WriteRaw("Changement état de la musique");
 }
 
 }

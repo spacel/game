@@ -10,7 +10,7 @@
 	<attribute name="Hover Image Offset" value="0 16" />
 	<attribute name="Pressed Child Offset" value="-1 1" />
 	<attribute name="Color" value="1 1 0" />
-	<attribute name="Horizontal Alignment" value="1 1 0" />
+	<attribute name="Horiz Alignment" value="Center" />
     </element>
     <element type="SoundButton" style="Button" auto="false">    <!-- non-auto style is shown explicitly in the Editor's style drop down list for user selection -->
 	<attribute name="Min Size" value="16 16" />

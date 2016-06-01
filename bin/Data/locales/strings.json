@@ -1,0 +1,32 @@
+{
+    "Lang":{
+        "fr":"Langage: Francais"
+    },
+    "Exit":{
+        "fr":"Quitter"
+    },
+    "Press this button":{
+        "fr":"Appuyez sur ce bouton"
+    },
+    "Title":{
+        "fr":"Titre"
+    },
+    "Play":{
+        "fr":"Jouer"
+    },
+    "Multiplayer":{
+        "fr":"Multijoueur"
+    },
+    "Settings":{
+        "fr":"Options"
+    },
+    "Graphics":{
+        "fr":"Graphismes"
+    },
+    "Sound":{
+        "fr":"Son"
+    },
+    "Back":{
+        "fr":"Retour"
+    }
+}

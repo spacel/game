@@ -25,7 +25,7 @@ using namespace Urho3D;
 
 namespace spacel {
 
-void GenericMenu::CreateButtonLabel(Button* b, const String &text,
+void GenericMenu::CreateButtonLabel(Button *b, const String &text,
 		const String &style) const
 {
 	Text *t = new Text(context_);

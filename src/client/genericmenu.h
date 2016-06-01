@@ -31,7 +31,7 @@ public:
 	GenericMenu(Urho3D::Context *context): Urho3D::UIElement(context)
 	{}
 protected:
-	void CreateButtonLabel(Urho3D::Button* b, const Urho3D::String &text,
+	void CreateButtonLabel(Urho3D::Button *b, const Urho3D::String &text,
 			const Urho3D::String &style = "TextButton") const;
 };
 }

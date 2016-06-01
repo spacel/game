@@ -2,6 +2,7 @@
  * This file is part of Spacel game.
  *
  * Copyright 2016, Loic Blot <loic.blot@unix-experience.fr>
+ * Copyright 2016, Jeremy Lomoro <jeremy.lomoro@tuxsrv.fr>
  *
  * Spacel is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,12 +22,16 @@
 
 #include <Urho3D/Engine/Application.h>
 #include <Urho3D/IO/Log.h>
+#include <Urho3D/Resource/ResourceCache.h>
 
+#include "mainmenu.h"
 #include "settings.h"
 
 using namespace Urho3D;
 
 namespace spacel {
+
+class MainMenu;
 
 class SpacelGame : public Application
 {
@@ -46,8 +51,12 @@ protected:
 	SharedPtr<Log>		log_;
 
 private:
-	void MusicMenu(const bool active);
+	void InitLocalizationSystem();
+
 	ClientSettings *m_config;
+	String m_path_config;
+	MainMenu *m_mainMenu;
+	ResourceCache *m_cache;
 };
 
 }
