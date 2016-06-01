@@ -39,9 +39,9 @@ URHO3D_OBJECT(MainMenu, GenericMenu);
 
 public:
 	MainMenu(Context *context);
-	~MainMenu() { };
+	~MainMenu() {}
 	void Start();
-	bool isMain() { return (main) ? true : false; };
+	inline const bool isMain() const { return m_main; };
 
 protected:
 	SharedPtr<Engine> engine_;
@@ -62,14 +62,14 @@ private:
 	void Title();
 	void Menu();
 
-	ResourceCache *cache;
-	UIElement *uiElem;
-	Localization *l10n ;
-	static const uint space_button = 20;
+	ResourceCache *m_cache;
+	UIElement *m_ui_elem;
+	Localization *m_l10n ;
+	static const uint s_space_button = 20;
 	Window *m_window_menu;
 	Text *m_title;
-	bool main;
-	bool musicActive;
+	bool m_main;
+	bool m_music_active;
 };
 
 }
