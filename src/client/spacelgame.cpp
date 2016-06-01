@@ -22,7 +22,6 @@
 #include <Urho3D/Graphics/Camera.h>
 #include <Urho3D/Graphics/DebugRenderer.h>
 #include <Urho3D/Input/Input.h>
-#include <Urho3D/Input/InputEvents.h>
 #include <Urho3D/IO/FileSystem.h>
 #include <Urho3D/Resource/JSONFile.h>
 #include <Urho3D/Resource/Localization.h>
@@ -45,8 +44,8 @@ engine::Universe *engine::Universe::s_universe = nullptr;
 void SpacelGame::Setup()
 {
 	m_config = new ClientSettings(context_);
-	m_path_config = GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "configs") + "client.json";
-	m_config->load(fs::path_config + DIR_DELIM + "client.json");
+	m_config->load(GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "config") +
+		"client.json");
 
 	// Called before engine initialization. engineParameters_ member variable can be modified here
 	engineParameters_["WindowTitle"] = "Spacel Game";
@@ -58,11 +57,12 @@ void SpacelGame::Setup()
 	engineParameters_["TripleBuffer"] = m_config->getBool(BSETTING_TRIPLEBUFFER);
 	engineParameters_["LogLevel"] = LOG_DEBUG;
 	engineParameters_["LogQuiet"] = m_config->getBool(BSETTING_LOGQUIET);
-	engineParameters_["LogName"] = GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "logs") + "SpacelGame.log";
+	engineParameters_["LogName"] = GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "logs") +
+		"SpacelGame.log";
 	GetSubsystem<Input>()->SetMouseVisible(true);
 	//if (!engineParameters_.Contains("ResourcePrefixPaths"))
 				//engineParameters_["ResourcePrefixPaths"] = ";./bin";
-	InitLocalizationSystem();
+	InitLocales();
 
 }
 
@@ -72,16 +72,15 @@ void SpacelGame::Start()
 	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(SpacelGame, HandleKeyDown));
 
 	m_mainMenu = new MainMenu(context_);
-	UI *ui = GetSubsystem<UI>();
-	ui->GetRoot()->AddChild(m_mainMenu);
+	GetSubsystem<UI>()->GetRoot()->AddChild(m_mainMenu);
 	m_mainMenu->Start();
 }
 
 void SpacelGame::Stop()
 {
-	m_config->save(m_path_config.CString());
+	m_config->save(GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "config") +
+		"client.json");
 	delete m_config;
-	engine_->DumpResources(true);
 }
 
 void SpacelGame::HandleKeyDown(StringHash eventType, VariantMap &eventData)
@@ -104,10 +103,9 @@ void SpacelGame::HandleClosePressed(StringHash eventType, VariantMap &eventData)
 	engine_->Exit();
 }
 
-void SpacelGame::InitLocalizationSystem()
+inline void SpacelGame::InitLocales()
 {
-	m_cache = GetSubsystem<ResourceCache>();
-	Localization *l10n = GetSubsystem<Localization>();
-	l10n->LoadJSONFile("Data/locales/strings.json");
+	GetSubsystem<Localization>()->LoadJSONFile(
+			GetSubsystem<FileSystem>()->GetProgramDir() + "/Data/locales/strings.json");
 }
 }

@@ -48,15 +48,12 @@ protected:
 	void HandleKeyDown(StringHash eventType, VariantMap &eventData);
 
 	SharedPtr<Engine>	engine_;
-	SharedPtr<Log>		log_;
 
 private:
-	void InitLocalizationSystem();
+	void InitLocales();
 
 	ClientSettings *m_config;
-	String m_path_config;
 	MainMenu *m_mainMenu;
-	ResourceCache *m_cache;
 };
 
 }

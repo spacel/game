@@ -42,12 +42,12 @@ Config::Config(Urho3D::Context *context, uint32_t b_size, uint32_t u32_size,
 	m_float_names.resize(f_size);
 }
 
-bool Config::load(const std::string &&f)
+bool Config::load(const String &f)
 {
 	Json::Value root;
 
 	try {
-		std::ifstream cfg_file(f, std::ifstream::binary);
+		std::ifstream cfg_file(f.CString(), std::ifstream::binary);
 		cfg_file >> root;
 		cfg_file.close();
 
@@ -89,7 +89,7 @@ bool Config::load(const std::string &&f)
 	}
 }
 
-bool Config::save(const char *&&f)
+bool Config::save(const String &f)
 {
 	Json::Value root;
 
@@ -106,7 +106,7 @@ bool Config::save(const char *&&f)
 	}
 
 	try {
-		std::ofstream cfg_file(f, std::ofstream::binary);
+		std::ofstream cfg_file(f.CString(), std::ofstream::binary);
 		cfg_file << root;
 		cfg_file.close();
 		return true;

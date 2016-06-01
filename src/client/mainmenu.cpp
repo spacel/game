@@ -84,8 +84,6 @@ void MainMenu::Title()
 
 void MainMenu::Menu()
 {
-	Localization *l10n = GetSubsystem<Localization>();
-
 	m_title->SetText("Spacel Game");
 	m_ui_elem->AddChild(m_window_menu);
 	m_window_menu->SetStyle("Window");

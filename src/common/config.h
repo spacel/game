@@ -33,8 +33,8 @@ public:
 	Config() {}
 	Config(Urho3D::Context *context, uint32_t b_size, uint32_t u32_size, uint32_t f_size);
 
-	bool load(const std::string &&f);
-	bool save(const char *&&f);
+	bool load(const Urho3D::String &f);
+	bool save(const Urho3D::String &f);
 
 	inline void registerBool(const uint32_t idx, const bool v, const std::string &name)
 	{
