@@ -29,6 +29,8 @@
 #include <Urho3D/UI/UI.h>
 #include <Urho3D/UI/UIEvents.h>
 #include <Urho3D/UI/Window.h>
+#include <Urho3D/UI/CheckBox.h>
+#include <Urho3D/UI/LineEdit.h>
 
 #include "mainmenu.h"
 #include <project_defines.h>
@@ -207,6 +209,14 @@ void MainMenu::HandleGraphicsPressed(StringHash, VariantMap &eventData)
 
 	Button *back = CreateMainMenuButton("Back");
 	back->SetPosition(0,  m_window_menu->GetPosition().y_ + back->GetSize().y_ + 65);
+
+	CheckBox *fullScreen = new CheckBox(context_);
+	fullScreen->SetChecked(true);
+	fullScreen->SetName("CheckBox");
+
+	m_window_menu->AddChild(fullScreen);
+
+	fullScreen->SetStyleAuto();
 
 	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSettingsPressed));
 }
