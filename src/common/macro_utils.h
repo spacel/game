@@ -22,5 +22,5 @@
 #define ARRLEN(x) (sizeof(x) / sizeof((x)[0]))
 #define DISABLE_CLASS_COPY(C) \
 	C(const C &);             \
-	C &operator=(const C &)
+	C &operator = (const C &)
 

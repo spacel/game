@@ -39,7 +39,6 @@ GenericMenu::GenericMenu(Context *context, ClientSettings *config): UIElement(co
 		m_cache(GetSubsystem<ResourceCache>()),
 		m_engine(GetSubsystem<Engine>()),
 		m_config(config)
-
 {
 	m_scene = new Scene(context_);
 }
@@ -61,8 +60,9 @@ void GenericMenu::CreateLineEditLabel(LineEdit *le, const String &text,
 {
 	Text *t = new Text(context_);
 	le->GetParent()->AddChild(t);
+	t->SetName(text);
 	t->SetStyle(style);
-	t->SetPosition(le->GetPosition().x_ + 20, le->GetPosition().y_);
+	t->SetPosition(le->GetPosition().x_ - 20, le->GetPosition().y_ + 5);
 	t->SetText(m_l10n->Get(text));
 }
 

@@ -21,6 +21,7 @@
 
 #include <Urho3D/Audio/SoundStream.h>
 #include <Urho3D/UI/Button.h>
+#include <Urho3D/UI/LineEdit.h>
 #include <Urho3D/Core/Context.h>
 #include <Urho3D/UI/LineEdit.h>
 #include <Urho3D/UI/UIElement.h>

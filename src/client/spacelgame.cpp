@@ -77,11 +77,12 @@ void SpacelGame::Stop()
 	m_config->save(GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "config") +
 		"client.json");
 	delete m_config;
+	engine_->DumpResources(true);
 }
 
 inline void SpacelGame::InitLocales()
 {
 	GetSubsystem<Localization>()->LoadJSONFile(
-			GetSubsystem<FileSystem>()->GetProgramDir() + "/Data/locales/strings.json");
+			GetSubsystem<FileSystem>()->GetProgramDir() + "Data/locales/strings.json");
 }
 }
