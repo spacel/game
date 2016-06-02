@@ -41,3 +41,9 @@ cd build
 cmake -D URHO3D_HOME=$(pwd)/../lib/Urho3D/build/ ..
 make
 ```
+
+## Included libraries
+
+* Urho3D 1.5
+* SQLite 3.13.0
+* jsoncpp 1.7.2

@@ -27,6 +27,10 @@ set(JSONCPP_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/jsoncpp/include")
 set(JSONCPP_LIBRARY jsoncpp)
 add_subdirectory(lib/jsoncpp)
 
+set(SQLITE3_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/sqlite3/src")
+set(SQLITE3_LIBRARY sqlite3)
+add_subdirectory(lib/sqlite3)
+
 configure_file(src/project_defines.h.in ${CMAKE_CURRENT_SOURCE_DIR}/src/project_defines.h)
 
 add_subdirectory(src/common)
