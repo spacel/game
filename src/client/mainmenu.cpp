@@ -85,6 +85,7 @@ void MainMenu::Title()
 {
 	m_title->SetStyle("Title");
 	m_title->SetText(PROJECT_LABEL);
+	m_title->SetPosition(0, 50);
 	m_ui_elem->AddChild(m_title);
 }
 
@@ -151,6 +152,9 @@ void MainMenu::HandleKeyDown(StringHash, VariantMap &eventData)
 					break;
 				default: break;
 			}
+			break;
+		case KEY_F12:
+			TakeScreenshot();
 			break;
 		default:
 			break;

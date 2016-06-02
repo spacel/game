@@ -19,6 +19,8 @@
 
 #include "genericmenu.h"
 
+#include <Urho3D/Graphics/Graphics.h>
+#include <Urho3D/IO/FileSystem.h>
 #include <Urho3D/UI/Text.h>
 
 using namespace Urho3D;
@@ -41,5 +43,14 @@ void GenericMenu::CreateButtonLabel(Button *b, const String &text,
 	b->AddChild(t);
 	t->SetStyle(style);
 	t->SetText(m_l10n->Get(text));
+}
+
+void GenericMenu::TakeScreenshot()
+{
+	Image screenshot(context_);
+	GetSubsystem<Graphics>()->TakeScreenShot(screenshot);
+	// Here we save in the Data folder with date and time appended
+	screenshot.SavePNG(GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "screenshots") + "Screenshot_" +
+		Time::GetTimeStamp().Replaced(':', '_').Replaced('.', '_').Replaced(' ', '_') + ".png");
 }
 }

@@ -34,6 +34,7 @@ public:
 protected:
 	void CreateButtonLabel(Urho3D::Button *b, const Urho3D::String &text,
 			const Urho3D::String &style = "TextButton") const;
+	void TakeScreenshot();
 
 	Urho3D::Localization *m_l10n;
 	Urho3D::SharedPtr<Urho3D::Engine> m_engine;
