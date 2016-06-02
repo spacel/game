@@ -13,12 +13,12 @@
 	<attribute name="Horiz Alignment" value="Center" />
     </element>
     <element type="CheckBox" style="BorderImage">
-        <attribute name="Min Size" value="16 16" />
-        <attribute name="Max Size" value="16 16" />
-        <attribute name="Image Rect" value="80 0 96 16" />
-        <attribute name="Border" value="4 4 4 4" />
-        <attribute name="Checked Image Offset" value="16 0" />
-        <attribute name="Hover Image Offset" value="0 16" />
+	<attribute name="Min Size" value="16 16" />
+	<attribute name="Max Size" value="16 16" />
+	<attribute name="Image Rect" value="80 0 96 16" />
+	<attribute name="Border" value="4 4 4 4" />
+	<attribute name="Checked Image Offset" value="16 0" />
+	<attribute name="Hover Image Offset" value="0 16" />
     </element>
     <element type="SoundButton" style="Button" auto="false">    <!-- non-auto style is shown explicitly in the Editor's style drop down list for user selection -->
 	<attribute name="Min Size" value="16 16" />
@@ -56,5 +56,13 @@
     <element type="Title" style="Text">
 	<attribute name="Font Size" value="40" />
 	<attribute name="Color" value="0.3 0 0.3" />
+	<attribute name="Horiz Alignment" value="Center" />
+	<attribute name="Vert Alignment" value="Top" />
+    </element>
+    <element type="TitleWindow" style="Text">
+	<attribute name="Font Size" value="30" />
+	<attribute name="Color" value="0.6 0 0.6" />
+	<attribute name="Horiz Alignment" value="Center" />
+	<attribute name="Vert Alignment" value="Top" />
     </element>
 </elements>

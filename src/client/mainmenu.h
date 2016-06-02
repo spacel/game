@@ -53,11 +53,12 @@ private:
 	void HandleMusicPressed(StringHash eventType, VariantMap &eventData);
 	void Background();
 	void Title();
+	void TitleWindow();
 	void HandleMasterMenu(StringHash, VariantMap &);
 
 	// Helpers
 	Urho3D::Button *CreateMainMenuButton(const String &label);
-	void SetTitle(const String &t);
+	void SetWindowTitle(const String &t);
 	// Attributes
 	uint8_t m_menu_id = 0;
 	ResourceCache *m_cache;
@@ -65,6 +66,7 @@ private:
 	static const uint s_mainmenu_button_space = 20;
 	Window *m_window_menu;
 	Text *m_title;
+	Text *m_window_title;
 	bool m_music_active;
 	SharedPtr<Sprite> m_menu_background;
 };

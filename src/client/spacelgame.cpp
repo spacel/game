@@ -61,10 +61,7 @@ void SpacelGame::Setup()
 	engineParameters_["LogName"] = GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "logs") +
 		"SpacelGame.log";
 	GetSubsystem<Input>()->SetMouseVisible(true);
-	//if (!engineParameters_.Contains("ResourcePrefixPaths"))
-				//engineParameters_["ResourcePrefixPaths"] = ";./bin";
 	InitLocales();
-
 }
 
 void SpacelGame::Start()
