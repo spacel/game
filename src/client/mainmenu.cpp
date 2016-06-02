@@ -85,8 +85,6 @@ void MainMenu::Title()
 {
 	m_title->SetStyle("Title");
 	m_title->SetText(PROJECT_LABEL);
-	m_title->SetHorizontalAlignment(HA_CENTER);
-	m_title->SetVerticalAlignment(VA_TOP);
 	m_ui_elem->AddChild(m_title);
 }
 

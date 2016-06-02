@@ -50,7 +50,7 @@ void SpacelGame::Setup()
 
 	// Called before engine initialization. engineParameters_ member variable can be modified here
 	engineParameters_["WindowTitle"] = PROJECT_LABEL;
-	engineParameters_["FullScreen"] = m_config->getBool(BSETTING_FULLSCREEN);;
+	engineParameters_["FullScreen"] = m_config->getBool(BSETTING_FULLSCREEN);
 	engineParameters_["WindowWidth"] = m_config->getU32(U32SETTING_WINDOW_WIDTH);
 	engineParameters_["WindowHeight"] = m_config->getU32(U32SETTING_WINDOW_HEIGHT);
 	engineParameters_["WindowResizable"] = m_config->getBool(BSETTING_RESIZABLE_WINDOW);
@@ -61,10 +61,7 @@ void SpacelGame::Setup()
 	engineParameters_["LogName"] = GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "logs") +
 		"SpacelGame.log";
 	GetSubsystem<Input>()->SetMouseVisible(true);
-	//if (!engineParameters_.Contains("ResourcePrefixPaths"))
-				//engineParameters_["ResourcePrefixPaths"] = ";./bin";
 	InitLocales();
-
 }
 
 void SpacelGame::Start()
