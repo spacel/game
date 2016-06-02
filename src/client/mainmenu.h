@@ -53,7 +53,6 @@ private:
 	void HandleMusicPressed(StringHash eventType, VariantMap &eventData);
 	void Background();
 	void Title();
-	void TitleWindow();
 	void HandleMasterMenu(StringHash, VariantMap &);
 
 	// Helpers

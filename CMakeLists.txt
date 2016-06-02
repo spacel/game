@@ -8,6 +8,11 @@ set(PROJECT_LABEL_SHORT "${TARGET_NAME}")
 
 cmake_minimum_required(VERSION 2.8.6)
 
+if(NOT CMAKE_BUILD_TYPE)
+	# Default to release
+	set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type: Debug or Release" FORCE)
+endif()
+
 set(CMAKE_MODULE_PATH
 	${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules
 	)
@@ -16,6 +21,7 @@ set(BAKED_CMAKE_SOURCE_DIR
 	)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -std=c++11 -g -O0 -Wall -Wabi")
 
 set(JSONCPP_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/jsoncpp/include")
 set(JSONCPP_LIBRARY jsoncpp)

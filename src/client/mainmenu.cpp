@@ -92,13 +92,6 @@ void MainMenu::Title()
 	m_ui_elem->AddChild(m_title);
 }
 
-void MainMenu::TitleWindow()
-{
-	m_window_title->SetStyle("TitleWindow");
-	m_window_title->SetText(m_l10n->Get("Main"));
-	m_window_menu->AddChild(m_window_title);
-}
-
 void MainMenu::HandleMasterMenu(StringHash, VariantMap &)
 {
 	m_menu_id = MAINMENUID_MASTER;
@@ -110,7 +103,9 @@ void MainMenu::HandleMasterMenu(StringHash, VariantMap &)
 	m_window_menu->SetAlignment(HA_CENTER, VA_CENTER);
 	m_window_menu->SetOpacity(0.55f);
 
-	TitleWindow();
+	m_window_menu->AddChild(m_window_title);
+	m_window_title->SetText(m_l10n->Get("Main"));
+
 
 	Button *singleplayer = CreateMainMenuButton("Play");
 	singleplayer->SetPosition(0, m_window_menu->GetPosition().y_ + singleplayer->GetSize().y_ + 65);
@@ -243,8 +238,7 @@ void MainMenu::HandleSoundsPressed(StringHash, VariantMap &eventData)
 
 void MainMenu::HandleUpdate(StringHash, VariantMap &eventData)
 {
-	m_menu_background->SetSize(GetSubsystem<UI>()->GetRoot()->GetSize().x_,
-		GetSubsystem<UI>()->GetRoot()->GetSize().y_);
+	m_menu_background->SetSize(m_ui_elem->GetSize().x_, m_ui_elem->GetSize().y_);
 }
 
 void MainMenu::HandleMusicPressed(StringHash, VariantMap &eventData)
@@ -254,8 +248,8 @@ void MainMenu::HandleMusicPressed(StringHash, VariantMap &eventData)
 
 inline void MainMenu::SetWindowTitle(const String &t)
 {
-	m_window_title->SetText(m_l10n->Get(t));
 	m_window_menu->AddChild(m_window_title);
+	m_window_title->SetText(m_l10n->Get(t));
 }
 
 Button *MainMenu::CreateMainMenuButton(const String &label)
