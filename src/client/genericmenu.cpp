@@ -53,4 +53,14 @@ void GenericMenu::TakeScreenshot()
 	screenshot.SavePNG(GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "screenshots") + "Screenshot_" +
 		Time::GetTimeStamp().Replaced(':', '_').Replaced('.', '_').Replaced(' ', '_') + ".png");
 }
+
+void GenericMenu::CreateLineEditLabel(LineEdit *le, const String &text,
+		const String &style) const
+{
+	Text *t = new Text(context_);
+	le->GetParent()->AddChild(t);
+	t->SetStyle(style);
+	t->SetPosition(le->GetPosition().x_ + 20, le->GetPosition().y_);
+	t->SetText(m_l10n->Get(text));
+}
 }

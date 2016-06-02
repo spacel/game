@@ -45,6 +45,8 @@ private:
 	void HandleClosePressed(StringHash eventType, VariantMap &eventData);
 	void HandleKeyDown(StringHash eventType, VariantMap &eventData);
 	void HandleSingleplayerPressed(StringHash eventType, VariantMap &eventData);
+	void HandleNewGamePressed(StringHash, VariantMap &eventData);
+	void HandleLoadGamePressed(StringHash, VariantMap &eventData);
 	void HandleSettingsPressed(StringHash eventType, VariantMap &eventData);
 	void HandleGraphicsPressed(StringHash eventType, VariantMap &eventData);
 	void HandleSoundsPressed(StringHash eventType, VariantMap &eventData);
@@ -57,6 +59,7 @@ private:
 
 	// Helpers
 	Urho3D::Button *CreateMainMenuButton(const String &label);
+	Urho3D::LineEdit *CreateMainMenuLineEdit(const String &label, const int x, const int y);
 	void SetTitle(const String &t);
 	// Attributes
 	uint8_t m_menu_id = 0;
