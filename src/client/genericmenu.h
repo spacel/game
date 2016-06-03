@@ -19,25 +19,36 @@
 
 #pragma once
 
+#include <Urho3D/Audio/SoundStream.h>
 #include <Urho3D/UI/Button.h>
 #include <Urho3D/Core/Context.h>
+#include <Urho3D/UI/LineEdit.h>
 #include <Urho3D/UI/UIElement.h>
 #include <Urho3D/Resource/Localization.h>
+#include <Urho3D/Scene/Scene.h>
 #include <Urho3D/Engine/Engine.h>
 #include <Urho3D/IO/Log.h>
+
+#include "settings.h"
 
 namespace spacel {
 
 class GenericMenu: public Urho3D::UIElement {
 public:
-	GenericMenu(Urho3D::Context *context);
+	GenericMenu(Urho3D::Context *context, ClientSettings *config);
 protected:
 	void CreateButtonLabel(Urho3D::Button *b, const Urho3D::String &text,
 			const Urho3D::String &style = "TextButton") const;
-	void TakeScreenshot();
+	void CreateLineEditLabel(Urho3D::LineEdit *le, const Urho3D::String &text,
+			const Urho3D::String &style = "LineEditLabel") const;
+	void TakeScreenshot(const bool play_sound = true);
+	void PlaySound(const Urho3D::String &sound_name);
 
 	Urho3D::Localization *m_l10n;
+	Urho3D::ResourceCache *m_cache;
 	Urho3D::SharedPtr<Urho3D::Engine> m_engine;
 	Urho3D::SharedPtr<Urho3D::Log> m_log;
+	Urho3D::SharedPtr<Urho3D::Scene> m_scene;
+	ClientSettings *m_config;
 };
 }

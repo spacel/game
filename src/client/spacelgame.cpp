@@ -66,9 +66,9 @@ void SpacelGame::Setup()
 
 void SpacelGame::Start()
 {
-	m_mainMenu = new MainMenu(context_);
-	GetSubsystem<UI>()->GetRoot()->AddChild(m_mainMenu);
-	m_mainMenu->Start();
+	m_main_menu = new MainMenu(context_, m_config);
+	GetSubsystem<UI>()->GetRoot()->AddChild(m_main_menu);
+	m_main_menu->Start();
 }
 
 void SpacelGame::Stop()

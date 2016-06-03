@@ -23,13 +23,11 @@
 #include <Urho3D/Core/CoreEvents.h>
 #include <Urho3D/Graphics/Texture2D.h>
 #include <Urho3D/Input/InputEvents.h>
-#include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/UI/Button.h>
 #include <Urho3D/UI/Font.h>
 #include <Urho3D/UI/UI.h>
 #include <Urho3D/UI/UIEvents.h>
 #include <Urho3D/UI/Window.h>
-
 #include "mainmenu.h"
 #include <project_defines.h>
 #include "spacelgame.h"
@@ -46,9 +44,8 @@ enum MainMenuIds {
 
 namespace spacel {
 
-MainMenu::MainMenu(Context *context) :
-		GenericMenu(context),
-		m_cache(GetSubsystem<ResourceCache>()),
+MainMenu::MainMenu(Context *context, ClientSettings *config) :
+		GenericMenu(context, config),
 		m_music_active(true)
 {
 	m_ui_elem = GetSubsystem<UI>()->GetRoot();

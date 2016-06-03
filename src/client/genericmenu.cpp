@@ -19,18 +19,27 @@
 
 #include "genericmenu.h"
 
+#include <Urho3D/Audio/Sound.h>
+#include <Urho3D/Audio/SoundSource.h>
 #include <Urho3D/Graphics/Graphics.h>
 #include <Urho3D/IO/FileSystem.h>
+#include <Urho3D/Scene/Node.h>
+#include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/UI/Text.h>
+
+#include "settings.h"
 
 using namespace Urho3D;
 
 namespace spacel {
 
-GenericMenu::GenericMenu(Context *context): UIElement(context),
+GenericMenu::GenericMenu(Context *context, ClientSettings *config): UIElement(context),
 		m_l10n(GetSubsystem<Localization>()),
-		m_engine(GetSubsystem<Engine>())
+		m_cache(GetSubsystem<ResourceCache>()),
+		m_engine(GetSubsystem<Engine>()),
+		m_config(config)
 {
+	m_scene = new Scene(context_);
 }
 
 /*
@@ -45,12 +54,32 @@ void GenericMenu::CreateButtonLabel(Button *b, const String &text,
 	t->SetText(m_l10n->Get(text));
 }
 
-void GenericMenu::TakeScreenshot()
+void GenericMenu::CreateLineEditLabel(LineEdit *le, const String &text,
+		const String &style) const
+{
+	Text *t = new Text(context_);
+	le->GetParent()->AddChild(t);
+	t->SetStyle(style);
+	t->SetPosition(le->GetPosition().x_ + 20, le->GetPosition().y_);
+	t->SetText(m_l10n->Get(text));
+}
+
+void GenericMenu::TakeScreenshot(const bool play_sound)
 {
 	Image screenshot(context_);
 	GetSubsystem<Graphics>()->TakeScreenShot(screenshot);
 	// Here we save in the Data folder with date and time appended
 	screenshot.SavePNG(GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "screenshots") + "Screenshot_" +
 		Time::GetTimeStamp().Replaced(':', '_').Replaced('.', '_').Replaced(' ', '_') + ".png");
+	if (play_sound) {
+		PlaySound("sounds/screenshot.ogg");
+	}
+}
+
+void GenericMenu::PlaySound(const String &sound_name)
+{
+	SoundSource *soundSource = m_scene->CreateChild("Sound")->CreateComponent<SoundSource>();
+	soundSource->SetGain(m_config->getFloat(FLOATSETTINGS_SOUND_UI_GAIN));
+	soundSource->Play(m_cache->GetResource<Sound>(sound_name));
 }
 }

@@ -47,7 +47,7 @@ private:
 	void InitLocales();
 
 	ClientSettings *m_config;
-	MainMenu *m_mainMenu;
+	MainMenu *m_main_menu;
 };
 
 }

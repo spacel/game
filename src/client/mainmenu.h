@@ -36,7 +36,7 @@ class MainMenu: public GenericMenu  {
 URHO3D_OBJECT(MainMenu, GenericMenu);
 
 public:
-	MainMenu(Context *context);
+	MainMenu(Context *context, ClientSettings *config);
 	~MainMenu() {}
 	void Start();
 
@@ -62,7 +62,6 @@ private:
 	void SetTitle(const String &t);
 	// Attributes
 	uint8_t m_menu_id = 0;
-	ResourceCache *m_cache;
 	UIElement *m_ui_elem;
 	static const uint s_mainmenu_button_space = 20;
 	Window *m_window_menu;
