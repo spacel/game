@@ -48,7 +48,7 @@ class ClientSettings: public Config
 {
 public:
 	ClientSettings(Urho3D::Context *context):
-			Config(context, BSETTINGS_MAX, U32SETTINGS_MAX, 0)
+			Config(context, BSETTINGS_MAX, U32SETTINGS_MAX, FLOATSETTINGS_MAX)
 	{
 		init();
 	}

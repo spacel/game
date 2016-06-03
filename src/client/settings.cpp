@@ -40,7 +40,6 @@ static SettingDefault<float> s_floatsettings[FLOATSETTINGS_MAX] = {
 		{ "sound_music_gain", 0.75f },
 };
 
-
 void ClientSettings::init()
 {
 	for (uint8_t i = 0; i < BSETTINGS_MAX; ++i) {
