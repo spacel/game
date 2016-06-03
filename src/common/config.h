@@ -27,6 +27,12 @@
 
 namespace spacel {
 
+template <typename T>
+struct SettingDefault {
+	std::string name;
+	T default_value;
+};
+
 class Config
 {
 public:

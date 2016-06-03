@@ -22,17 +22,7 @@
 
 namespace spacel {
 
-struct BoolSettingDefault {
-	std::string name;
-	bool default_value;
-};
-
-struct U32SettingDefault {
-	std::string name;
-	uint32_t default_value;
-};
-
-static BoolSettingDefault s_bsettings[BSETTINGS_MAX] = {
+static SettingDefault<bool> s_bsettings[BSETTINGS_MAX] = {
 		{ "enable_sound", true },
 		{ "fullscreen", false },
 		{ "resizable_window", true },
@@ -40,10 +30,16 @@ static BoolSettingDefault s_bsettings[BSETTINGS_MAX] = {
 		{ "log_quiet", false },
 };
 
-static U32SettingDefault s_u32settings[U32SETTINGS_MAX] = {
+static SettingDefault<uint32_t> s_u32settings[U32SETTINGS_MAX] = {
 		{ "window_height", 720 },
 		{ "window_width", 1280 },
 };
+
+static SettingDefault<float> s_floatsettings[FLOATSETTINGS_MAX] = {
+		{ "sound_ui_gain", 0.75f },
+		{ "sound_music_gain", 0.75f },
+};
+
 
 void ClientSettings::init()
 {
@@ -53,6 +49,10 @@ void ClientSettings::init()
 
 	for (uint8_t i = 0; i < U32SETTINGS_MAX; ++i) {
 		registerU32(i, s_u32settings[i].default_value, s_u32settings[i].name);
+	}
+
+	for (uint8_t i = 0; i < FLOATSETTINGS_MAX; ++i) {
+		registerFloat(i, s_floatsettings[i].default_value, s_floatsettings[i].name);
 	}
 }
 
