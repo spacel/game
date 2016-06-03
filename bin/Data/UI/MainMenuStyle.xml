@@ -3,7 +3,7 @@
 	<attribute name="Texture" value="Texture2D;Textures/UI.png" />
     </element>
     <element type="Button" style="BorderImage">
-	<attribute name="Size" value="300 50" />
+	<attribute name="Size" value="350 50" />
 	<attribute name="Image Rect" value="16 0 32 16" />
 	<attribute name="Border" value="4 4 4 4" />
 	<attribute name="Pressed Image Offset" value="16 0" />
@@ -37,7 +37,7 @@
 	<attribute name="Vert Alignment" value="Center" />
     </element>
     <element type="Text">
-	<attribute name="Font" value="Font;Fonts/Anonymous Pro.ttf" />
+	<attribute name="Font" value="Font;Fonts/ethnocentric rg.ttf" />
     </element>
     <element type="TextButton" style="Text">
 	<attribute name="Font Size" value="25" />
@@ -50,5 +50,17 @@
 	<attribute name="Color" value="0.3 0 0.3" />
 	<attribute name="Horiz Alignment" value="Center" />
 	<attribute name="Vert Alignment" value="Top" />
+    </element>
+    <element type="LineEdit" style="BorderImage">
+	<attribute name="Size" value="200 25" />
+	<attribute name="Border" value="4 4 4 4" />
+	<attribute name="Image Rect" value="64 0 80 16" />
+	<attribute name="Hover Image Offset" value="0 16" />    <!-- Background color of the hover image IS the hover color of LineEdit -->
+	<attribute name="Horiz Alignment" value="Right" />
+    </element>
+    <element type="LineEditLabel" style="Text">
+	<attribute name="Font Size" value="10" />
+	<attribute name="Color" value="1 1 0.85" />
+	<attribute name="Horiz Alignment" value="Left" />
     </element>
 </elements>

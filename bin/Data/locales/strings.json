@@ -1,41 +1,56 @@
 {
   "Lang": {
-	"fr": "Langage: Francais"
+    "fr": "Langage: Francais"
   },
   "Exit": {
-	"fr": "Quitter"
+    "fr": "Quitter"
   },
   "Press this button": {
-	"fr": "Appuyez sur ce bouton"
+    "fr": "Appuyez sur ce bouton"
   },
   "Title": {
-	"fr": "Titre"
+    "fr": "Titre"
   },
   "Play": {
-	"fr": "Jouer"
+    "fr": "Jouer"
   },
   "Singleplayer": {
-	"fr": "Un joueur"
+    "fr": "Un joueur"
   },
   "Multiplayer": {
-	"fr": "Multijoueur"
+    "fr": "Multijoueur"
   },
   "Settings": {
-	"fr": "Options"
+    "fr": "Options"
   },
   "Graphics": {
-	"fr": "Graphismes"
+    "fr": "Graphismes"
   },
   "Sound": {
-	"fr": "Son"
+    "fr": "Son"
   },
   "Back": {
-	"fr": "Retour"
+    "fr": "Retour"
   },
   "New game": {
-	"fr": "Nouvelle partie"
+    "fr": "Nouvelle partie"
   },
   "Load game": {
-	"fr": "Charger une partie"
+    "fr": "Charger une partie"
+  },
+  "Create new universe": {
+    "fr": "Création d'un nouvel univers"
+  },
+  "Load universe": {
+    "fr": "Chargement d'un univers"
+  },
+  "Create": {
+    "fr": "Créer"
+  },
+  "Cancel": {
+    "fr": "Annuler"
+  },
+  "Universe Name : ": {
+    "fr": "Nom de l'univers : "
   }
 }

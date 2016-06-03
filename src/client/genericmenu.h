@@ -20,6 +20,7 @@
 #pragma once
 
 #include <Urho3D/UI/Button.h>
+#include <Urho3D/UI/LineEdit.h>
 #include <Urho3D/Core/Context.h>
 #include <Urho3D/UI/UIElement.h>
 #include <Urho3D/Resource/Localization.h>
@@ -34,8 +35,9 @@ public:
 protected:
 	void CreateButtonLabel(Urho3D::Button *b, const Urho3D::String &text,
 			const Urho3D::String &style = "TextButton") const;
+	void CreateLineEditLabel(Urho3D::LineEdit *le, const Urho3D::String &text,
+			const Urho3D::String &style = "LineEditLabel") const;
 	void TakeScreenshot();
-
 	Urho3D::Localization *m_l10n;
 	Urho3D::SharedPtr<Urho3D::Engine> m_engine;
 	Urho3D::SharedPtr<Urho3D::Log> m_log;
