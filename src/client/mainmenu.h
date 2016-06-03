@@ -56,7 +56,9 @@ private:
 	void HandleMasterMenu(StringHash, VariantMap &);
 
 	// Helpers
-	Urho3D::Button *CreateMainMenuButton(const String &label);
+	Urho3D::Button *CreateMainMenuButton(const String &label,
+			const String &button_style = "Button",
+			const String &label_style = "TextButton");
 	void SetTitle(const String &t);
 	// Attributes
 	uint8_t m_menu_id = 0;

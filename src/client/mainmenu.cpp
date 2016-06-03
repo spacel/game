@@ -241,14 +241,14 @@ inline void MainMenu::SetTitle(const String &t)
 	m_title->SetText(m_l10n->Get(t));
 }
 
-Button *MainMenu::CreateMainMenuButton(const String &label)
+Button *MainMenu::CreateMainMenuButton(const String &label, const String &button_style,
+		const String &label_style)
 {
 	Button *b = new Button(context_);
-	// Note, must be part of the UI system before SetSize calls!
-	b->SetStyle("Button");
+	b->SetStyle(button_style);
 	b->SetHorizontalAlignment(HA_CENTER);
 	m_window_menu->AddChild(b);
-	CreateButtonLabel(b, label);
+	CreateButtonLabel(b, label, label_style);
 
 	return b;
 }
