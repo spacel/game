@@ -37,7 +37,7 @@
 	<attribute name="Vert Alignment" value="Center" />
     </element>
     <element type="Text">
-	<attribute name="Font" value="Font;Fonts/Anonymous Pro.ttf" />
+	<attribute name="Font" value="Font;Fonts/ethnocentric rg.ttf" />
     </element>
     <element type="TextButton" style="Text">
 	<attribute name="Font Size" value="25" />
