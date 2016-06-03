@@ -66,7 +66,8 @@ private:
 	static const uint s_mainmenu_button_space = 20;
 	Window *m_window_menu;
 	Text *m_title;
-	bool m_music_active;
+	SharedPtr<Button> m_music_button;
+	bool m_enable_menu_music;
 	SharedPtr<Sprite> m_menu_background;
 };
 

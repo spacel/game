@@ -46,12 +46,13 @@ namespace spacel {
 
 MainMenu::MainMenu(Context *context, ClientSettings *config) :
 		GenericMenu(context, config),
-		m_music_active(true)
+		m_enable_menu_music(m_config->getBool(BSETTING_ENABLE_MUSIC))
 {
 	m_ui_elem = GetSubsystem<UI>()->GetRoot();
 	m_ui_elem->SetDefaultStyle(m_cache->GetResource<XMLFile>("UI/MainMenuStyle.xml"));
 	m_window_menu = new Window(context_);
 	m_title = new Text(context_);
+	m_music_button = new Button(context_);
 }
 
 void MainMenu::Start()
@@ -61,6 +62,11 @@ void MainMenu::Start()
 	Title();
 	VariantMap v;
 	HandleMasterMenu(StringHash(), v);
+
+	// Main menu music
+	m_ui_elem->AddChild(m_music_button);
+	m_music_button->SetStyle(m_enable_menu_music ? "SoundButton": "SoundButtonOff");
+	PlayMusic(m_enable_menu_music);
 }
 
 void MainMenu::Background()
@@ -110,12 +116,7 @@ void MainMenu::HandleMasterMenu(StringHash, VariantMap &)
 	Button *exit = CreateMainMenuButton("Exit");
 	exit->SetPosition(0, settings->GetPosition().y_ + settings->GetSize().y_ + s_mainmenu_button_space);
 
-	Button *music = new Button(context_);
-	m_ui_elem->AddChild(music);
-	music->SetStyle(m_music_active ? "SoundButton": "SoundButtonOff");
-	music->SetAlignment(HA_RIGHT, VA_BOTTOM);
-
-	SubscribeToEvent(music, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleMusicPressed));
+	SubscribeToEvent(m_music_button, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleMusicPressed));
 	SubscribeToEvent(exit, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleClosePressed));
 	SubscribeToEvent(singleplayer, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSingleplayerPressed));
 	SubscribeToEvent(settings, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSettingsPressed));
@@ -230,7 +231,10 @@ void MainMenu::HandleUpdate(StringHash, VariantMap &eventData)
 
 void MainMenu::HandleMusicPressed(StringHash, VariantMap &eventData)
 {
-	m_music_active = !m_music_active;
+	m_enable_menu_music = !m_enable_menu_music;
+	m_config->setBool(BSETTING_ENABLE_MUSIC, m_enable_menu_music);
+	m_music_button->SetStyle(m_enable_menu_music ? "SoundButton": "SoundButtonOff");
+	PlayMusic(m_enable_menu_music);
 }
 
 inline void MainMenu::SetTitle(const String &t)

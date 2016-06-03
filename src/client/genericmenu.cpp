@@ -2,6 +2,7 @@
  * This file is part of Spacel game.
  *
  * Copyright 2016, Loic Blot <loic.blot@unix-experience.fr>
+ * Copyright 2016, Jeremy Lomoro <jeremy.lomoro@tuxsrv.fr>
  *
  * Spacel is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +39,7 @@ GenericMenu::GenericMenu(Context *context, ClientSettings *config): UIElement(co
 		m_cache(GetSubsystem<ResourceCache>()),
 		m_engine(GetSubsystem<Engine>()),
 		m_config(config)
+
 {
 	m_scene = new Scene(context_);
 }
@@ -78,8 +80,32 @@ void GenericMenu::TakeScreenshot(const bool play_sound)
 
 void GenericMenu::PlaySound(const String &sound_name)
 {
+	if (!GetSubsystem<FileSystem>()->FileExists(
+				GetSubsystem<FileSystem>()->GetProgramDir() + "/Data/" + sound_name)) {
+		URHO3D_LOGERRORF("Sound: %s doesn't exist", sound_name.CString());
+		return;
+	}
 	SoundSource *soundSource = m_scene->CreateChild("Sound")->CreateComponent<SoundSource>();
 	soundSource->SetGain(m_config->getFloat(FLOATSETTINGS_SOUND_UI_GAIN));
 	soundSource->Play(m_cache->GetResource<Sound>(sound_name));
+}
+
+void GenericMenu::PlayMusic(const bool activate)
+{
+	// Check if the music player node/component already exist
+	if (!m_scene->GetChild("Music") && activate) {
+		Sound *music = m_cache->GetResource<Sound>("Music/Gnawa-Spirit.ogg");
+		if (!music) {
+			URHO3D_LOGERROR("Main menu music doesn't exist");
+			return;
+		}
+		music->SetLooped(true);
+		SoundSource *musicSource = m_scene->CreateChild("Music")->CreateComponent<SoundSource>();
+		// Set the sound type to music so that master volume control works correctly
+		musicSource->SetSoundType(SOUND_MUSIC);
+		musicSource->Play(music);
+	} else {
+		m_scene->RemoveChild(m_scene->GetChild("Music"));
+	}
 }
 }

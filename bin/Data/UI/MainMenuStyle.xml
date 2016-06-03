@@ -2,6 +2,9 @@
     <element type="BorderImage" >
 	<attribute name="Texture" value="Texture2D;Textures/UI.png" />
     </element>
+    <element type="AudioImage" >
+	<attribute name="Texture" value="Texture2D;Textures/audio_icons.png" />
+    </element>
     <element type="Button" style="BorderImage">
 	<attribute name="Size" value="300 50" />
 	<attribute name="Image Rect" value="16 0 32 16" />
@@ -12,21 +15,25 @@
 	<attribute name="Color" value="1 1 0" />
 	<attribute name="Horiz Alignment" value="Center" />
     </element>
-    <element type="SoundButton" style="Button" auto="false">
-	<attribute name="Min Size" value="16 16" />
+    <element type="SoundButton" style="AudioImage" auto="false">
+	<attribute name="Min Size" value="32 32" />
 	<attribute name="Max Size" value="32 32" />
-	<attribute name="Image Rect" value="208 64 224 80" />
+	<attribute name="Image Rect" value="15 95 45 125" />
 	<attribute name="Hover Image Offset" value="0 0" />
 	<attribute name="Pressed Child Offset" value="0 0" />
 	<attribute name="Focus Mode" value="NotFocusable" />
+	<attribute name="Horiz Alignment" value="Right" />
+	<attribute name="Vert Alignment" value="Bottom" />
     </element>
-    <element type="SoundButtonOff" style="Button" auto="false">
-	<attribute name="Min Size" value="16 16" />
+    <element type="SoundButtonOff" style="AudioImage" auto="false">
+	<attribute name="Min Size" value="32 32" />
 	<attribute name="Max Size" value="32 32" />
-	<attribute name="Image Rect" value="224 64 240 80" />
+	<attribute name="Image Rect" value="45 95 75 125" />
 	<attribute name="Hover Image Offset" value="0 0" />
 	<attribute name="Pressed Child Offset" value="0 0" />
 	<attribute name="Focus Mode" value="NotFocusable" />
+	<attribute name="Horiz Alignment" value="Right" />
+	<attribute name="Vert Alignment" value="Bottom" />
     </element>
     <element type="Window" style="BorderImage">
 	<attribute name="Size" value="500 400" />
@@ -47,7 +54,7 @@
     </element>
     <element type="Title" style="Text">
 	<attribute name="Font Size" value="40" />
-	<attribute name="Color" value="0.3 0 0.3" />
+	<attribute name="Color" value="0.5 0.5 1" />
 	<attribute name="Horiz Alignment" value="Center" />
 	<attribute name="Vert Alignment" value="Top" />
     </element>

@@ -43,6 +43,7 @@ protected:
 			const Urho3D::String &style = "LineEditLabel") const;
 	void TakeScreenshot(const bool play_sound = true);
 	void PlaySound(const Urho3D::String &sound_name);
+	void PlayMusic(const bool activate);
 
 	Urho3D::Localization *m_l10n;
 	Urho3D::ResourceCache *m_cache;
