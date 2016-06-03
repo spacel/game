@@ -24,6 +24,7 @@ namespace spacel {
 
 static SettingDefault<bool> s_bsettings[BSETTINGS_MAX] = {
 		{ "enable_sound", true },
+		{ "enable_music", true },
 		{ "fullscreen", false },
 		{ "resizable_window", true },
 		{ "triple_buffer", true },
