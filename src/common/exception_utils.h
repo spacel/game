@@ -19,28 +19,22 @@
 
 #pragma once
 
-#include "exception_utils.h"
+#include <exception>
+#include <string>
 
 namespace spacel {
-
-namespace engine {
-
-class DatabaseException: public Exception
+class Exception : public std::exception
 {
 public:
-	DatabaseException(const std::string &s): Exception(s) {}
-};
+	Exception(const std::string &s) throw(): m_s(s) {}
+	~Exception() throw() {}
 
-class Database
-{
-public:
-	Database() {}
-	virtual ~Database() {}
-private:
-	virtual bool open() = 0;
-	virtual bool updateSchema() = 0;
-	virtual bool close() = 0;
-	virtual void checkDatabase() = 0;
+	virtual const char *what() const throw()
+	{
+		return m_s.c_str();
+	}
+
+protected:
+	std::string m_s;
 };
-}
 }

@@ -17,30 +17,19 @@
  * along with Spacel.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
-#include "exception_utils.h"
+#include <chrono>
 
 namespace spacel {
 
-namespace engine {
-
-class DatabaseException: public Exception
+inline static uint64_t get_current_time()
 {
-public:
-	DatabaseException(const std::string &s): Exception(s) {}
-};
+	return (uint64_t) std::chrono::duration_cast<std::chrono::seconds>(
+			std::chrono::system_clock::now().time_since_epoch()).count();
+}
 
-class Database
+inline static uint64_t get_current_time_ms()
 {
-public:
-	Database() {}
-	virtual ~Database() {}
-private:
-	virtual bool open() = 0;
-	virtual bool updateSchema() = 0;
-	virtual bool close() = 0;
-	virtual void checkDatabase() = 0;
-};
+	return (uint64_t) std::chrono::duration_cast<std::chrono::milliseconds>(
+			std::chrono::system_clock::now().time_since_epoch()).count();
 }
 }

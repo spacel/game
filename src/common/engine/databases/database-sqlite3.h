@@ -19,28 +19,37 @@
 
 #pragma once
 
-#include "exception_utils.h"
+#include <string>
+#include <Urho3D/IO/Log.h>
+#include "database.h"
 
 namespace spacel {
 
 namespace engine {
 
-class DatabaseException: public Exception
+class DatabaseSQLite3: public Database
 {
 public:
-	DatabaseException(const std::string &s): Exception(s) {}
+	DatabaseSQLite3(const std::string &db_path): m_db_path(db_path) {}
+	~DatabaseSQLite3() { close(); }
+
+	bool open();
+	bool updateSchema();
+	bool close();
+private:
+	void checkDatabase() {}
+
+	static int busyHandler(void *data, int count);
+
+	inline bool sqlite3_verify(const int s, const int r = SQLITE_OK) const
+	{
+		return s == r;
+	}
+	std::string m_db_path = "";
+	sqlite3 *m_database;
+	int64_t m_busy_handler_data[2];
 };
 
-class Database
-{
-public:
-	Database() {}
-	virtual ~Database() {}
-private:
-	virtual bool open() = 0;
-	virtual bool updateSchema() = 0;
-	virtual bool close() = 0;
-	virtual void checkDatabase() = 0;
-};
 }
+
 }

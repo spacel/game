@@ -47,7 +47,6 @@ protected:
 	Urho3D::Localization *m_l10n;
 	Urho3D::ResourceCache *m_cache;
 	Urho3D::SharedPtr<Urho3D::Engine> m_engine;
-	Urho3D::SharedPtr<Urho3D::Log> m_log;
 	Urho3D::SharedPtr<Urho3D::Scene> m_scene;
 	ClientSettings *m_config;
 };

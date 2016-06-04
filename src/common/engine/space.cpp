@@ -93,6 +93,7 @@ bool Universe::RemoveSolarSystem(const uint64_t id)
 	// And then destroy object and reference in universe
 	delete (*ss_it).second;
 	m_solar_systems.erase(ss_it);
+	return true;
 }
 
 void Universe::CreateGalaxy()
@@ -119,6 +120,7 @@ bool Universe::RemoveGalaxy(const uint64_t id)
 	}
 
 	delete (*galaxy_it).second;
+	return true;
 }
 
 }

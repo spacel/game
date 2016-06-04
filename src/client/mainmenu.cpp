@@ -68,7 +68,7 @@ void MainMenu::Background()
 	Texture2D *logoTexture = m_cache->GetResource<Texture2D>("Textures/cwd_up.png");
 
 	if (!logoTexture) {
-		m_log->Write(LOG_ERROR, "Background texture not loaded");
+		URHO3D_LOGERROR("Background texture not loaded");
 		return;
 	}
 
