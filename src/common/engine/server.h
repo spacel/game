@@ -19,8 +19,17 @@
 
 #pragma once
 
-#define ARRLEN(x) (sizeof(x) / sizeof((x)[0]))
-#define DISABLE_CLASS_COPY(C) \
-	C(const C &);             \
-	C &operator=(const C &)
+#include "../thread_utils.h"
 
+namespace spacel {
+namespace engine {
+
+class Server: public Thread
+{
+public:
+	void* run() { return nullptr; }
+private:
+};
+
+}
+}

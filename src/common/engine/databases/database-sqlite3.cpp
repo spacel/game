@@ -33,12 +33,12 @@ namespace engine {
 bool DatabaseSQLite3::open()
 {
 	if (!sqlite3_verify(sqlite3_open_v2(m_db_path.c_str(), &m_database,
-										SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL))) {
+			SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL))) {
 		return false;
 	}
 
 	if (!sqlite3_verify(sqlite3_busy_handler(m_database, DatabaseSQLite3::busyHandler,
-											 m_busy_handler_data))) {
+			m_busy_handler_data))) {
 		return false;
 	}
 
