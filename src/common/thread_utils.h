@@ -31,14 +31,14 @@ class Thread
 public:
 	Thread();
 	virtual ~Thread();
-	const bool start();
+	const bool Start();
 	inline virtual void stop()
 	{ requeststop = true; }
 	int kill();
 	virtual void *run() = 0;
 	inline bool IsRunning()
 	{ return running; }
-	inline bool stopRequested()
+	inline bool StopRequested()
 	{ return requeststop; }
 
 	/*

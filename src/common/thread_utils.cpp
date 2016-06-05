@@ -45,7 +45,7 @@ void Thread::wait() {
 	}
 }
 
-const bool Thread::start()
+const bool Thread::Start()
 {
 	if (running) {
 		return false;

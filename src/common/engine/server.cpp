@@ -17,20 +17,21 @@
  * along with Spacel.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
-#include "../thread_utils.h"
+#include "server.h"
 
 namespace spacel {
 namespace engine {
 
-class Server: public Thread
+void* Server::run()
 {
-public:
-	void* run();
-	void step(const float dtime);
-private:
-};
+	while (!StopRequested()) {
+		// step(dtime);
+	}
+}
 
+void Server::step(const float dtime)
+{
+
+}
 }
 }
