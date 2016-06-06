@@ -28,19 +28,27 @@ namespace engine {
 void* Server::run()
 {
 	float dtime = 0.0f;
-	auto prev_time = std::chrono::system_clock::now();
-
 	while (!StopRequested()) {
+		const auto prev_time = std::chrono::system_clock::now();
 		step(dtime);
-		auto step_time = std::chrono::system_clock::now().time_since_epoch() -
+		const auto step_time = std::chrono::system_clock::now().time_since_epoch() -
 				prev_time.time_since_epoch();
-		URHO3D_LOGINFOF("time: %d", std::chrono::duration_cast<std::chrono::microseconds>(step_time).count());
-		// sleep for SERVER_LOOP_TIME (ms) - loop duration (ms)
-		std::this_thread::sleep_for(
-				std::chrono::milliseconds(((int)(SERVER_LOOP_TIME * 1000)) -
-				std::chrono::duration_cast<std::chrono::milliseconds>(step_time).count())
-		);
-		prev_time = std::chrono::system_clock::now();
+
+		// runtime is a float sec time
+		float runtime = std::chrono::duration_cast<std::chrono::milliseconds>(step_time).count() / 1000.0f;
+		URHO3D_LOGINFOF("time: %f s", runtime);
+
+		// If step runtime < LOOP TIME, sleep for the diff time
+		if (runtime < SERVER_LOOP_TIME) {
+			// Convert back to ms from s
+			std::this_thread::sleep_for(std::chrono::milliseconds((uint32_t)((SERVER_LOOP_TIME - runtime) * 1000.0f)));
+			dtime = SERVER_LOOP_TIME;
+		}
+		else {
+			URHO3D_LOGWARNINGF("Server thread lagging. Runtime %f > %f",
+				runtime, SERVER_LOOP_TIME);
+			dtime = runtime;
+		}
 	}
 
 	return nullptr;
