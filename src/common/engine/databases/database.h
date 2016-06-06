@@ -25,20 +25,14 @@ namespace spacel {
 
 namespace engine {
 
-class DatabaseException: public Exception
-{
-public:
-	DatabaseException(const std::string &s): Exception(s) {}
-};
-
 class Database
 {
 public:
 	Database() {}
 	virtual ~Database() {}
 private:
-	virtual bool open() = 0;
-	virtual bool updateSchema() = 0;
+	virtual void open() = 0;
+	virtual void updateSchema() = 0;
 	virtual bool close() = 0;
 	virtual void checkDatabase() = 0;
 };

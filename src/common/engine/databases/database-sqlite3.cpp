@@ -24,25 +24,31 @@
 namespace spacel {
 namespace engine {
 
+class SQLiteException: public Exception
+{
+public:
+	SQLiteException(const std::string &s): Exception("SQLite3: " + s) {}
+};
+
 #define BUSY_INFO_THRESHOLD	100	// Print first informational message after 100ms.
 #define BUSY_WARNING_THRESHOLD	250	// Print warning message after 250ms. Lag is increased.
 #define BUSY_ERROR_THRESHOLD	1000	// Print error message after 1000ms. Significant lag.
 #define BUSY_FATAL_THRESHOLD	3000	// Allow SQLITE_BUSY to be returned
 #define BUSY_ERROR_INTERVAL	10000	// Safety net: report again every 10 seconds
 
-bool DatabaseSQLite3::open()
+void DatabaseSQLite3::open()
 {
 	if (!sqlite3_verify(sqlite3_open_v2(m_db_path.c_str(), &m_database,
 			SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL))) {
-		return false;
+		throw SQLiteException("Unable to open " + m_db_path + " universe file");
 	}
 
 	if (!sqlite3_verify(sqlite3_busy_handler(m_database, DatabaseSQLite3::busyHandler,
 			m_busy_handler_data))) {
-		return false;
+		throw SQLiteException("Unable to bind the busy handler");
 	}
 
-	return updateSchema();
+	updateSchema();
 }
 
 bool DatabaseSQLite3::close()
@@ -50,9 +56,9 @@ bool DatabaseSQLite3::close()
 	return sqlite3_verify(sqlite3_close(m_database));
 }
 
-bool DatabaseSQLite3::updateSchema()
+void DatabaseSQLite3::updateSchema()
 {
-	return true;
+	throw SQLiteException("Schema not implemented");
 }
 
 int DatabaseSQLite3::busyHandler(void *data, int count)

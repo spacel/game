@@ -21,6 +21,7 @@
 
 #include <string>
 #include <Urho3D/IO/Log.h>
+#include <sqlite3.h>
 #include "database.h"
 
 namespace spacel {
@@ -30,13 +31,13 @@ namespace engine {
 class DatabaseSQLite3: public Database
 {
 public:
-	DatabaseSQLite3(const std::string &db_path): m_db_path(db_path) {}
+	DatabaseSQLite3(const std::string &db_path): m_db_path(db_path) { open(); }
 	~DatabaseSQLite3() { close(); }
-
-	bool open();
-	bool updateSchema();
-	bool close();
 private:
+	void open();
+	bool close();
+	void updateSchema();
+
 	void checkDatabase() {}
 
 	static int busyHandler(void *data, int count);

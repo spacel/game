@@ -19,10 +19,12 @@
 
 #pragma once
 
-#include "../thread_utils.h"
+#include "thread_utils.h"
 
 namespace spacel {
 namespace engine {
+
+class Database;
 
 class Server: public Thread
 {
@@ -31,7 +33,10 @@ public:
 	void* run();
 private:
 	const bool InitServer();
+	void StopServer();
 	void Step(const float dtime);
+
+	Database *m_db = nullptr;
 };
 
 }

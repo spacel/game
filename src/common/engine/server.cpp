@@ -19,6 +19,7 @@
 
 #include "server.h"
 #include <Urho3D/IO/Log.h>
+#include "databases/database-sqlite3.h"
 
 namespace spacel {
 namespace engine {
@@ -27,7 +28,13 @@ namespace engine {
 
 const bool Server::InitServer()
 {
-	return false;
+	m_db = new DatabaseSQLite3("test.db");
+	return true;
+}
+
+void Server::StopServer()
+{
+	delete m_db;
 }
 
 void* Server::run()
@@ -59,6 +66,8 @@ void* Server::run()
 			dtime = runtime;
 		}
 	}
+
+	StopServer();
 
 	return nullptr;
 }
