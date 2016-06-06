@@ -24,12 +24,6 @@
 namespace spacel {
 namespace engine {
 
-class SQLiteException: public Exception
-{
-public:
-	SQLiteException(const std::string &s): Exception("SQLite3: " + s) {}
-};
-
 #define BUSY_INFO_THRESHOLD	100	// Print first informational message after 100ms.
 #define BUSY_WARNING_THRESHOLD	250	// Print warning message after 250ms. Lag is increased.
 #define BUSY_ERROR_THRESHOLD	1000	// Print error message after 1000ms. Significant lag.

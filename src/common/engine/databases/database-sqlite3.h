@@ -28,6 +28,12 @@ namespace spacel {
 
 namespace engine {
 
+class SQLiteException: public Exception
+{
+public:
+	SQLiteException(const std::string &s): Exception("SQLite3: " + s) {}
+};
+
 class DatabaseSQLite3: public Database
 {
 public:
