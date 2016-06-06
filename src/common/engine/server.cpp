@@ -25,18 +25,27 @@ namespace engine {
 
 #define SERVER_LOOP_TIME 0.025f
 
+const bool Server::InitServer()
+{
+	return false;
+}
+
 void* Server::run()
 {
+	if (!InitServer()) {
+		URHO3D_LOGERROR("Failed to init server, aborting!");
+		return nullptr;
+	}
+
 	float dtime = 0.0f;
 	while (!StopRequested()) {
 		const auto prev_time = std::chrono::system_clock::now();
-		step(dtime);
+		Step(dtime);
 		const auto step_time = std::chrono::system_clock::now().time_since_epoch() -
 				prev_time.time_since_epoch();
 
 		// runtime is a float sec time
 		float runtime = std::chrono::duration_cast<std::chrono::milliseconds>(step_time).count() / 1000.0f;
-		URHO3D_LOGINFOF("time: %f s", runtime);
 
 		// If step runtime < LOOP TIME, sleep for the diff time
 		if (runtime < SERVER_LOOP_TIME) {
@@ -54,7 +63,7 @@ void* Server::run()
 	return nullptr;
 }
 
-void Server::step(const float dtime)
+void Server::Step(const float dtime)
 {
 
 }

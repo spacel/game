@@ -21,13 +21,6 @@
 
 namespace spacel {
 
-Thread::Thread()
-{
-	m_stop_requested = false;
-	m_is_running = false;
-	m_is_started = false;
-}
-
 Thread::~Thread()
 {
 	kill();

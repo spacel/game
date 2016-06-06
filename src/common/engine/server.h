@@ -27,9 +27,11 @@ namespace engine {
 class Server: public Thread
 {
 public:
+	Server(): Thread() {}
 	void* run();
-	void step(const float dtime);
 private:
+	const bool InitServer();
+	void Step(const float dtime);
 };
 
 }

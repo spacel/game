@@ -29,7 +29,7 @@ namespace spacel {
 class Thread
 {
 public:
-	Thread();
+	Thread(): m_is_started(false), m_is_running(false), m_stop_requested(false) {}
 	virtual ~Thread();
 	const bool Start();
 	inline virtual void stop() { m_stop_requested = true; }
@@ -49,9 +49,9 @@ protected:
 	void ThreadStarted();
 private:
 
-	static void * TheThread(void *data);
+	static void *TheThread(void *data);
 
-	std::thread* m_thread = nullptr;
+	std::thread *m_thread = nullptr;
 
 	/*
 	 * reading and writing bool values is atomic on all relevant architectures
