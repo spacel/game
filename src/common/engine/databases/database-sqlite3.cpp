@@ -24,13 +24,17 @@
 namespace spacel {
 namespace engine {
 
+static const char* stmt_list[SQLITE3STMT_COUNT] = {
+		"BEGIN",
+		"END"
+};
 #define BUSY_INFO_THRESHOLD	100	// Print first informational message after 100ms.
 #define BUSY_WARNING_THRESHOLD	250	// Print warning message after 250ms. Lag is increased.
 #define BUSY_ERROR_THRESHOLD	1000	// Print error message after 1000ms. Significant lag.
 #define BUSY_FATAL_THRESHOLD	3000	// Allow SQLITE_BUSY to be returned
 #define BUSY_ERROR_INTERVAL	10000	// Safety net: report again every 10 seconds
 
-void DatabaseSQLite3::open()
+void DatabaseSQLite3::Open()
 {
 	if (!sqlite3_verify(sqlite3_open_v2(m_db_path.c_str(), &m_database,
 			SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL))) {
@@ -42,15 +46,20 @@ void DatabaseSQLite3::open()
 		throw SQLiteException("Unable to bind the busy handler");
 	}
 
-	updateSchema();
+	UpdateSchema();
+
+	for (uint16_t i = 0; i < SQLITE3STMT_COUNT; i++) {
+		URHO3D_LOGINFOF("Loading statement %d %s", i, stmt_list[i]);
+		sqlite3_verify(sqlite3_prepare_v2(m_database, stmt_list[i], -1, &m_stmt[i], NULL));
+	}
 }
 
-bool DatabaseSQLite3::close()
+bool DatabaseSQLite3::Close()
 {
 	return sqlite3_verify(sqlite3_close(m_database));
 }
 
-void DatabaseSQLite3::updateSchema()
+void DatabaseSQLite3::UpdateSchema()
 {
 	throw SQLiteException("Schema not implemented");
 }
@@ -99,6 +108,20 @@ int DatabaseSQLite3::busyHandler(void *data, int count)
 
 	// Make sqlite transaction fail if delay exceeds BUSY_FATAL_THRESHOLD
 	return cur_time - first_time < BUSY_FATAL_THRESHOLD;
+}
+
+void DatabaseSQLite3::BeginTransaction()
+{
+	CheckDatabase();
+	sqlite3_verify(stmt_step(SQLITE3STMT_BEGIN), SQLITE_DONE);
+	reset_stmt(SQLITE3STMT_BEGIN);
+}
+
+void DatabaseSQLite3::CommitTransaction()
+{
+	CheckDatabase();
+	sqlite3_verify(stmt_step(SQLITE3STMT_END), SQLITE_DONE);
+	reset_stmt(SQLITE3STMT_END);
 }
 
 }

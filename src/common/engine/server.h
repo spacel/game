@@ -29,13 +29,14 @@ class Database;
 class Server: public Thread
 {
 public:
-	Server(): Thread() {}
+	Server(const std::string &datapath): Thread(), m_datapath(datapath) {}
 	void* run();
 private:
 	const bool InitServer();
 	void StopServer();
 	void Step(const float dtime);
 
+	std::string m_datapath;
 	Database *m_db = nullptr;
 };
 

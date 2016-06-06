@@ -31,10 +31,14 @@ public:
 	Database() {}
 	virtual ~Database() {}
 private:
-	virtual void open() = 0;
-	virtual void updateSchema() = 0;
-	virtual bool close() = 0;
-	virtual void checkDatabase() = 0;
+	virtual void Open() = 0;
+	virtual void UpdateSchema() = 0;
+	virtual bool Close() = 0;
+	virtual void CheckDatabase() = 0;
+
+	// transactions
+	virtual void BeginTransaction() = 0;
+	virtual void CommitTransaction() = 0;
 };
 }
 }

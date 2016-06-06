@@ -34,17 +34,28 @@ public:
 	SQLiteException(const std::string &s): Exception("SQLite3: " + s) {}
 };
 
+enum SQLite3Stmt
+{
+	SQLITE3STMT_BEGIN = 0,
+	SQLITE3STMT_END = 1,
+	SQLITE3STMT_COUNT,
+};
+
 class DatabaseSQLite3: public Database
 {
 public:
-	DatabaseSQLite3(const std::string &db_path): m_db_path(db_path) { open(); }
-	~DatabaseSQLite3() { close(); }
+	DatabaseSQLite3(const std::string &db_path): m_db_path(db_path) { Open(); }
+	~DatabaseSQLite3() { Close(); }
 private:
-	void open();
-	bool close();
-	void updateSchema();
+	void Open();
+	bool Close();
+	void UpdateSchema();
+	void CheckDatabase() {}
 
-	void checkDatabase() {}
+	// Transactions related
+	void BeginTransaction();
+	void CommitTransaction();
+
 
 	static int busyHandler(void *data, int count);
 
@@ -52,9 +63,23 @@ private:
 	{
 		return s == r;
 	}
+
+	inline int stmt_step(const SQLite3Stmt s)
+	{
+		assert(s < SQLITE3STMT_COUNT);
+		return sqlite3_step(m_stmt[s]);
+	}
+
+	inline int reset_stmt(const SQLite3Stmt s)
+	{
+		assert(s < SQLITE3STMT_COUNT);
+		return sqlite3_reset(m_stmt[s]);
+	}
+
 	std::string m_db_path = "";
 	sqlite3 *m_database;
 	int64_t m_busy_handler_data[2];
+	sqlite3_stmt *m_stmt[SQLITE3STMT_COUNT];
 };
 
 }
