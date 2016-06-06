@@ -23,10 +23,9 @@ namespace spacel {
 
 Thread::Thread()
 {
-	retval = NULL;
-	requeststop = false;
-	running = false;
-	started = false;
+	m_stop_requested = false;
+	m_is_running = false;
+	m_is_started = false;
 }
 
 Thread::~Thread()
@@ -35,23 +34,23 @@ Thread::~Thread()
 }
 
 void Thread::wait() {
-	if (started) {
+	if (m_is_started) {
 		if (m_thread) {
 			m_thread->join();
 			delete m_thread;
 			m_thread = nullptr;
 		}
-		started = false;
+		m_is_started = false;
 	}
 }
 
 const bool Thread::Start()
 {
-	if (running) {
+	if (m_is_running) {
 		return false;
 	}
 
-	requeststop = false;
+	m_stop_requested = false;
 
 	continuemutex.lock();
 	m_thread = new std::thread(TheThread, this);
@@ -62,7 +61,7 @@ const bool Thread::Start()
 
 	/* Wait until 'running' is set */
 
-	while (!running) {
+	while (!m_is_running) {
 #ifdef _WIN32
 		Sleep(1);
 #else
@@ -72,7 +71,7 @@ const bool Thread::Start()
 		nanosleep(&req,&rem);
 #endif
 	}
-	started = true;
+	m_is_started = true;
 
 	continuemutex.unlock();
 
@@ -83,7 +82,7 @@ const bool Thread::Start()
 
 int Thread::kill()
 {
-	if (!running)
+	if (!m_is_running)
 	{
 		wait();
 		return 1;
@@ -105,7 +104,7 @@ int Thread::kill()
 	}
 
 	wait();
-	running = false;
+	m_is_running = false;
 
 	return 0;
 }
@@ -115,14 +114,14 @@ void * Thread::TheThread(void *data)
 	Thread *thread = (Thread *)data;
 
 	thread->continuemutex2.lock();
-	thread->running = true;
+	thread->m_is_running = true;
 
 	thread->continuemutex.lock();
 	thread->continuemutex.unlock();
 
 	thread->run();
 
-	thread->running = false;
+	thread->m_is_running = false;
 	return NULL;
 }
 

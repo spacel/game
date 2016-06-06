@@ -32,14 +32,11 @@ public:
 	Thread();
 	virtual ~Thread();
 	const bool Start();
-	inline virtual void stop()
-	{ requeststop = true; }
+	inline virtual void stop() { m_stop_requested = true; }
 	int kill();
 	virtual void *run() = 0;
-	inline bool IsRunning()
-	{ return running; }
-	inline bool StopRequested()
-	{ return requeststop; }
+	inline bool IsRunning() const { return m_is_running; }
+	inline bool StopRequested() const { return m_stop_requested; }
 
 	/*
 	 * Wait for thread to finish
@@ -63,8 +60,7 @@ private:
 	 * too. This should cause additional improvement (and silence thread
 	 * concurrency check tools.
 	 */
-	std::atomic_bool started;
-	void *retval;
+	std::atomic_bool m_is_started;
 	/*
 	 * reading and writing bool values is atomic on all relevant architectures
 	 * ( x86 + arm ). No need to waste time for locking here.
@@ -72,10 +68,10 @@ private:
 	 * too. This should cause additional improvement (and silence thread
 	 * concurrency check tools.
 	 */
-	std::atomic_bool running;
-	std::atomic_bool requeststop;
+	std::atomic_bool m_is_running;
+	std::atomic_bool m_stop_requested;
 
-	std::mutex continuemutex,continuemutex2;
+	std::mutex continuemutex, continuemutex2;
 	DISABLE_CLASS_COPY(Thread);
 };
 
