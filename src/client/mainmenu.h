@@ -37,7 +37,7 @@ URHO3D_OBJECT(MainMenu, GenericMenu);
 
 public:
 	MainMenu(Context *context, ClientSettings *config);
-	~MainMenu() {}
+	~MainMenu();
 	void Start();
 
 private:
@@ -56,16 +56,16 @@ private:
 	void HandleMasterMenu(StringHash, VariantMap &);
 
 	// Helpers
-	Urho3D::Button *CreateMainMenuButton(const String &label,
+	Button *CreateMainMenuButton(const String &label,
 			const String &button_style = "Button",
 			const String &label_style = "TextButton");
 	void SetTitle(const String &t);
 	// Attributes
 	uint8_t m_menu_id = 0;
-	UIElement *m_ui_elem;
+	SharedPtr<UIElement> m_ui_elem;
 	static const uint s_mainmenu_button_space = 20;
-	Window *m_window_menu;
-	Text *m_title;
+	SharedPtr<Window> m_window_menu;
+	SharedPtr<Text> m_title;
 	SharedPtr<Button> m_music_button;
 	bool m_enable_menu_music;
 	SharedPtr<Sprite> m_menu_background;

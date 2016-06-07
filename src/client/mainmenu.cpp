@@ -55,6 +55,13 @@ MainMenu::MainMenu(Context *context, ClientSettings *config) :
 	m_music_button = new Button(context_);
 }
 
+MainMenu::~MainMenu()
+{
+	UnsubscribeFromEvents(this);
+	m_window_menu->RemoveAllChildren();
+	m_window_menu->Remove();
+}
+
 void MainMenu::Start()
 {
 	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(MainMenu, HandleKeyDown));
