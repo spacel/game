@@ -31,6 +31,7 @@ endif ()
 
 set(client_sources
 	genericmenu.cpp
+	loadingscreen.cpp
 	mainmenu.cpp
 	settings.cpp
 	spacelgame.cpp

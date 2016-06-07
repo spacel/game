@@ -20,42 +20,39 @@
 
 #pragma once
 
-#include <Urho3D/Engine/Application.h>
-#include <Urho3D/IO/Log.h>
-#include <Urho3D/Resource/ResourceCache.h>
+#include <Urho3D/UI/Slider.h>
+#include <Urho3D/UI/Sprite.h>
 
-#include "settings.h"
+#include <common/engine/server.h>
+#include "genericmenu.h"
 
 using namespace Urho3D;
 
 namespace spacel {
 
-namespace engine {
-	class Server;
-}
-
-enum GlobalUIId
-{
-	GLOBALUI_MAINMENU,
-	GLOBALUI_LOADINGSCREEN,
-};
-
-class SpacelGame : public Application
-{
-	URHO3D_OBJECT(SpacelGame, Application);
+class LoadingScreen: public GenericMenu {
+URHO3D_OBJECT(LoadingScreen, GenericMenu);
 
 public:
-	SpacelGame(Context *context): Application(context) {}
-	virtual void Setup();
-	virtual void Start();
-	virtual void Stop();
+	LoadingScreen(Context *context, ClientSettings *config, engine::Server *server);
+	~LoadingScreen() {};
+	void Start();
 
-	void ChangeGameGlobalUI(const GlobalUIId ui_id, void *param = nullptr);
 private:
-	void InitLocales();
+	void ShowBackground();
+	void LoadingBar();
+	void ShowTips();
+	void SetLoadingPercentText(const float &range);
+	void HandleUpdate(StringHash, VariantMap &eventData);
 
-	ClientSettings *m_config = nullptr;
-	engine::Server *m_server = nullptr;
+	SharedPtr<UIElement> m_ui_elem;
+	SharedPtr<Sprite> m_loading_background;
+	SharedPtr<Text> m_tips_text;
+	SharedPtr<Slider> m_loading_bar;
+	SharedPtr<Text> m_loading_text;
+	SharedPtr<Text> m_loading_percent_text;
+	// Server
+	engine::Server *m_server;
+	engine::ServerLoadingStep server_loading_step;
 };
-
 }

@@ -89,10 +89,10 @@ void MainMenu::Start()
 
 void MainMenu::Background()
 {
-	Texture2D *logoTexture = m_cache->GetResource<Texture2D>("Textures/cwd_up.png");
+	Texture2D *logoTexture = m_cache->GetResource<Texture2D>("Textures/background_menu.png");
 
 	if (!logoTexture) {
-		URHO3D_LOGERROR("Background texture not loaded");
+		URHO3D_LOGERROR("Background menu texture not loaded");
 		return;
 	}
 
@@ -139,7 +139,6 @@ void MainMenu::HandleMasterMenu(StringHash, VariantMap &)
 	SubscribeToEvent(multiplayer, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleMultiplayerPressed));
 	SubscribeToEvent(settings, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSettingsPressed));
 	SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(MainMenu, HandleUpdate));
-
 	SubscribeToEvent(E_UIMOUSECLICK, URHO3D_HANDLER(MainMenu, HandleControlClicked));
 }
 
@@ -444,8 +443,7 @@ void MainMenu::HandleGenerateSeedPressed(StringHash eventType, VariantMap &event
 
 void MainMenu::HandleUpdate(StringHash, VariantMap &eventData)
 {
-	m_menu_background->SetSize(GetSubsystem<UI>()->GetRoot()->GetSize().x_,
-		GetSubsystem<UI>()->GetRoot()->GetSize().y_);
+	m_menu_background->SetSize(m_ui_elem->GetSize().x_, m_ui_elem->GetSize().y_);
 
 	if (m_enable_error_bubble_timer &&
 			m_error_bubble_timer->GetMSec(false) >= m_config->getFloat(FLOATSETTINGS_TIMER_ERROR_BUBBLE)) {
