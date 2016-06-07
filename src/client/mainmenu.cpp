@@ -57,7 +57,7 @@ MainMenu::MainMenu(Context *context, ClientSettings *config) :
 
 MainMenu::~MainMenu()
 {
-	UnsubscribeFromEvents(this);
+	UnsubscribeFromAllEvents();
 	m_window_menu->RemoveAllChildren();
 	m_window_menu->Remove();
 }
