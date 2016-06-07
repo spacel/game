@@ -26,16 +26,28 @@ namespace engine {
 
 #define SERVER_LOOP_TIME 0.025f
 
+Server::Server(const std::string &datapath): Thread(), m_datapath(datapath)
+{
+	m_loading_step = SERVERLOADINGSTEP_NOT_STARTED;
+}
+
 const bool Server::InitServer()
 {
+	m_loading_step = SERVERLOADINGSTEP_BEGIN_START;
 	try {
 		m_db = new DatabaseSQLite3(m_datapath);
 	}
 	catch (SQLiteException &e) {
 		URHO3D_LOGERROR(e.what());
+		m_loading_step = SERVERLOADINGSTEP_FAILED;
 		return false;
 	}
 
+	m_loading_step = SERVERLOADINGSTEP_DB_INITED;
+
+	// @TODO
+
+	m_loading_step = SERVERLOADINGSTEP_STARTED;
 	return true;
 }
 

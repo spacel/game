@@ -26,11 +26,20 @@ namespace engine {
 
 class Database;
 
+enum ServerLoadingStep
+{
+	SERVERLOADINGSTEP_NOT_STARTED = 0,
+	SERVERLOADINGSTEP_BEGIN_START,
+	SERVERLOADINGSTEP_STARTED,
+	SERVERLOADINGSTEP_DB_INITED,
+	SERVERLOADINGSTEP_FAILED,
+};
 class Server: public Thread
 {
 public:
-	Server(const std::string &datapath): Thread(), m_datapath(datapath) {}
+	Server(const std::string &datapath);
 	void* run();
+	inline const ServerLoadingStep getLoadingStep() const { return m_loading_step; }
 private:
 	const bool InitServer();
 	void StopServer();
@@ -38,6 +47,7 @@ private:
 
 	std::string m_datapath;
 	Database *m_db = nullptr;
+	std::atomic<ServerLoadingStep> m_loading_step;
 };
 
 }
