@@ -283,8 +283,7 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 		GetSubsystem<FileSystem>()->CreateDir(path_universe + universe_name);
 	}
 
-	// @TODO: go to loading screen
-	m_main->ChangeGameGlobalUI();
+	m_main->ChangeGameGlobalUI(GLOBALUI_LOADINGSCREEN);
 }
 
 void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)

@@ -33,6 +33,12 @@ namespace spacel {
 
 class MainMenu;
 
+enum GlobalUIId
+{
+	GLOBALUI_MAINMENU,
+	GLOBALUI_LOADINGSCREEN,
+};
+
 class SpacelGame : public Application
 {
 	URHO3D_OBJECT(SpacelGame, Application);
@@ -43,7 +49,7 @@ public:
 	virtual void Start();
 	virtual void Stop();
 
-	void ChangeGameGlobalUI();
+	void ChangeGameGlobalUI(const GlobalUIId ui_id);
 private:
 	void InitLocales();
 

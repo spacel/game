@@ -67,9 +67,7 @@ void SpacelGame::Setup()
 
 void SpacelGame::Start()
 {
-	MainMenu *main_menu = new MainMenu(context_, m_config, this);
-	GetSubsystem<UI>()->GetRoot()->AddChild(main_menu);
-	main_menu->Start();
+	ChangeGameGlobalUI(GLOBALUI_MAINMENU);
 }
 
 void SpacelGame::Stop()
@@ -86,8 +84,19 @@ inline void SpacelGame::InitLocales()
 			GetSubsystem<FileSystem>()->GetProgramDir() + "Data/locales/strings.json");
 }
 
-void SpacelGame::ChangeGameGlobalUI()
+void SpacelGame::ChangeGameGlobalUI(const GlobalUIId ui_id)
 {
 	GetSubsystem<UI>()->GetRoot()->RemoveAllChildren();
+
+	switch (ui_id) {
+		case GLOBALUI_MAINMENU: {
+				MainMenu *main_menu = new MainMenu(context_, m_config, this);
+				GetSubsystem<UI>()->GetRoot()->AddChild(main_menu);
+				main_menu->Start();
+			}
+			break;
+
+		default: assert(false);
+	}
 }
 }
