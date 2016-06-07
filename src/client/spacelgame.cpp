@@ -100,7 +100,7 @@ void SpacelGame::ChangeGameGlobalUI(const GlobalUIId ui_id, void *param)
 			m_server = new engine::Server(
 					GetSubsystem<FileSystem>()->GetAppPreferencesDir(
 						"spacel", "universe").CString(),
-					std::string((const char*) param));
+					std::string((const char *) param));
 			m_server->Run();
 			break;
 		}
