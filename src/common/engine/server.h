@@ -19,7 +19,9 @@
 
 #pragma once
 
-#include "../thread_utils.h"
+#include <Urho3D/Core/Thread.h>
+#include <string>
+#include <atomic>
 
 namespace spacel {
 namespace engine {
@@ -34,11 +36,11 @@ enum ServerLoadingStep
 	SERVERLOADINGSTEP_DB_INITED,
 	SERVERLOADINGSTEP_FAILED,
 };
-class Server: public Thread
+class Server: public Urho3D::Thread
 {
 public:
 	Server(const std::string &datapath, const std::string &universe_name);
-	void* run();
+	void ThreadFunction();
 	inline const ServerLoadingStep getLoadingStep() const { return m_loading_step; }
 private:
 	const bool InitServer();

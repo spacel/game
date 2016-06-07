@@ -44,7 +44,7 @@ enum SQLite3Stmt
 class DatabaseSQLite3: public Database
 {
 public:
-	DatabaseSQLite3(const std::string &db_path): m_db_path(db_path) { Open(); }
+	DatabaseSQLite3(const std::string &db_path);
 	~DatabaseSQLite3() { Close(); }
 private:
 	void Open();

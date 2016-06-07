@@ -18,7 +18,12 @@
  */
 
 #include "server.h"
+
 #include <Urho3D/IO/Log.h>
+#include <iostream>
+#include <chrono>
+#include <thread>
+
 #include "databases/database-sqlite3.h"
 
 namespace spacel {
@@ -59,16 +64,16 @@ void Server::StopServer()
 	delete m_db;
 }
 
-void* Server::run()
+void Server::ThreadFunction()
 {
 	URHO3D_LOGINFOF("Starting server for universe %s", m_universe_name.c_str());
 	if (!InitServer()) {
 		URHO3D_LOGERROR("Failed to init server, aborting!");
-		return nullptr;
+		return;
 	}
 
 	float dtime = 0.0f;
-	while (!StopRequested()) {
+	while (shouldRun_) {
 		const auto prev_time = std::chrono::system_clock::now();
 		Step(dtime);
 		const auto step_time = std::chrono::system_clock::now().time_since_epoch() -
@@ -91,8 +96,6 @@ void* Server::run()
 	}
 
 	StopServer();
-
-	return nullptr;
 }
 
 void Server::Step(const float dtime)

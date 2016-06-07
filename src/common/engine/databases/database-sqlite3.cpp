@@ -18,6 +18,7 @@
  */
 
 #include <sqlite3.h>
+#include "porting.h"
 #include "database-sqlite3.h"
 #include "time_utils.h"
 
@@ -34,6 +35,11 @@ static const char* stmt_list[SQLITE3STMT_COUNT] = {
 #define BUSY_FATAL_THRESHOLD	3000	// Allow SQLITE_BUSY to be returned
 #define BUSY_ERROR_INTERVAL	10000	// Safety net: report again every 10 seconds
 
+DatabaseSQLite3::DatabaseSQLite3(const std::string &db_path):
+	m_db_path(db_path + DIR_DELIM + "universe.db")
+{
+	Open();
+}
 void DatabaseSQLite3::Open()
 {
 	if (!sqlite3_verify(sqlite3_open_v2(m_db_path.c_str(), &m_database,
