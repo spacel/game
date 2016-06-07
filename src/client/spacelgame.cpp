@@ -33,6 +33,8 @@
 #include <common/engine/space.h>
 #include <project_defines.h>
 #include <common/engine/server.h>
+#include "loadingscreen.h"
+#include "mainmenu.h"
 #include "spacelgame.h"
 
 using namespace Urho3D;
@@ -102,6 +104,9 @@ void SpacelGame::ChangeGameGlobalUI(const GlobalUIId ui_id, void *param)
 						"spacel", "universe").CString(),
 					std::string((const char *) param));
 			m_server->Run();
+			LoadingScreen *loading_screen = new LoadingScreen(context_, m_config, m_server);
+			GetSubsystem<UI>()->GetRoot()->AddChild(loading_screen);
+			loading_screen->Start();
 			break;
 		}
 		default: assert(false);
