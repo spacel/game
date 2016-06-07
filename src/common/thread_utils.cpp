@@ -67,9 +67,6 @@ const bool Thread::Start()
 	m_is_started = true;
 
 	continuemutex.unlock();
-
-	continuemutex2.lock();
-	continuemutex2.unlock();
 	return true;
 }
 
@@ -106,7 +103,6 @@ void * Thread::TheThread(void *data)
 {
 	Thread *thread = (Thread *)data;
 
-	thread->continuemutex2.lock();
 	thread->m_is_running = true;
 
 	thread->continuemutex.lock();
@@ -116,11 +112,6 @@ void * Thread::TheThread(void *data)
 
 	thread->m_is_running = false;
 	return NULL;
-}
-
-void Thread::ThreadStarted()
-{
-	continuemutex2.unlock();
 }
 
 

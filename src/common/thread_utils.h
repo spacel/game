@@ -45,8 +45,7 @@ public:
 	 */
 	void wait();
 	inline void stop_and_wait() { stop(); wait(); }
-protected:
-	void ThreadStarted();
+
 private:
 
 	static void *TheThread(void *data);
@@ -71,7 +70,7 @@ private:
 	std::atomic_bool m_is_running;
 	std::atomic_bool m_stop_requested;
 
-	std::mutex continuemutex, continuemutex2;
+	std::mutex continuemutex;
 	DISABLE_CLASS_COPY(Thread);
 };
 

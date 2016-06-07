@@ -32,6 +32,7 @@
 #include <common/porting.h>
 #include <common/engine/space.h>
 #include <project_defines.h>
+#include <common/engine/server.h>
 #include "spacelgame.h"
 
 using namespace Urho3D;
