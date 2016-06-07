@@ -29,7 +29,7 @@ namespace engine {
 const bool Server::InitServer()
 {
 	try {
-		m_db = new DatabaseSQLite3("test.db");
+		m_db = new DatabaseSQLite3(m_datapath);
 	}
 	catch (SQLiteException &e) {
 		URHO3D_LOGERROR(e.what());

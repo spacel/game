@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "thread_utils.h"
+#include "../thread_utils.h"
 
 namespace spacel {
 namespace engine {

@@ -61,7 +61,12 @@ bool DatabaseSQLite3::Close()
 
 void DatabaseSQLite3::UpdateSchema()
 {
-	throw SQLiteException("Schema not implemented");
+	const char* dbcreate_sql = "CREATE TABLE IF NOT EXISTS `gameversion` ("
+		 "	version INT NOT NULL"
+		 ");"
+		 "INSERT INTO `gameversion` (`version`) VALUES (1);";
+
+	sqlite3_verify(sqlite3_exec(m_database, dbcreate_sql, NULL, NULL, NULL));
 }
 
 int DatabaseSQLite3::busyHandler(void *data, int count)

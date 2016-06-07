@@ -18,3 +18,5 @@ include_directories(
 add_library(${PROJECT_NAME}lib ${common_sources})
 
 add_dependencies(${PROJECT_NAME}lib ${JSONCPP_LIBRARY} ${SQLITE3_LIBRARY})
+
+target_link_libraries(${PROJECT_NAME}lib ${JSONCPP_LIBRARY} ${SQLITE3_LIBRARY})
