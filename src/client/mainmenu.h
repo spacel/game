@@ -86,9 +86,8 @@ private:
 	SharedPtr<Text> m_title;
 	SharedPtr<Button> m_music_button;
 	bool m_enable_menu_music;
-	Timer *m_error_bubble_timer ;
-	bool m_timer_error_bubble_enable;
-	float m_timer_error_bubble;
+	Timer *m_error_bubble_timer;
+	bool m_enable_error_bubble_timer = false;
 	SharedPtr<Sprite> m_menu_background;
 	SharedPtr<Sprite> m_preview;
 	SharedPtr<ListView> m_universes_listview;

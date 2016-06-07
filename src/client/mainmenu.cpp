@@ -51,9 +51,7 @@ namespace spacel {
 MainMenu::MainMenu(Context *context, ClientSettings *config, SpacelGame *main) :
 		GenericMenu(context, config),
 		m_main(main),
-		m_enable_menu_music(m_config->getBool(BSETTING_ENABLE_MUSIC)),
-		m_timer_error_bubble_enable(false),
-		m_timer_error_bubble(m_config->getFloat(FLOATSETTINGS_TIMER_ERROR_BUBBLE))
+		m_enable_menu_music(m_config->getBool(BSETTING_ENABLE_MUSIC))
 {
 	m_ui_elem = GetSubsystem<UI>()->GetRoot();
 	m_ui_elem->SetDefaultStyle(m_cache->GetResource<XMLFile>("UI/MainMenuStyle.xml"));
@@ -434,9 +432,10 @@ void MainMenu::HandleUpdate(StringHash, VariantMap &eventData)
 	m_menu_background->SetSize(GetSubsystem<UI>()->GetRoot()->GetSize().x_,
 		GetSubsystem<UI>()->GetRoot()->GetSize().y_);
 
-	if (m_timer_error_bubble_enable && m_error_bubble_timer->GetMSec(false) >= m_timer_error_bubble) {
+	if (m_enable_error_bubble_timer &&
+			m_error_bubble_timer->GetMSec(false) >= m_config->getFloat(FLOATSETTINGS_TIMER_ERROR_BUBBLE)) {
 		m_error_bubble_window->SetVisible(false);
-		m_timer_error_bubble_enable = false;
+		m_enable_error_bubble_timer = false;
 	}
 }
 
@@ -455,7 +454,7 @@ void MainMenu::HandleUniversSelectionItemClick(StringHash, VariantMap &eventData
 
 void MainMenu::ShowErrorBubble(const String &message, ...)
 {
-	m_timer_error_bubble_enable = true;
+	m_enable_error_bubble_timer = true;
 	m_error_bubble_timer->Reset();
 
 	if (!m_window_menu->GetChild("error_window_bubble", true)) {
