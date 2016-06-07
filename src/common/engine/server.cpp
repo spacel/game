@@ -26,7 +26,10 @@ namespace engine {
 
 #define SERVER_LOOP_TIME 0.025f
 
-Server::Server(const std::string &datapath): Thread(), m_datapath(datapath)
+Server::Server(const std::string &datapath, const std::string &universe_name):
+		Thread(),
+		m_datapath(datapath),
+		m_universe_name(universe_name)
 {
 	m_loading_step = SERVERLOADINGSTEP_NOT_STARTED;
 }
@@ -35,7 +38,7 @@ const bool Server::InitServer()
 {
 	m_loading_step = SERVERLOADINGSTEP_BEGIN_START;
 	try {
-		m_db = new DatabaseSQLite3(m_datapath);
+		m_db = new DatabaseSQLite3(m_datapath + m_universe_name);
 	}
 	catch (SQLiteException &e) {
 		URHO3D_LOGERROR(e.what());
@@ -58,6 +61,7 @@ void Server::StopServer()
 
 void* Server::run()
 {
+	URHO3D_LOGINFOF("Starting server for universe %s", m_universe_name.c_str());
 	if (!InitServer()) {
 		URHO3D_LOGERROR("Failed to init server, aborting!");
 		return nullptr;

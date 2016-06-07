@@ -81,7 +81,6 @@ private:
 	uint8_t m_menu_id = 0;
 	SharedPtr<UIElement> m_ui_elem;
 	SharedPtr<Window> m_window_menu;
-	SharedPtr<Window> m_error_bubble_window;
 	SharedPtr<Text> m_title;
 	SharedPtr<Button> m_music_button;
 	bool m_enable_menu_music;

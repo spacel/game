@@ -84,18 +84,27 @@ inline void SpacelGame::InitLocales()
 			GetSubsystem<FileSystem>()->GetProgramDir() + "Data/locales/strings.json");
 }
 
-void SpacelGame::ChangeGameGlobalUI(const GlobalUIId ui_id)
+void SpacelGame::ChangeGameGlobalUI(const GlobalUIId ui_id, void *param)
 {
 	GetSubsystem<UI>()->GetRoot()->RemoveAllChildren();
 
 	switch (ui_id) {
 		case GLOBALUI_MAINMENU: {
-				MainMenu *main_menu = new MainMenu(context_, m_config, this);
-				GetSubsystem<UI>()->GetRoot()->AddChild(main_menu);
-				main_menu->Start();
-			}
+			MainMenu *main_menu = new MainMenu(context_, m_config, this);
+			GetSubsystem<UI>()->GetRoot()->AddChild(main_menu);
+			main_menu->Start();
 			break;
-
+		}
+		case GLOBALUI_LOADINGSCREEN: {
+			assert(param != nullptr);
+			m_server = new engine::Server(
+					GetSubsystem<FileSystem>()->GetAppPreferencesDir(
+						"spacel", "universe").CString(),
+					std::string((const char*) param));
+			m_server->Start();
+			URHO3D_LOGINFOF("Server starting step %d", m_server->getLoadingStep());
+			break;
+		}
 		default: assert(false);
 	}
 }

@@ -50,7 +50,7 @@
   "Cancel": {
     "fr": "Annuler"
   },
-  "Universe Name : ": {
+  "Universe Name: ": {
     "fr": "Nom de l'univers : "
   },
   "Seed : ": {
@@ -64,6 +64,9 @@
   },
   "Universe name is empty": {
     "fr": "Le nom de l'univers est vide"
+  },
+  "You must select a universe.": {
+	"fr": "Vous devez sélectionner un univers."
   },
   "Launch": {
     "fr": "Lancer"

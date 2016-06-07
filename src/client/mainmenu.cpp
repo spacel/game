@@ -61,7 +61,6 @@ MainMenu::MainMenu(Context *context, ClientSettings *config, SpacelGame *main) :
 	m_window_menu = new Window(context_);
 	m_title = new Text(context_);
 	m_music_button = new Button(context_);
-	m_error_bubble_window = new Window(context_);
 	m_error_bubble_timer  = new Timer();
 	except_unsubscribe.Push("E_KEYDOWN");
 }
@@ -221,7 +220,7 @@ void MainMenu::HandleNewGamePressed(StringHash, VariantMap &eventData)
 
 	SetTitle("New universe");
 
-	LineEdit *universename = CreateMainMenuLineEdit("univere_name", "Universe Name : ", 0, 65);
+	LineEdit *universename = CreateMainMenuLineEdit("universe_name", "Universe Name: ", 0, 65);
 
 	CreateMainMenuLineEdit("seed", "Seed : ", 0, universename->GetPosition().y_ + universename->GetSize().y_ + MAINMENU_BUTTON_SPACE);
 
@@ -249,9 +248,11 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 	bool universe_creation = false;
 
 	// Universe creation
-	if (static_cast<LineEdit *>(m_window_menu->GetChild("Universe Name : ", true)) != nullptr) {
-		universe_name = static_cast<LineEdit *>(m_window_menu->GetChild(
-				"Universe Name : ", true))->GetText();
+	LineEdit *le = static_cast<LineEdit *>(m_window_menu->GetChild("universe_name", true));
+	if (le != nullptr) {
+		universe_name = le->GetText().Replaced(':', '_').Replaced('.', '_')
+			.Replaced(' ', '_');
+
 		universe_creation = true;
 	}
 	else {
@@ -259,14 +260,11 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 	}
 
 	const String path_universe = GetSubsystem<FileSystem>()->GetAppPreferencesDir(
-			"spacel", "universe");
+			"spacel", "universe") + universe_name;
 
 	if (universe_creation) {
 		if (!universe_name.Empty()) {
-			universe_name = universe_name.Replaced(':', '_').Replaced('.', '_').Replaced(
-					' ', '_');
-
-			if (GetSubsystem<FileSystem>()->DirExists(path_universe + universe_name)) {
+			if (GetSubsystem<FileSystem>()->DirExists(path_universe)) {
 				URHO3D_LOGERRORF("Universe %s already exists", universe_name.CString());
 				//TODO : Send parameter variables
 				ShowErrorBubble(
@@ -276,14 +274,20 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 		else {
 			ShowErrorBubble("Universe name is empty");
 			URHO3D_LOGERROR("Universe name is empty");
+			return;
 		}
 	}
-
-	if (!GetSubsystem<FileSystem>()->CreateDir(path_universe + universe_name)) {
-		GetSubsystem<FileSystem>()->CreateDir(path_universe + universe_name);
+	else {
+		ShowErrorBubble("You must select a universe.");
+		URHO3D_LOGERROR("No universe selected when loading.");
+		return;
 	}
 
-	m_main->ChangeGameGlobalUI(GLOBALUI_LOADINGSCREEN);
+	if (!GetSubsystem<FileSystem>()->CreateDir(path_universe)) {
+		GetSubsystem<FileSystem>()->CreateDir(path_universe);
+	}
+
+	m_main->ChangeGameGlobalUI(GLOBALUI_LOADINGSCREEN, (void *)universe_name.CString());
 }
 
 void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
@@ -436,7 +440,11 @@ void MainMenu::HandleUpdate(StringHash, VariantMap &eventData)
 
 	if (m_enable_error_bubble_timer &&
 			m_error_bubble_timer->GetMSec(false) >= m_config->getFloat(FLOATSETTINGS_TIMER_ERROR_BUBBLE)) {
-		m_error_bubble_window->SetVisible(false);
+		if (Window * error_bubble_window = dynamic_cast<Window *>(
+				m_window_menu->GetChild("error_window_bubble", true))) {
+			error_bubble_window->SetVisible(false);
+		}
+
 		m_enable_error_bubble_timer = false;
 	}
 }
@@ -459,21 +467,23 @@ void MainMenu::ShowErrorBubble(const String &message, ...)
 	m_enable_error_bubble_timer = true;
 	m_error_bubble_timer->Reset();
 
-	if (!m_window_menu->GetChild("error_window_bubble", true)) {
-		m_window_menu->AddChild(m_error_bubble_window);
-		m_error_bubble_window->SetStyle("ErrorBubble");
-		m_error_bubble_window->SetName("error_window_bubble");
-		m_error_bubble_window->SetPosition(0, 15);
+	Window * error_bubble_window = dynamic_cast<Window *>(m_window_menu->GetChild("error_window_bubble", true));
+	if (!error_bubble_window) {
+		error_bubble_window = new Window(context_);
+		error_bubble_window->SetStyle("ErrorBubble");
+		error_bubble_window->SetName("error_window_bubble");
+		error_bubble_window->SetPosition(0, 15);
+		m_window_menu->AddChild(error_bubble_window);
 
 		Text *error_txt = new Text(context_);
-		m_error_bubble_window->AddChild(error_txt);
 		error_txt->SetStyle("ErrorBubbleText");
-		error_txt->SetName("error_txt");
+		error_txt->SetName("error_bubble_text");
 		error_txt->SetText(m_l10n->Get(message));
+		error_bubble_window->AddChild(error_txt);
 	} else {
-		static_cast<Text *>(m_window_menu->GetChild("error_txt", true))->SetText(message);
-		m_error_bubble_window->SetVisible(true);
+		static_cast<Text *>(m_window_menu->GetChild("error_bubble_text", true))->SetText(message);
 	}
+	error_bubble_window->SetVisible(true);
 }
 
 inline void MainMenu::SetTitle(const String &t)
@@ -496,11 +506,10 @@ Button *MainMenu::CreateMainMenuButton(const String &label, const String &button
 LineEdit *MainMenu::CreateMainMenuLineEdit(const String &name, const String &label, const int x, const int y)
 {
 	LineEdit *le = new LineEdit(context_);
-	m_window_menu->AddChild(le);
 	le->SetName(name);
 	le->SetStyle("LineEdit");
-	le->SetName(label);
 	le->SetPosition(x + 30, y);
+	m_window_menu->AddChild(le);
 	CreateLineEditLabel(le, label);
 
 	return le;

@@ -33,6 +33,10 @@ namespace spacel {
 
 class MainMenu;
 
+namespace engine {
+	class Server;
+}
+
 enum GlobalUIId
 {
 	GLOBALUI_MAINMENU,
@@ -49,11 +53,12 @@ public:
 	virtual void Start();
 	virtual void Stop();
 
-	void ChangeGameGlobalUI(const GlobalUIId ui_id);
+	void ChangeGameGlobalUI(const GlobalUIId ui_id, void *param = nullptr);
 private:
 	void InitLocales();
 
-	ClientSettings *m_config;
+	ClientSettings *m_config = nullptr;
+	engine::Server *m_server = nullptr;
 };
 
 }
