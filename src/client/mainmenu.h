@@ -59,7 +59,6 @@ private:
 	void HandleSoundsPressed(StringHash eventType, VariantMap &eventData);
 	void HandleUpdate(StringHash eventType, VariantMap &eventData);
 	void HandleMusicPressed(StringHash eventType, VariantMap &eventData);
-	void HandleUniversSelectionItemClick(StringHash, VariantMap &eventData);
 	void HandleGenerateSeedPressed(StringHash eventType, VariantMap &eventData);
 	void Background();
 	void Title();
@@ -88,7 +87,6 @@ private:
 	bool m_enable_error_bubble_timer = false;
 	SharedPtr<Sprite> m_menu_background;
 	SharedPtr<Sprite> m_preview;
-	SharedPtr<ListView> m_universes_listview;
 	PODVector<StringHash> except_unsubscribe;
 };
 

@@ -70,7 +70,6 @@ private:
 	std::atomic_bool m_is_running;
 	std::atomic_bool m_stop_requested;
 
-	std::mutex continuemutex;
 	DISABLE_CLASS_COPY(Thread);
 };
 

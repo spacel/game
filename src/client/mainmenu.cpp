@@ -249,16 +249,23 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 	bool universe_creation = false;
 
 	// Universe creation
-	LineEdit *le = static_cast<LineEdit *>(m_window_menu->GetChild("universe_name", true));
+	LineEdit *le = dynamic_cast<LineEdit *>(m_window_menu->GetChild("universe_name", true));
 	if (le != nullptr) {
-		universe_name = le->GetText().Replaced(':', '_').Replaced('.', '_')
-			.Replaced(' ', '_');
-
+		universe_name = le->GetText();
+		URHO3D_LOGDEBUGF("User wants to create universe %s", universe_name.CString());
 		universe_creation = true;
 	}
 	else {
+		ListView * lv = dynamic_cast<ListView *>(m_window_menu->GetChild("loading_univerise_listview", true));
+		assert(lv);
+
+		universe_name = lv->GetSelectedItem()->GetName();
+		URHO3D_LOGDEBUGF("User wants to load universe %s", universe_name.CString());
 		// @TODO find a way to retrieve the universe_name selected for loading
 	}
+
+	universe_name = universe_name.Replaced(':', '_').Replaced('.', '_')
+			.Replaced(' ', '_').ToLower();
 
 	const String path_universe = GetSubsystem<FileSystem>()->GetAppPreferencesDir(
 			"spacel", "universe") + universe_name;
@@ -278,7 +285,7 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 			return;
 		}
 	}
-	else {
+	else if (universe_name.Empty()) {
 		ShowErrorBubble("You must select a universe.");
 		URHO3D_LOGERROR("No universe selected when loading.");
 		return;
@@ -303,19 +310,19 @@ void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
 	const String path_universe = GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "universe");
 	GetSubsystem<FileSystem>()->ScanDir(list_universe, path_universe, "*", SCAN_DIRS, false);
 
-	m_universes_listview = new ListView(context_);
-	m_window_menu->AddChild(m_universes_listview);
-	m_universes_listview->SetStyle("ListView");
-	m_universes_listview->SetName("list_view_universe");
-	m_universes_listview->SetMultiselect(false);
-	m_universes_listview->SetHighlightMode(HM_ALWAYS);
+	ListView *universes_listview = new ListView(context_);
+	m_window_menu->AddChild(universes_listview);
+	universes_listview->SetStyle("ListView");
+	universes_listview->SetName("loading_univerise_listview");
+	universes_listview->SetMultiselect(false);
+	universes_listview->SetHighlightMode(HM_ALWAYS);
 
 	// TODO: WIP
 	if (!list_universe.Empty()) {
 		for (Vector<String>::Iterator it = list_universe.Begin() ; it != list_universe.End(); ++it) {
 			if (it->Compare(".") != 0 && it->Compare("..") != 0) {
 				Text *text = new Text(context_);
-				m_universes_listview->AddItem(text);
+				universes_listview->AddItem(text);
 				text->SetStyle("ListViewText");
 				text->SetName(*it);
 				text->SetText(*it);
@@ -347,7 +354,7 @@ void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
 	text->SetPosition(-text->GetSize().x_ -35, m_window_menu->GetPosition().y_ + m_preview->GetSize().y_ + 25);
 	text->SetHorizontalAlignment(HA_RIGHT);
 	text->SetSize(20, 50);
-	text->SetText("Age du serveur : ");
+	text->SetText("Server Age : ");
 
 
 	Button *launch = CreateMainMenuButton("Launch", "ButtonInLine", "TextButtonInLine");
@@ -359,7 +366,7 @@ void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
 	back->SetHorizontalAlignment(HA_RIGHT);
 
 	//SubscribeToEvent(listview_univers, E_ITEMSELECTED, URHO3D_HANDLER(MainMenu, HandleUniversSelectionItemClick));
-	SubscribeToEvent(m_universes_listview, E_ITEMCLICKED, URHO3D_HANDLER(MainMenu, HandleUniversSelectionItemClick));
+	SubscribeToEvent(universes_listview, E_ITEMDOUBLECLICKED, URHO3D_HANDLER(MainMenu, HandleLaunchGamePressed));
 	SubscribeToEvent(launch, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleLaunchGamePressed));
 	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSingleplayerPressed));
 }
@@ -458,17 +465,12 @@ void MainMenu::HandleMusicPressed(StringHash, VariantMap &eventData)
 	PlayMusic(m_enable_menu_music);
 }
 
-void MainMenu::HandleUniversSelectionItemClick(StringHash, VariantMap &eventData)
-{
-	m_universes_listview->SetSelection(eventData["Selection"].GetUInt());
-}
-
 void MainMenu::ShowErrorBubble(const String &message, ...)
 {
 	m_enable_error_bubble_timer = true;
 	m_error_bubble_timer->Reset();
 
-	Window * error_bubble_window = dynamic_cast<Window *>(m_window_menu->GetChild("error_window_bubble", true));
+	Window *error_bubble_window = dynamic_cast<Window *>(m_window_menu->GetChild("error_window_bubble", true));
 	if (!error_bubble_window) {
 		error_bubble_window = new Window(context_);
 		error_bubble_window->SetStyle("ErrorBubble");

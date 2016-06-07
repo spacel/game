@@ -45,10 +45,8 @@ const bool Thread::Start()
 
 	m_stop_requested = false;
 
-	continuemutex.lock();
 	m_thread = new std::thread(TheThread, this);
 	if (!m_thread) {
-		continuemutex.unlock();
 		return false;
 	}
 
@@ -65,8 +63,6 @@ const bool Thread::Start()
 #endif
 	}
 	m_is_started = true;
-
-	continuemutex.unlock();
 	return true;
 }
 
@@ -104,12 +100,7 @@ void * Thread::TheThread(void *data)
 	Thread *thread = (Thread *)data;
 
 	thread->m_is_running = true;
-
-	thread->continuemutex.lock();
-	thread->continuemutex.unlock();
-
 	thread->run();
-
 	thread->m_is_running = false;
 	return NULL;
 }
