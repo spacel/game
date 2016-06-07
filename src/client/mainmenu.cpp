@@ -35,7 +35,10 @@
 
 using namespace Urho3D;
 
-enum MainMenuIds {
+namespace spacel {
+
+enum MainMenuIds
+{
 	MAINMENUID_MASTER = 0,
 	MAINMENUID_SINGLEPLAYER,
 	MAINMENUID_SINGLEPLAYER_NEWGAME,
@@ -46,7 +49,7 @@ enum MainMenuIds {
 	MAINMENUID_SETTINGS_SOUND,
 };
 
-namespace spacel {
+#define MAINMENU_BUTTON_SPACE 20
 
 MainMenu::MainMenu(Context *context, ClientSettings *config, SpacelGame *main) :
 		GenericMenu(context, config),
@@ -123,13 +126,13 @@ void MainMenu::HandleMasterMenu(StringHash, VariantMap &)
 	singleplayer->SetPosition(0, singleplayer->GetSize().y_ + 65);
 
 	Button *multiplayer = CreateMainMenuButton("Multiplayer");
-	multiplayer->SetPosition(0, singleplayer->GetPosition().y_ + singleplayer->GetSize().y_ + s_mainmenu_button_space);
+	multiplayer->SetPosition(0, singleplayer->GetPosition().y_ + singleplayer->GetSize().y_ + MAINMENU_BUTTON_SPACE);
 
 	Button *settings = CreateMainMenuButton("Settings");
-	settings->SetPosition(0, multiplayer->GetPosition().y_ + multiplayer->GetSize().y_ + s_mainmenu_button_space);
+	settings->SetPosition(0, multiplayer->GetPosition().y_ + multiplayer->GetSize().y_ + MAINMENU_BUTTON_SPACE);
 
 	Button *exit = CreateMainMenuButton("Exit");
-	exit->SetPosition(0, settings->GetPosition().y_ + settings->GetSize().y_ + s_mainmenu_button_space);
+	exit->SetPosition(0, settings->GetPosition().y_ + settings->GetSize().y_ + MAINMENU_BUTTON_SPACE);
 
 	SubscribeToEvent(m_music_button, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleMusicPressed));
 	SubscribeToEvent(exit, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleClosePressed));
@@ -200,10 +203,10 @@ void MainMenu::HandleSingleplayerPressed(StringHash, VariantMap &eventData)
 	newgame->SetPosition(0, newgame->GetSize().y_ + 65);
 
 	Button *loadgame = CreateMainMenuButton("Load game");
-	loadgame->SetPosition(0, newgame->GetPosition().y_ + loadgame->GetSize().y_ + s_mainmenu_button_space);
+	loadgame->SetPosition(0, newgame->GetPosition().y_ + loadgame->GetSize().y_ + MAINMENU_BUTTON_SPACE);
 
 	Button *back = CreateMainMenuButton("Back");
-	back->SetPosition(0, loadgame->GetPosition().y_ + back->GetSize().y_ + s_mainmenu_button_space);
+	back->SetPosition(0, loadgame->GetPosition().y_ + back->GetSize().y_ + MAINMENU_BUTTON_SPACE);
 
 	SubscribeToEvent(newgame, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleNewGamePressed ));
 	SubscribeToEvent(loadgame, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleLoadGamePressed));
@@ -220,18 +223,18 @@ void MainMenu::HandleNewGamePressed(StringHash, VariantMap &eventData)
 
 	LineEdit *universename = CreateMainMenuLineEdit("univere_name", "Universe Name : ", 0, 65);
 
-	CreateMainMenuLineEdit("seed", "Seed : ", 0, universename->GetPosition().y_ + universename->GetSize().y_ + s_mainmenu_button_space);
+	CreateMainMenuLineEdit("seed", "Seed : ", 0, universename->GetPosition().y_ + universename->GetSize().y_ + MAINMENU_BUTTON_SPACE);
 
 	Button *generateSeed = CreateMainMenuButton("Generate seed", "ButtonInLine", "TextButtonInLine");
-	generateSeed->SetPosition( -20,  universename->GetPosition().y_ + universename->GetSize().y_ + s_mainmenu_button_space);
+	generateSeed->SetPosition( -20,  universename->GetPosition().y_ + universename->GetSize().y_ + MAINMENU_BUTTON_SPACE);
 	generateSeed->SetHorizontalAlignment(HA_RIGHT);
 
 	Button *create = CreateMainMenuButton("Create", "ButtonInLine", "TextButtonInLine");
-	create->SetPosition(0 + 50,  m_window_menu->GetSize().y_ - create->GetSize().y_ - s_mainmenu_button_space);
+	create->SetPosition(0 + 50,  m_window_menu->GetSize().y_ - create->GetSize().y_ - MAINMENU_BUTTON_SPACE);
 	create->SetHorizontalAlignment(HA_LEFT);
 
 	Button *back = CreateMainMenuButton("Cancel", "ButtonInLine", "TextButtonInLine");
-	back->SetPosition(0 - 50, m_window_menu->GetSize().y_ - back->GetSize().y_ - s_mainmenu_button_space);
+	back->SetPosition(0 - 50, m_window_menu->GetSize().y_ - back->GetSize().y_ - MAINMENU_BUTTON_SPACE);
 	back->SetHorizontalAlignment(HA_RIGHT);
 
 	SubscribeToEvent(generateSeed, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleGenerateSeedPressed));
@@ -344,11 +347,11 @@ void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
 
 
 	Button *launch = CreateMainMenuButton("Launch", "ButtonInLine", "TextButtonInLine");
-	launch->SetPosition(0 + 50,  m_window_menu->GetSize().y_ - launch->GetSize().y_ - s_mainmenu_button_space);
+	launch->SetPosition(0 + 50,  m_window_menu->GetSize().y_ - launch->GetSize().y_ - MAINMENU_BUTTON_SPACE);
 	launch->SetHorizontalAlignment(HA_LEFT);
 
 	Button *back = CreateMainMenuButton("Cancel", "ButtonInLine", "TextButtonInLine");
-	back->SetPosition(0 - 50, m_window_menu->GetSize().y_ - back->GetSize().y_ - s_mainmenu_button_space);
+	back->SetPosition(0 - 50, m_window_menu->GetSize().y_ - back->GetSize().y_ - MAINMENU_BUTTON_SPACE);
 	back->SetHorizontalAlignment(HA_RIGHT);
 
 	//SubscribeToEvent(listview_univers, E_ITEMSELECTED, URHO3D_HANDLER(MainMenu, HandleUniversSelectionItemClick));
@@ -383,10 +386,10 @@ void MainMenu::HandleSettingsPressed(StringHash, VariantMap &eventData)
 	graphics->SetPosition(0, graphics->GetSize().y_ + 65);
 
 	Button *sound = CreateMainMenuButton("Sound");
-	sound->SetPosition(0, graphics->GetPosition().y_ + graphics->GetSize().y_ + s_mainmenu_button_space);
+	sound->SetPosition(0, graphics->GetPosition().y_ + graphics->GetSize().y_ + MAINMENU_BUTTON_SPACE);
 
 	Button *back = CreateMainMenuButton("Back");
-	back->SetPosition(0, sound->GetPosition().y_ + sound->GetSize().y_ + s_mainmenu_button_space);
+	back->SetPosition(0, sound->GetPosition().y_ + sound->GetSize().y_ + MAINMENU_BUTTON_SPACE);
 
 	SubscribeToEvent(graphics, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleGraphicsPressed));
 	SubscribeToEvent(sound, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSoundsPressed));
