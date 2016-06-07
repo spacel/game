@@ -18,20 +18,18 @@
  * along with Spacel.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "mainmenu.h"
+
 #include <Urho3D/Audio/Sound.h>
 #include <Urho3D/Audio/SoundSource.h>
-#include <Urho3D/Container/Vector.h>
-#include <Urho3D/Container/VectorBase.h>
 #include <Urho3D/Core/CoreEvents.h>
 #include <Urho3D/Graphics/Texture2D.h>
 #include <Urho3D/Input/InputEvents.h>
 #include <Urho3D/IO/FileSystem.h>
-#include <Urho3D/UI/Button.h>
 #include <Urho3D/UI/Font.h>
 #include <Urho3D/UI/UI.h>
 #include <Urho3D/UI/UIEvents.h>
-#include <Urho3D/UI/Window.h>
-#include "mainmenu.h"
+
 #include <project_defines.h>
 #include "spacelgame.h"
 
@@ -50,8 +48,9 @@ enum MainMenuIds {
 
 namespace spacel {
 
-MainMenu::MainMenu(Context *context, ClientSettings *config) :
+MainMenu::MainMenu(Context *context, ClientSettings *config, SpacelGame *main) :
 		GenericMenu(context, config),
+		m_main(main),
 		m_enable_menu_music(m_config->getBool(BSETTING_ENABLE_MUSIC)),
 		m_timer_error_bubble_enable(false),
 		m_timer_error_bubble(m_config->getFloat(FLOATSETTINGS_TIMER_ERROR_BUBBLE))
@@ -186,13 +185,13 @@ void MainMenu::HandleKeyDown(StringHash, VariantMap &eventData)
 	}
 }
 
-void MainMenu::HandleControlClicked(StringHash eventType, VariantMap &eventData)
+void MainMenu::HandleControlClicked(StringHash, VariantMap &eventData)
 {
 	// Get control that was clicked
 	//UIElement *clicked = static_cast<UIElement *>(eventData[UIMouseClick::P_ELEMENT].GetPtr());
 }
 
-void MainMenu::HandleSingleplayerPressed(StringHash eventType, VariantMap &eventData)
+void MainMenu::HandleSingleplayerPressed(StringHash, VariantMap &eventData)
 {
 	m_menu_id = MAINMENUID_SINGLEPLAYER;
 	m_window_menu->RemoveAllChildren();
@@ -224,7 +223,7 @@ void MainMenu::HandleNewGamePressed(StringHash, VariantMap &eventData)
 
 	LineEdit *universename = CreateMainMenuLineEdit("univere_name", "Universe Name : ", 0, 65);
 
-	LineEdit *seed = CreateMainMenuLineEdit("seed", "Seed : ", 0, universename->GetPosition().y_ + universename->GetSize().y_ + s_mainmenu_button_space);
+	CreateMainMenuLineEdit("seed", "Seed : ", 0, universename->GetPosition().y_ + universename->GetSize().y_ + s_mainmenu_button_space);
 
 	Button *generateSeed = CreateMainMenuButton("Generate seed", "ButtonInLine", "TextButtonInLine");
 	generateSeed->SetPosition( -20,  universename->GetPosition().y_ + universename->GetSize().y_ + s_mainmenu_button_space);
@@ -239,27 +238,52 @@ void MainMenu::HandleNewGamePressed(StringHash, VariantMap &eventData)
 	back->SetHorizontalAlignment(HA_RIGHT);
 
 	SubscribeToEvent(generateSeed, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleGenerateSeedPressed));
-	SubscribeToEvent(create, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleCreateUniversePressed));
+	SubscribeToEvent(create, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleLaunchGamePressed));
 	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSingleplayerPressed));
 }
 
-void MainMenu::HandleCreateUniversePressed(StringHash, VariantMap &eventData)
+void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 {
-	String universe_name = static_cast<LineEdit *>(m_window_menu->GetChild("Universe Name : ", true))->GetText();
-	if (!universe_name.Empty()) {
-		universe_name = universe_name.Replaced(':', '_').Replaced('.', '_').Replaced(' ', '_');
-		String path_universe = GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "universe");
-		if (!GetSubsystem<FileSystem>()->DirExists(path_universe + universe_name)) {
-			GetSubsystem<FileSystem>()->CreateDir(path_universe +  universe_name);
-		} else {
-			URHO3D_LOGERRORF("Universe %s already exists", universe_name.CString());
-			//TODO : Send variables parameters
-			ErrorBubble("Universe %s already exists");
-		}
-	} else {
-		ErrorBubble("Universe name is empty");
-		URHO3D_LOGERROR("Universe name is empty");
+	// @TODO Find the better way to load & creator universe here
+	String universe_name = "";
+	bool universe_creation = false;
+
+	// Universe creation
+	if (static_cast<LineEdit *>(m_window_menu->GetChild("Universe Name : ", true)) != nullptr) {
+		universe_name = static_cast<LineEdit *>(m_window_menu->GetChild(
+				"Universe Name : ", true))->GetText();
+		universe_creation = true;
 	}
+	else {
+		// @TODO find a way to retrieve the universe_name selected for loading
+	}
+
+	const String path_universe = GetSubsystem<FileSystem>()->GetAppPreferencesDir(
+			"spacel", "universe");
+
+	if (universe_creation) {
+		if (!universe_name.Empty()) {
+			universe_name = universe_name.Replaced(':', '_').Replaced('.', '_').Replaced(
+					' ', '_');
+
+			if (GetSubsystem<FileSystem>()->DirExists(path_universe + universe_name)) {
+				URHO3D_LOGERRORF("Universe %s already exists", universe_name.CString());
+				//TODO : Send parameter variables
+				ShowErrorBubble(
+						Urho3D::ToString("Universe %s already exists", universe_name.CString()));
+			}
+		}
+		else {
+			ShowErrorBubble("Universe name is empty");
+			URHO3D_LOGERROR("Universe name is empty");
+		}
+	}
+
+	if (!GetSubsystem<FileSystem>()->CreateDir(path_universe + universe_name)) {
+		GetSubsystem<FileSystem>()->CreateDir(path_universe + universe_name);
+	}
+
+	// @TODO: go to loading screen
 }
 
 void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
@@ -331,7 +355,7 @@ void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
 
 	//SubscribeToEvent(listview_univers, E_ITEMSELECTED, URHO3D_HANDLER(MainMenu, HandleUniversSelectionItemClick));
 	SubscribeToEvent(m_listview_univers, E_ITEMCLICKED, URHO3D_HANDLER(MainMenu, HandleUniversSelectionItemClick));
-	//SubscribeToEvent(launch, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleLaunchGamePressed));
+	SubscribeToEvent(launch, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleLaunchGamePressed));
 	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSingleplayerPressed));
 }
 
@@ -401,8 +425,7 @@ void MainMenu::HandleSoundsPressed(StringHash, VariantMap &eventData)
 
 void MainMenu::HandleGenerateSeedPressed(StringHash eventType, VariantMap &eventData)
 {
-	uint seed = Rand();
-	String seed_str = (String)seed;
+	String seed_str = std::to_string(Rand()).c_str();
 	static_cast<LineEdit *>(m_window_menu->GetChild("Seed : ", true))->SetText(seed_str);
 }
 
@@ -427,11 +450,10 @@ void MainMenu::HandleMusicPressed(StringHash, VariantMap &eventData)
 
 void MainMenu::HandleUniversSelectionItemClick(StringHash, VariantMap &eventData)
 {
-	const int32_t selectionIndex = eventData["Selection"].GetInt();
-	m_listview_univers->SetSelection(selectionIndex);
+	m_listview_univers->SetSelection(eventData["Selection"].GetUInt());
 }
 
-void MainMenu::ErrorBubble(const String &message, ...)
+void MainMenu::ShowErrorBubble(const String &message, ...)
 {
 	m_timer_error_bubble_enable = true;
 	m_error_bubble_timer->Reset();

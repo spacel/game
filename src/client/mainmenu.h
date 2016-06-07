@@ -28,16 +28,19 @@
 #include <Urho3D/UI/Window.h>
 
 #include "genericmenu.h"
+#include "spacelgame.h"
 
 using namespace Urho3D;
 
 namespace spacel {
 
+class SpacelGame;
+
 class MainMenu: public GenericMenu  {
 URHO3D_OBJECT(MainMenu, GenericMenu);
 
 public:
-	MainMenu(Context *context, ClientSettings *config);
+	MainMenu(Context *context, ClientSettings *config, SpacelGame *main);
 	~MainMenu();
 	void Start();
 
@@ -46,9 +49,9 @@ private:
 	void HandleClosePressed(StringHash eventType, VariantMap &eventData);
 	void HandleKeyDown(StringHash eventType, VariantMap &eventData);
 	void HandleControlClicked(StringHash eventType, VariantMap &eventData);
+	void HandleLaunchGamePressed(StringHash eventType, VariantMap &eventData);
 	void HandleSingleplayerPressed(StringHash eventType, VariantMap &eventData);
 	void HandleNewGamePressed(StringHash, VariantMap &eventData);
-	void HandleCreateUniversePressed(StringHash, VariantMap &eventData);
 	void HandleLoadGamePressed(StringHash, VariantMap &eventData);
 	void HandleMultiplayerPressed(StringHash, VariantMap &eventData);
 	void HandleSettingsPressed(StringHash eventType, VariantMap &eventData);
@@ -61,7 +64,7 @@ private:
 	void Background();
 	void Title();
 	void HandleMasterMenu(StringHash, VariantMap &);
-	void ErrorBubble(const String &message, ...);
+	void ShowErrorBubble(const String &message, ...);
 
 	// Helpers
 	Button *CreateMainMenuButton(const String &label,
@@ -72,7 +75,9 @@ private:
 			const int x,
 			const int y);
 	void SetTitle(const String &t);
+
 	// Attributes
+	SpacelGame *m_main;
 	uint8_t m_menu_id = 0;
 	SharedPtr<UIElement> m_ui_elem;
 	static const uint s_mainmenu_button_space = 20;
