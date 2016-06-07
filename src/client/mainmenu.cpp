@@ -222,7 +222,8 @@ void MainMenu::HandleNewGamePressed(StringHash, VariantMap &eventData)
 
 	LineEdit *universename = CreateMainMenuLineEdit("universe_name", "Universe Name: ", 0, 65);
 
-	CreateMainMenuLineEdit("seed", "Seed : ", 0, universename->GetPosition().y_ + universename->GetSize().y_ + MAINMENU_BUTTON_SPACE);
+	CreateMainMenuLineEdit("create_universe_seed", "Seed : ", 0,
+		universename->GetPosition().y_ + universename->GetSize().y_ + MAINMENU_BUTTON_SPACE);
 
 	Button *generateSeed = CreateMainMenuButton("Generate seed", "ButtonInLine", "TextButtonInLine");
 	generateSeed->SetPosition( -20,  universename->GetPosition().y_ + universename->GetSize().y_ + MAINMENU_BUTTON_SPACE);
@@ -430,7 +431,7 @@ void MainMenu::HandleSoundsPressed(StringHash, VariantMap &eventData)
 void MainMenu::HandleGenerateSeedPressed(StringHash eventType, VariantMap &eventData)
 {
 	String seed_str = std::to_string(Rand()).c_str();
-	static_cast<LineEdit *>(m_window_menu->GetChild("Seed : ", true))->SetText(seed_str);
+	static_cast<LineEdit *>(m_window_menu->GetChild("create_universe_seed", true))->SetText(seed_str);
 }
 
 void MainMenu::HandleUpdate(StringHash, VariantMap &eventData)
