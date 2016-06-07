@@ -102,7 +102,6 @@ void SpacelGame::ChangeGameGlobalUI(const GlobalUIId ui_id, void *param)
 						"spacel", "universe").CString(),
 					std::string((const char*) param));
 			m_server->Run();
-			URHO3D_LOGINFOF("Server starting step %d", m_server->getLoadingStep());
 			break;
 		}
 		default: assert(false);
