@@ -85,4 +85,9 @@ inline void SpacelGame::InitLocales()
 	GetSubsystem<Localization>()->LoadJSONFile(
 			GetSubsystem<FileSystem>()->GetProgramDir() + "Data/locales/strings.json");
 }
+
+void SpacelGame::ChangeGameGlobalUI()
+{
+	GetSubsystem<UI>()->GetRoot()->RemoveAllChildren();
+}
 }

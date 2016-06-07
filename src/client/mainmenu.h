@@ -80,7 +80,7 @@ private:
 	SpacelGame *m_main;
 	uint8_t m_menu_id = 0;
 	SharedPtr<UIElement> m_ui_elem;
-	static const uint s_mainmenu_button_space = 20;
+	static const uint8_t s_mainmenu_button_space = 20;
 	SharedPtr<Window> m_window_menu;
 	SharedPtr<Window> m_error_bubble_window;
 	SharedPtr<Text> m_title;
@@ -91,7 +91,7 @@ private:
 	float m_timer_error_bubble;
 	SharedPtr<Sprite> m_menu_background;
 	SharedPtr<Sprite> m_preview;
-	ListView *m_listview_univers;
+	SharedPtr<ListView> m_universes_listview;
 	PODVector<StringHash> except_unsubscribe;
 };
 

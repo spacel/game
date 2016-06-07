@@ -43,6 +43,7 @@ public:
 	virtual void Start();
 	virtual void Stop();
 
+	void ChangeGameGlobalUI();
 private:
 	void InitLocales();
 

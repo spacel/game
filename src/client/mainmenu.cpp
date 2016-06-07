@@ -70,8 +70,7 @@ MainMenu::~MainMenu()
 	UnsubscribeFromAllEvents();
 	m_window_menu->RemoveAllChildren();
 	m_window_menu->Remove();
-	delete m_error_bubble_timer ;
-	delete m_listview_univers;
+	delete m_error_bubble_timer;
 }
 
 void MainMenu::Start()
@@ -284,6 +283,7 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 	}
 
 	// @TODO: go to loading screen
+	m_main->ChangeGameGlobalUI();
 }
 
 void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
@@ -298,19 +298,19 @@ void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
 	const String path_universe = GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "universe");
 	GetSubsystem<FileSystem>()->ScanDir(list_universe, path_universe, "*", SCAN_DIRS, false);
 
-	m_listview_univers = new ListView(context_);
-	m_window_menu->AddChild(m_listview_univers);
-	m_listview_univers->SetStyle("ListView");
-	m_listview_univers->SetName("list_view_universe");
-	m_listview_univers->SetMultiselect(false);
-	m_listview_univers->SetHighlightMode(HM_ALWAYS);
+	m_universes_listview = new ListView(context_);
+	m_window_menu->AddChild(m_universes_listview);
+	m_universes_listview->SetStyle("ListView");
+	m_universes_listview->SetName("list_view_universe");
+	m_universes_listview->SetMultiselect(false);
+	m_universes_listview->SetHighlightMode(HM_ALWAYS);
 
 	// TODO: WIP
 	if (!list_universe.Empty()) {
 		for (Vector<String>::Iterator it = list_universe.Begin() ; it != list_universe.End(); ++it) {
 			if (it->Compare(".") != 0 && it->Compare("..") != 0) {
 				Text *text = new Text(context_);
-				m_listview_univers->AddItem(text);
+				m_universes_listview->AddItem(text);
 				text->SetStyle("ListViewText");
 				text->SetName(*it);
 				text->SetText(*it);
@@ -354,7 +354,7 @@ void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
 	back->SetHorizontalAlignment(HA_RIGHT);
 
 	//SubscribeToEvent(listview_univers, E_ITEMSELECTED, URHO3D_HANDLER(MainMenu, HandleUniversSelectionItemClick));
-	SubscribeToEvent(m_listview_univers, E_ITEMCLICKED, URHO3D_HANDLER(MainMenu, HandleUniversSelectionItemClick));
+	SubscribeToEvent(m_universes_listview, E_ITEMCLICKED, URHO3D_HANDLER(MainMenu, HandleUniversSelectionItemClick));
 	SubscribeToEvent(launch, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleLaunchGamePressed));
 	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSingleplayerPressed));
 }
@@ -450,7 +450,7 @@ void MainMenu::HandleMusicPressed(StringHash, VariantMap &eventData)
 
 void MainMenu::HandleUniversSelectionItemClick(StringHash, VariantMap &eventData)
 {
-	m_listview_univers->SetSelection(eventData["Selection"].GetUInt());
+	m_universes_listview->SetSelection(eventData["Selection"].GetUInt());
 }
 
 void MainMenu::ShowErrorBubble(const String &message, ...)
