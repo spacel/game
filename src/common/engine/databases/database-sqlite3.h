@@ -59,9 +59,11 @@ private:
 
 	static int busyHandler(void *data, int count);
 
-	inline bool sqlite3_verify(const int s, const int r = SQLITE_OK) const
+	inline void sqlite3_verify(const int s, const int r = SQLITE_OK) const
 	{
-		return s == r;
+		if (s != r) {
+			throw SQLiteException(std::string("Query failed: ") + sqlite3_errmsg(m_database));
+		}
 	}
 
 	inline int stmt_step(const SQLite3Stmt s)

@@ -31,7 +31,7 @@ namespace engine {
 struct StellarObject
 {
 	uint64_t id;
-	double diameter;
+	double radius;
 };
 
 struct StellarPositionnedObject: public StellarObject

@@ -58,7 +58,7 @@ void Universe::CreateSolarSystem(const uint64_t galaxy_id)
 
 	// @TODO random
 	SolarSystem *ss = new SolarSystem();
-	ss->diameter = 100;
+	ss->radius = 100;
 	ss->type = SOLAR_TYPE_BIG_BLUE;
 	ss->pos_x = 1;
 	ss->pos_y = 1;

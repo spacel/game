@@ -40,17 +40,13 @@ DatabaseSQLite3::DatabaseSQLite3(const std::string &db_path):
 {
 	Open();
 }
+
 void DatabaseSQLite3::Open()
 {
-	if (!sqlite3_verify(sqlite3_open_v2(m_db_path.c_str(), &m_database,
-			SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL))) {
-		throw SQLiteException("Unable to open " + m_db_path + " universe file");
-	}
-
-	if (!sqlite3_verify(sqlite3_busy_handler(m_database, DatabaseSQLite3::busyHandler,
-			m_busy_handler_data))) {
-		throw SQLiteException("Unable to bind the busy handler");
-	}
+	sqlite3_verify(sqlite3_open_v2(m_db_path.c_str(), &m_database,
+	   SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL));
+	sqlite3_verify(sqlite3_busy_handler(m_database, DatabaseSQLite3::busyHandler,
+		m_busy_handler_data));
 
 	UpdateSchema();
 
@@ -62,17 +58,71 @@ void DatabaseSQLite3::Open()
 
 bool DatabaseSQLite3::Close()
 {
-	return sqlite3_verify(sqlite3_close(m_database));
+	try {
+		sqlite3_verify(sqlite3_close(m_database));
+		return true;
+	}
+	catch (SQLiteException &) {
+		return false;
+	}
 }
 
 void DatabaseSQLite3::UpdateSchema()
 {
-	const char* dbcreate_sql = "CREATE TABLE IF NOT EXISTS `gameversion` ("
+	static const char *dbcreate_sql = "CREATE TABLE IF NOT EXISTS `gameversion` ("
 		 "	version INT NOT NULL"
 		 ");"
 		 "INSERT INTO `gameversion` (`version`) VALUES (1);";
 
 	sqlite3_verify(sqlite3_exec(m_database, dbcreate_sql, NULL, NULL, NULL));
+
+	static const char *galaxy_table_sql = "CREATE TABLE IF NOT EXISTS `galaxies` ("
+		"	galaxy_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
+		"	galaxy_name VARCHAR(32) NOT NULL"
+		");";
+
+	sqlite3_verify(sqlite3_exec(m_database, galaxy_table_sql, NULL, NULL, NULL));
+
+	static const char *solarsystem_table_sql = "CREATE TABLE IF NOT EXISTS `solar_systems` ("
+		"	solarsystem_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
+		"	galaxy_id INTEGER NOT NULL,"
+		"	type SMALLINT NOT NULL,"
+		"	pos_x REAL NOT NULL,"
+		"	pos_y REAL NOT NULL,"
+		"	pos_z REAL NOT NULL,"
+		"	radius REAL NOT NULL,"
+		"	FOREIGN KEY (galaxy_id) REFERENCES `galaxies` (galaxy_id) ON DELETE CASCADE"
+		");";
+
+	sqlite3_verify(sqlite3_exec(m_database, solarsystem_table_sql, NULL, NULL, NULL));
+
+	static const char *planet_table_sql = "CREATE TABLE IF NOT EXISTS `planets` ("
+			"	planet_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
+			"	solarsystem_id INTEGER NOT NULL,"
+			"	type SMALLINT NOT NULL,"
+			"	pos_x REAL NOT NULL,"
+			"	pos_y REAL NOT NULL,"
+			"	pos_z REAL NOT NULL,"
+			"	distance_to_parent REAL NOT NULL,"
+			"	radius REAL NOT NULL,"
+			"	FOREIGN KEY (solarsystem_id) REFERENCES `solar_systems` (solarsystem_id) ON DELETE CASCADE"
+			");";
+
+	sqlite3_verify(sqlite3_exec(m_database, planet_table_sql, NULL, NULL, NULL));
+
+	static const char *moon_table_sql = "CREATE TABLE IF NOT EXISTS `moons` ("
+			"	moon_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
+			"	planet_id INTEGER NOT NULL,"
+			"	type SMALLINT NOT NULL,"
+			"	pos_x REAL NOT NULL,"
+			"	pos_y REAL NOT NULL,"
+			"	pos_z REAL NOT NULL,"
+			"	distance_to_parent REAL NOT NULL,"
+			"	radius REAL NOT NULL,"
+			"	FOREIGN KEY (planet_id) REFERENCES `planets` (planet_id) ON DELETE CASCADE"
+			");";
+
+	sqlite3_verify(sqlite3_exec(m_database, moon_table_sql, NULL, NULL, NULL));
 }
 
 int DatabaseSQLite3::busyHandler(void *data, int count)
