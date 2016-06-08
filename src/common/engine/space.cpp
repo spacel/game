@@ -84,7 +84,7 @@ bool Universe::RemoveSolarSystem(const uint64_t id)
 	}
 
 	// If there is galaxy drop the pointer from the galaxy
-	if (Galaxy* galaxy = (*ss_it).second->galaxy) {
+	if (Galaxy *galaxy = (*ss_it).second->galaxy) {
 		SolarSystemMap::iterator ss_galaxy_it = galaxy->solar_systems.find(id);
 		if (ss_galaxy_it != galaxy->solar_systems.end())
 			galaxy->solar_systems.erase(ss_galaxy_it);

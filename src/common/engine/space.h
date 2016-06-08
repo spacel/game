@@ -90,7 +90,7 @@ struct Moon: public StellarObject
 struct Planet: public Moon
 {
 	~Planet();
-	std::vector<Moon*> moons;
+	std::vector<Moon *> moons;
 };
 
 /*
@@ -102,10 +102,10 @@ struct SolarSystem: public StellarPositionnedObject
 {
 	~SolarSystem();
 	SolarType type;
-	std::vector<Planet*> planets;
-	Galaxy* galaxy = nullptr;
+	std::vector<Planet *> planets;
+	Galaxy *galaxy = nullptr;
 };
-typedef std::unordered_map<uint64_t, SolarSystem*> SolarSystemMap;
+typedef std::unordered_map<uint64_t, SolarSystem *> SolarSystemMap;
 
 /*
  * Galaxies
@@ -115,7 +115,7 @@ struct Galaxy: public StellarPositionnedObject
 	~Galaxy();
 	SolarSystemMap solar_systems;
 };
-typedef std::unordered_map<uint64_t, Galaxy*> GalaxyMap;
+typedef std::unordered_map<uint64_t, Galaxy *> GalaxyMap;
 
 /*
  * The whole universe
