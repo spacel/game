@@ -277,6 +277,7 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 				//TODO : Send parameter variables
 				ShowErrorBubble(
 						Urho3D::ToString("Universe %s already exists", universe_name.CString()));
+				return;
 			}
 		}
 		else {
@@ -291,7 +292,7 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 		return;
 	}
 
-	if (!GetSubsystem<FileSystem>()->CreateDir(path_universe)) {
+	if (!GetSubsystem<FileSystem>()->DirExists(path_universe)) {
 		GetSubsystem<FileSystem>()->CreateDir(path_universe);
 	}
 
