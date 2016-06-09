@@ -25,6 +25,7 @@
 #include <thread>
 
 #include "databases/database-sqlite3.h"
+#include "namegenerator.h"
 
 namespace spacel {
 namespace engine {
@@ -52,6 +53,10 @@ const bool Server::InitServer()
 	}
 
 	m_loading_step = SERVERLOADINGSTEP_DB_INITED;
+
+	for (uint8_t i = 0; i < 100; i++) {
+		std::cout << generate_world_name() << std::endl;
+	}
 
 	// @TODO
 

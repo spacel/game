@@ -1,6 +1,7 @@
 set(common_sources
 	config.cpp
 	porting.cpp
+	engine/namegenerator.cpp
 	engine/server.cpp
 	engine/space.cpp
 	engine/databases/database-sqlite3.cpp
