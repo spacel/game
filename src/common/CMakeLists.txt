@@ -4,6 +4,7 @@ set(common_sources
 	engine/server.cpp
 	engine/space.cpp
 	engine/databases/database-sqlite3.cpp
+	engine/ui/ProgressBar.cpp
 )
 
 find_package(Urho3D REQUIRED)

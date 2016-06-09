@@ -18,7 +18,6 @@
  * along with Spacel.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <cmath>
 #include <Urho3D/Core/CoreEvents.h>
 #include <Urho3D/Graphics/Texture2D.h>
 #include <Urho3D/Resource/ResourceCache.h>
@@ -37,16 +36,15 @@ LoadingScreen::LoadingScreen(Context *context, ClientSettings *config, engine::S
 {
 	m_ui_elem = GetSubsystem<UI>()->GetRoot();
 	m_ui_elem->SetDefaultStyle(m_cache->GetResource<XMLFile>("UI/LoadingScreenStyle.xml"));
-	m_loading_bar = new Slider(context_);
+	m_progress_bar = new engine::ui::ProgressBar(context_);
 	m_loading_text = new Text(context_);
-	m_loading_percent_text = new Text(context_);
 	m_tips_text = new Text(context_);
 }
 
 void LoadingScreen::Start()
 {
 	ShowBackground();
-	LoadingBar();
+	ShowProgressBar();
 	ShowTips();
 
 	SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(LoadingScreen, HandleUpdate));
@@ -65,77 +63,78 @@ void LoadingScreen::ShowBackground()
 	m_loading_background->SetPriority(-100);
 }
 
-void LoadingScreen::LoadingBar()
+void LoadingScreen::ShowProgressBar()
 {
-	m_ui_elem->AddChild(m_loading_bar);
-	m_loading_bar->SetStyle("Slider");
-	m_loading_bar->SetSize(m_ui_elem->GetSize().x_ -50 , 20);
-	m_loading_bar->AddChild(m_loading_percent_text);
-	m_loading_bar->SetEditable(false);
-	m_loading_bar->SetFocus(false);
-	m_loading_bar->SetEnabled(false);
-	m_loading_bar->SetRange(100);
-
-	m_loading_percent_text->SetStyle("Text");
-	m_loading_percent_text->SetAlignment(HA_CENTER, VA_CENTER);
-	m_loading_percent_text->SetText("0 %");
+	m_ui_elem->AddChild(m_progress_bar);
+	m_progress_bar->SetStyle("Slider");
+	m_progress_bar->SetSize(m_ui_elem->GetSize().x_ -50 , 20);
+	m_progress_bar->SetRange(100);
+	m_progress_bar->SetAlignment(HA_CENTER, VA_BOTTOM);
+	m_progress_bar->SetPosition(0, -30);
 
 	m_ui_elem->AddChild(m_loading_text);
 	m_loading_text->SetStyle("Text");
-	m_loading_text->SetAlignment(HA_CENTER, VA_CENTER);
-	m_loading_text->SetPosition(0, 25);
-	m_loading_text->SetText("Chargement du cache");
+	m_loading_text->SetAlignment(HA_CENTER, VA_BOTTOM);
+	m_loading_text->SetPosition(0, -10);
+	m_loading_text->SetText(m_l10n->Get("Loading..."));
 }
 
 void LoadingScreen::ShowTips()
 {
 	m_ui_elem->AddChild(m_tips_text);
 	m_tips_text->SetStyle("Text");
-	m_tips_text->SetPosition(0, m_ui_elem->GetSize().y_ - 45);
-	m_tips_text->SetHorizontalAlignment(HA_CENTER);
+	m_tips_text->SetPosition(0, -70);
+	m_tips_text->SetAlignment(HA_CENTER, VA_BOTTOM);
 	m_tips_text->SetText("Il pleut aujourd'hui\n Mais il fera surement beau demain!!");
 }
 
-void LoadingScreen::SetLoadingPercentText(const float &range)
-{
-	int new_range = static_cast<int>(range);
-	// @TODO: range = 100 percent = 0 - range = 1 = 50% - Range = 0 percent 100%
-	if (new_range < 0) {
-		new_range = 0;
-	 } else if (range > 100) {
-		new_range = 100;
-	}
-	m_loading_percent_text->SetText(ToString("%d", new_range) + " %");
-}
+static const char *loading_texts[engine::SERVERLOADINGSTEP_COUNT] = {
+	"Not started.",
+	"Loading...",
+	"Game DB backend inited.",
+	"Started!",
+	"Failed!"
+};
 
 void LoadingScreen::HandleUpdate(StringHash, VariantMap &eventData)
 {
 	m_loading_background->SetSize(m_ui_elem->GetSize().x_,
 		m_ui_elem->GetSize().y_ - 50);
 
-	// @TODO : For test
-	//m_loading_bar->SetRange(m_loading_bar->GetRange() - 0.05);
-	SetLoadingPercentText(m_loading_bar->GetRange());
+	m_progress_bar->SetSize(m_ui_elem->GetSize().x_ -50 , 20);
 
-	// @TODO: WIP
-	switch (server_loading_step = m_server->getLoadingStep()) {
-	case engine::SERVERLOADINGSTEP_NOT_STARTED:
-
-		break;
-	case engine::SERVERLOADINGSTEP_BEGIN_START:
-
-		break;
-	case engine::SERVERLOADINGSTEP_STARTED:
-
-		break;
-	case engine::SERVERLOADINGSTEP_DB_INITED:
-
-		break;
-	case engine::SERVERLOADINGSTEP_FAILED:
-
-		break;
-	default:
-		break;
+	const auto loading_step = m_server->getLoadingStep();
+	if (m_last_loading_step != loading_step) {
+		switch (loading_step) {
+			case engine::SERVERLOADINGSTEP_NOT_STARTED:
+				m_progress_bar->SetValue(0);
+				m_loading_text->SetText(
+						m_l10n->Get(loading_texts[m_server->getLoadingStep()]));
+				break;
+			case engine::SERVERLOADINGSTEP_BEGIN_START:
+				m_progress_bar->SetValue(5);
+				m_loading_text->SetText(
+						m_l10n->Get(loading_texts[m_server->getLoadingStep()]));
+				break;
+			case engine::SERVERLOADINGSTEP_DB_INITED:
+				m_progress_bar->SetValue(10);
+				m_loading_text->SetText(
+						m_l10n->Get(loading_texts[m_server->getLoadingStep()]));
+				break;
+			case engine::SERVERLOADINGSTEP_STARTED:
+				m_progress_bar->SetValue(100);
+				m_loading_text->SetText(
+						m_l10n->Get(loading_texts[m_server->getLoadingStep()]));
+				break;
+			case engine::SERVERLOADINGSTEP_FAILED:
+				m_progress_bar->SetValue(0);
+				m_loading_text->SetText(
+						m_l10n->Get(loading_texts[m_server->getLoadingStep()]));
+				break;
+			default:
+				assert(false);
+		}
+		m_last_loading_step = loading_step;
 	}
 
 }

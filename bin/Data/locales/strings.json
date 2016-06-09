@@ -76,5 +76,20 @@
   },
   "Textures/no_preview.png": {
     "fr": "Textures/no_preview_fr.png"
+  },
+  "Loading...": {
+	"fr": "Chargement..."
+  },
+  "Not started.": {
+	"fr": "Non démarré."
+  },
+  "Game DB backend inited.": {
+	"fr": "Base de données du jeu initialisée."
+  },
+  "Started!": {
+	"fr": "Démarré !"
+  },
+  "Failed!": {
+	"fr": "Echec !"
   }
 }
