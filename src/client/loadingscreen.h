@@ -20,8 +20,8 @@
 
 #pragma once
 
-#include <Urho3D/UI/Slider.h>
 #include <Urho3D/UI/Sprite.h>
+#include <common/engine/ui/ProgressBar.h>
 
 #include <common/engine/server.h>
 #include "genericmenu.h"
@@ -40,19 +40,18 @@ public:
 
 private:
 	void ShowBackground();
-	void LoadingBar();
+	void ShowProgressBar();
 	void ShowTips();
-	void SetLoadingPercentText(const float &range);
 	void HandleUpdate(StringHash, VariantMap &eventData);
 
 	SharedPtr<UIElement> m_ui_elem;
 	SharedPtr<Sprite> m_loading_background;
 	SharedPtr<Text> m_tips_text;
-	SharedPtr<Slider> m_loading_bar;
+	SharedPtr<engine::ui::ProgressBar> m_progress_bar;
 	SharedPtr<Text> m_loading_text;
-	SharedPtr<Text> m_loading_percent_text;
 	// Server
 	engine::Server *m_server;
-	engine::ServerLoadingStep server_loading_step;
+
+	engine::ServerLoadingStep m_last_loading_step = engine::SERVERLOADINGSTEP_NOT_STARTED;
 };
 }
