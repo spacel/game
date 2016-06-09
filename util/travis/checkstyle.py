@@ -21,7 +21,7 @@ def check_file(name):
                 error_count += 1
 
             # Check missing spaces
-            if re.search("(if|for|while|try|catch)\t?\(", line) or re.search("\)\t?\{", line) \
+            if re.search("[ \t]+(switch|if|for|while|try|catch)\t?\(", line) or re.search("\)\t?\{", line) \
                 or re.search("[a-zA-Z0-9][=]", line) or re.search("[=][a-zA-Z0-9]", line):
                 print("%s:%d\tMissing spaces:\t%s" % (name, line_number, line.strip()))
                 error_count += 1
