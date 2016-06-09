@@ -23,6 +23,8 @@
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/UI/Text.h>
 #include <Urho3D/UI/UI.h>
+#include <stdlib.h>
+#include <common/macro_utils.h>
 
 #include "loadingscreen.h"
 
@@ -79,13 +81,18 @@ void LoadingScreen::ShowProgressBar()
 	m_loading_text->SetText(m_l10n->Get("Loading..."));
 }
 
+static const char *tip_list[] = {
+		"You can change the settings somewhere.",
+		"Don't forget to do a pause after some hours of gaming.",
+};
+
 void LoadingScreen::ShowTips()
 {
 	m_ui_elem->AddChild(m_tips_text);
 	m_tips_text->SetStyle("Text");
 	m_tips_text->SetPosition(0, -70);
 	m_tips_text->SetAlignment(HA_CENTER, VA_BOTTOM);
-	m_tips_text->SetText("Il pleut aujourd'hui\n Mais il fera surement beau demain!!");
+	m_tips_text->SetText(tip_list[rand() % (ARRLEN(tip_list) - 1)]);
 }
 
 static const char *loading_texts[engine::SERVERLOADINGSTEP_COUNT] = {
