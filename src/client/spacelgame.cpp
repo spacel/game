@@ -35,6 +35,8 @@
 #include <common/engine/server.h>
 #include <common/engine/objectmanager.h>
 #include <common/engine/generators.h>
+
+#include "game.h"
 #include "loadingscreen.h"
 #include "mainmenu.h"
 #include "spacelgame.h"
@@ -111,9 +113,15 @@ void SpacelGame::ChangeGameGlobalUI(const GlobalUIId ui_id, void *param)
 						"spacel", "universe").CString(),
 					std::string((const char *) param));
 			m_server->Run();
-			LoadingScreen *loading_screen = new LoadingScreen(context_, m_config, m_server);
+			LoadingScreen *loading_screen = new LoadingScreen(context_, m_config, m_server, this);
 			GetSubsystem<UI>()->GetRoot()->AddChild(loading_screen);
 			loading_screen->Start();
+			break;
+		}
+		case GLOBALUI_GAME: {
+			Game *game = new Game(context_, m_config, m_server);
+			GetSubsystem<UI>()->GetRoot()->AddChild(game);
+			game->Start();
 			break;
 		}
 		default: assert(false);

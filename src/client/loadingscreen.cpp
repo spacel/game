@@ -32,8 +32,9 @@ using namespace Urho3D;
 
 namespace spacel {
 
-LoadingScreen::LoadingScreen(Context *context, ClientSettings *config, engine::Server *server) :
+LoadingScreen::LoadingScreen(Context *context, ClientSettings *config, engine::Server *server, SpacelGame *main) :
 	GenericMenu(context, config),
+	m_main(main),
 	m_server(server)
 {
 	m_ui_elem = GetSubsystem<UI>()->GetRoot();
@@ -50,7 +51,8 @@ void LoadingScreen::Start()
 	ShowTips();
 
 	SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(LoadingScreen, HandleUpdate));
-	GetSubsystem<Input>()->SetMouseVisible(false);
+	// Mouse is activate if loader is busy
+	GetSubsystem<Input>()->SetMouseVisible(true);
 }
 
 void LoadingScreen::ShowBackground()
@@ -129,6 +131,8 @@ void LoadingScreen::HandleUpdate(StringHash, VariantMap &eventData)
 				m_progress_bar->SetValue(10);
 				m_loading_text->SetText(
 						m_l10n->Get(loading_texts[m_server->getLoadingStep()]));
+				//@TODO: A supprimer
+				LaunchGame();
 				break;
 			case engine::SERVERLOADINGSTEP_GAMEDATAS_LOADED:
 				m_progress_bar->SetValue(30);
@@ -139,6 +143,7 @@ void LoadingScreen::HandleUpdate(StringHash, VariantMap &eventData)
 				m_progress_bar->SetValue(100);
 				m_loading_text->SetText(
 						m_l10n->Get(loading_texts[m_server->getLoadingStep()]));
+				LaunchGame();
 				break;
 			case engine::SERVERLOADINGSTEP_FAILED:
 				m_progress_bar->SetValue(0);
@@ -151,5 +156,11 @@ void LoadingScreen::HandleUpdate(StringHash, VariantMap &eventData)
 		m_last_loading_step = loading_step;
 	}
 
+}
+
+void LoadingScreen::LaunchGame()
+{
+	UnsubscribeFromAllEvents();
+	m_main->ChangeGameGlobalUI(GLOBALUI_GAME);
 }
 }

@@ -38,6 +38,7 @@ enum GlobalUIId
 {
 	GLOBALUI_MAINMENU,
 	GLOBALUI_LOADINGSCREEN,
+	GLOBALUI_GAME,
 };
 
 class SpacelGame : public Application

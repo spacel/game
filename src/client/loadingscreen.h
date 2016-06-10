@@ -25,6 +25,7 @@
 
 #include <common/engine/server.h>
 #include "genericmenu.h"
+#include "spacelgame.h"
 
 using namespace Urho3D;
 
@@ -34,7 +35,7 @@ class LoadingScreen: public GenericMenu {
 URHO3D_OBJECT(LoadingScreen, GenericMenu);
 
 public:
-	LoadingScreen(Context *context, ClientSettings *config, engine::Server *server);
+	LoadingScreen(Context *context, ClientSettings *config, engine::Server *server, SpacelGame *main);
 	~LoadingScreen() {};
 	void Start();
 
@@ -43,7 +44,9 @@ private:
 	void ShowProgressBar();
 	void ShowTips();
 	void HandleUpdate(StringHash, VariantMap &eventData);
+	void LaunchGame();
 
+	SpacelGame *m_main;
 	SharedPtr<UIElement> m_ui_elem;
 	SharedPtr<Sprite> m_loading_background;
 	SharedPtr<Text> m_tips_text;

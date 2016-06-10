@@ -272,7 +272,6 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 		ListView *lv = dynamic_cast<ListView *>(m_window_menu->GetChild("loading_univerise_listview", true));
 		assert(lv);
 
-		// @TODO: Segfault if not selected item
 		if (lv->GetSelectedItem() != nullptr) {
 			universe_name = lv->GetSelectedItem()->GetName();
 			engine::UniverseGenerator::SetSeed(engine::Universe::instance()->GetUniverseSeed());

@@ -7,9 +7,9 @@ set(URHO3D_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../assets)
 include(Urho3D-CMake-common)
 find_package(Urho3D REQUIRED)
 include_directories(
-		${URHO3D_INCLUDE_DIRS}
-		..
-)
+	${URHO3D_INCLUDE_DIRS}
+	..
+	)
 
 set(CLIENT_LIBRARIES
 	${PROJECT_NAME}lib
@@ -33,6 +33,7 @@ endif ()
 set(client_sources
 	ui/ProgressBar.cpp
 	genericmenu.cpp
+	game.cpp
 	loadingscreen.cpp
 	mainmenu.cpp
 	settings.cpp
