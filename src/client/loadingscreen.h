@@ -21,7 +21,7 @@
 #pragma once
 
 #include <Urho3D/UI/Sprite.h>
-#include <common/engine/ui/ProgressBar.h>
+#include "ui/ProgressBar.h"
 
 #include <common/engine/server.h>
 #include "genericmenu.h"

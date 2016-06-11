@@ -31,6 +31,7 @@ else ()
 endif ()
 
 set(client_sources
+	ui/ProgressBar.cpp
 	genericmenu.cpp
 	loadingscreen.cpp
 	mainmenu.cpp
