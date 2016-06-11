@@ -154,7 +154,7 @@ void MainMenu::HandleKeyDown(StringHash, VariantMap &eventData)
 	int key = eventData[P_KEY].GetInt();
 
 	switch (key) {
-		case KEY_ESC:
+		case KEY_ESCAPE:
 			switch (m_menu_id) {
 				case MAINMENUID_MASTER:
 					m_engine->Exit();

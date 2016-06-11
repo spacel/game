@@ -23,7 +23,7 @@
 
 namespace spacel {
 namespace engine {
-static const char* name_prefixes[] = {
+static const char *name_prefixes[] = {
 		"ak",
 		"bac", "bak",
 		"car"
@@ -33,7 +33,7 @@ static const char* name_prefixes[] = {
 		"vat", "vin", "vop"
 };
 
-static const char* name_suffixes[] = {
+static const char *name_suffixes[] = {
 		"ar", "as", "at",
 		"er", "es", "es",
 		"ir", "is", "ix",
@@ -41,13 +41,13 @@ static const char* name_suffixes[] = {
 		"ur", "us",
 };
 
-static const char* name_stem[] = {
-		"ad", "af", "am", "ass", "ast", "atr",
-		"ed", "ef", "em", "ess", "est", "etr",
-		"id", "if", "im", "iss", "ist", "itr",
-		"od", "of", "om", "oss", "ost", "otr",
-		"ud", "uf", "um", "uss", "ust", "utr",
-		"yd", "yf", "ym", "yss", "yst", "ytr",
+static const char *name_stem[] = {
+		"ad", "af", "am", "ass", "ast", "atr", "al", "aj",
+		"ed", "ef", "em", "ess", "est", "etr", "el", "ej",
+		"id", "if", "im", "iss", "ist", "itr", "il", "ij",
+		"od", "of", "om", "oss", "ost", "otr", "ol", "oj",
+		"ud", "uf", "um", "uss", "ust", "utr", "ul", "uj",
+		"yd", "yf", "ym", "yss", "yst", "ytr", "yl", "yj"
 };
 
 std::string generate_world_name()

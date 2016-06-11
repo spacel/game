@@ -26,6 +26,7 @@ else ()
 		${X11_LIBRARIES}
 		${OPENGL_LIBRARIES}
 		${JSONCPP_LIBRARY}
+		sqlite3
 		)
 endif ()
 
@@ -37,7 +38,7 @@ set(client_sources
 	spacelgame.cpp
 	)
 
-link_directories(${URHO3D_HOME}/lib)
+link_directories(${URHO3D_HOME}/lib ${URHO3D_HOME}/Source/ThirdParty/SQLite)
 add_executable(${PROJECT_NAME} ${client_sources})
 
 add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}lib)
