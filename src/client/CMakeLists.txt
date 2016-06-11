@@ -38,6 +38,9 @@ set(client_sources
 	spacelgame.cpp
 	)
 
+# Hack due to the current cmake implementation of Urho3D library
+remove_definitions(-DURHO3D_SSE -DURHO3D_OPENGL)
+
 link_directories(${URHO3D_HOME}/lib ${URHO3D_HOME}/Source/ThirdParty/SQLite)
 add_executable(${PROJECT_NAME} ${client_sources})
 

@@ -33,7 +33,7 @@ Before compiling Spacel Game you will need to compile Urho3D as a standalone lib
 cd lib/Urho3D
 mkdir build
 cd build
-cmake ..
+cmake .. -DURHO3D_SAMPLES=0 -DURHO3D_C++11=1 -DURHO3D_DATABASE_SQLITE=1 -DURHO3D_TOOLS=0
 make
 ```
 

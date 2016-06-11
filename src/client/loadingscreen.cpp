@@ -23,7 +23,6 @@
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/UI/Text.h>
 #include <Urho3D/UI/UI.h>
-#include <stdlib.h>
 #include <common/macro_utils.h>
 
 #include "loadingscreen.h"

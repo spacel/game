@@ -18,8 +18,6 @@
  * along with Spacel.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "genericmenu.h"
-
 #include <Urho3D/Audio/Sound.h>
 #include <Urho3D/Audio/SoundSource.h>
 #include <Urho3D/Graphics/Graphics.h>
@@ -28,6 +26,7 @@
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/UI/Text.h>
 
+#include "genericmenu.h"
 #include "settings.h"
 
 using namespace Urho3D;
