@@ -1,6 +1,7 @@
 set(common_sources
 	config.cpp
 	porting.cpp
+	engine/inventory.cpp
 	engine/namegenerator.cpp
 	engine/server.cpp
 	engine/space.cpp
