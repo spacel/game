@@ -105,7 +105,7 @@ void ProgressBar::SetValue(float value)
 
 		using namespace SliderChanged;
 
-		VariantMap& eventData = GetEventDataMap();
+		VariantMap &eventData = GetEventDataMap();
 		eventData[P_ELEMENT] = this;
 		eventData[P_VALUE] = value_;
 		SendEvent(E_SLIDERCHANGED, eventData);
