@@ -22,24 +22,25 @@
 namespace spacel {
 namespace engine {
 
-bool ItemStack::AddItems(uint32_t count)
+uint16_t ItemStack::AddItems(const uint16_t count)
 {
-	// @TODO check max stacking ItemDef and stack only the maximum
-	// @TODO change return to -1 (fail) or not stacked count (0 if okay)
-	if (m_item_count == UINT32_MAX) {
-		return false;
+	// @TODO: check we don't exceed ItemDef stack size
+	if (m_item_count == UINT16_MAX) {
+		return count;
 	}
 
-	if ((uint64_t)m_item_count + (uint64_t)count > UINT32_MAX) {
-		m_item_count = UINT32_MAX;
-		return true;
+	if ((uint32_t)m_item_count + (uint32_t)count > UINT16_MAX) {
+		// Calculate the item overhead
+		uint32_t diff = m_item_count + count - (uint16_t)UINT16_MAX;
+		m_item_count = UINT16_MAX;
+		return (uint16_t) diff;
 	}
 
 	m_item_count += count;
-	return true;
+	return 0;
 }
 
-bool ItemStack::RemoveItems(uint32_t count)
+bool ItemStack::RemoveItems(const uint16_t count)
 {
 	if (m_item_count == 0) {
 		return false;
@@ -51,6 +52,12 @@ bool ItemStack::RemoveItems(uint32_t count)
 	}
 
 	m_item_count -= count;
+}
+
+void ItemStack::SetItemCount(const uint16_t count)
+{
+	// @TODO: check we don't exceed ItemDef stack size
+	m_item_count = count;
 }
 }
 }

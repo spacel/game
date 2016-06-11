@@ -34,8 +34,8 @@ public:
 	~Inventory() {}
 
 	bool AddItemIntoFirstAvailableSlot(ItemStackPtr stack);
-	ItemStackPtr GetItem(uint16_t slot_id);
-	bool AddItem(uint16_t slot_id, ItemStackPtr stack);
+	ItemStackPtr GetItem(const uint16_t slot_id);
+	bool AddItem(const uint16_t slot_id, ItemStackPtr stack);
 private:
 	uint16_t m_size = 0;
 	std::unordered_map<uint16_t, ItemStackPtr> m_items;

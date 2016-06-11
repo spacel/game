@@ -40,7 +40,7 @@ bool Inventory::AddItemIntoFirstAvailableSlot(std::shared_ptr<ItemStack> stack)
 	return false;
 }
 
-ItemStackPtr Inventory::GetItem(uint16_t slot_id)
+ItemStackPtr Inventory::GetItem(const uint16_t slot_id)
 {
 	assert(slot_id < m_size);
 	if (m_items.find(slot_id) != m_items.end()) {
@@ -50,7 +50,7 @@ ItemStackPtr Inventory::GetItem(uint16_t slot_id)
 	return nullptr;
 }
 
-bool Inventory::AddItem(uint16_t slot_id, ItemStackPtr stack)
+bool Inventory::AddItem(const uint16_t slot_id, ItemStackPtr stack)
 {
 	assert(slot_id < m_size);
 	auto current_stack = m_items.find(slot_id);
@@ -64,8 +64,9 @@ bool Inventory::AddItem(uint16_t slot_id, ItemStackPtr stack)
 		return false;
 	}
 
-	// @TODO Check stack max for item before stacking
-	return (*current_stack->second).AddItems(stack->GetItemCount());
+	// Add items from stack to the Inventory Stack and set the new stack amount to stack
+	stack->SetItemCount((*current_stack->second).AddItems(stack->GetItemCount()));
+	return true;
 }
 }
 }
