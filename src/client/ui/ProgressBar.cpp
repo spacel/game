@@ -105,7 +105,7 @@ void ProgressBar::SetValue(float value)
 
 		using namespace SliderChanged;
 
-		VariantMap& eventData = GetEventDataMap();
+		VariantMap &eventData = GetEventDataMap();
 		eventData[P_ELEMENT] = this;
 		eventData[P_VALUE] = value_;
 		SendEvent(E_SLIDERCHANGED, eventData);
@@ -144,13 +144,13 @@ void ProgressBar::UpdateLoadingBar()
 	if (range_ > 0.0f) {
 		if (orientation_ == O_HORIZONTAL) {
 			int loadingBarLength = (int) Max((float) GetWidth() * value_ / range_,
-											 (float) (border.left_ + border.right_));
+				(float) (border.left_ + border.right_));
 			knob_->SetSize(loadingBarLength, GetHeight());
 			knob_->SetPosition(Clamp(0, 0, GetWidth() - knob_->GetWidth()), 0);
 		}
 		else {
 			int loadingBarLength = (int) Max((float) GetHeight() * value_ / range_,
-											 (float) (border.top_ + border.bottom_));
+				(float) (border.top_ + border.bottom_));
 			knob_->SetSize(GetWidth(), loadingBarLength);
 			knob_->SetPosition(0, Clamp(0, 0, GetHeight() - knob_->GetHeight()));
 		}
