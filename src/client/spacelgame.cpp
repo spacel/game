@@ -34,6 +34,7 @@
 #include <project_defines.h>
 #include <common/engine/server.h>
 #include <common/engine/objectmanager.h>
+#include <common/engine/generators.h>
 #include "loadingscreen.h"
 #include "mainmenu.h"
 #include "spacelgame.h"
@@ -44,8 +45,11 @@ URHO3D_DEFINE_APPLICATION_MAIN(spacel::SpacelGame)
 
 namespace spacel {
 
+// Init singletons
 engine::Universe *engine::Universe::s_universe = nullptr;
 engine::ObjectMgr *engine::ObjectMgr::s_objmgr = nullptr;
+engine::UniverseGenerator *engine::UniverseGenerator::s_univgen = nullptr;
+uint64_t engine::UniverseGenerator::s_seed = 0;
 
 void SpacelGame::Setup()
 {

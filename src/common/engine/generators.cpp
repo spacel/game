@@ -19,7 +19,8 @@
 
 #include <macro_utils.h>
 #include <stdlib.h>
-#include "namegenerator.h"
+#include <iostream>
+#include "generators.h"
 
 namespace spacel {
 namespace engine {
@@ -50,19 +51,35 @@ static const char *name_stem[] = {
 		"yd", "yf", "ym", "yss", "yst", "ytr", "yl", "yj"
 };
 
-std::string generate_world_name()
+void UniverseGenerator::InitRandomGeneratorIfNot()
 {
-	std::string res = name_prefixes[rand() % (ARRLEN(name_prefixes) - 1)];
-	uint8_t stem_number = rand() % 2;
+	if (!m_random_generator_inited) {
+		m_random_generator = std::mt19937(s_seed);
+
+		m_name_generators[0] = std::uniform_int_distribution<uint16_t>(0, ARRLEN(name_prefixes) - 1);
+		m_name_generators[1] = std::uniform_int_distribution<uint16_t>(0, ARRLEN(name_suffixes) - 1);
+		m_name_generators[2] = std::uniform_int_distribution<uint16_t>(0, ARRLEN(name_stem) - 1);
+		m_name_generators[3] = std::uniform_int_distribution<uint16_t>(0, 2);
+		m_random_generator_inited = true;
+	}
+}
+
+std::string UniverseGenerator::generate_world_name()
+{
+	InitRandomGeneratorIfNot();
+
+	std::string res = name_prefixes[m_name_generators[0](m_random_generator)];
+	uint8_t stem_number = m_name_generators[3](m_random_generator) % 2;
 
 	for (uint8_t i = 0; i < stem_number; i++) {
-		res += name_stem[rand() % (ARRLEN(name_stem) - 1)];
+		res += name_stem[m_name_generators[2](m_random_generator)];
 	}
 
-	res += name_suffixes[rand() % (ARRLEN(name_suffixes) - 1)];
+	res += name_suffixes[m_name_generators[1](m_random_generator)];
 
 	return res;
 }
+
 }
 }
 

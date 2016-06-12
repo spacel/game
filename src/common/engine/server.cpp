@@ -27,7 +27,7 @@
 #include <json/json.h>
 
 #include "databases/database-sqlite3.h"
-#include "namegenerator.h"
+#include "generators.h"
 #include "objectmanager.h"
 
 namespace spacel {
@@ -59,8 +59,11 @@ const bool Server::InitServer()
 
 	m_loading_step = SERVERLOADINGSTEP_DB_INITED;
 
-	for (uint8_t i = 0; i < 100; i++) {
-		std::cout << generate_world_name() << std::endl;
+	// @TODO get the seed from database
+	UniverseGenerator::instance()->SetSeed(180);
+
+	for (uint8_t i = 0; i < 10; i++) {
+		std::cout << UniverseGenerator::instance()->generate_world_name() << std::endl;
 	}
 
 	if (!LoadGameDatas()) {
@@ -68,7 +71,6 @@ const bool Server::InitServer()
 	}
 
 	m_loading_step = SERVERLOADINGSTEP_GAMEDATAS_LOADED;
-
 	// @TODO more ?
 
 	m_loading_step = SERVERLOADINGSTEP_STARTED;

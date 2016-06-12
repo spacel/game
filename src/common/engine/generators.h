@@ -20,12 +20,39 @@
 #pragma once
 
 #include <string>
+#include <cassert>
+#include <random>
 
 namespace spacel {
 namespace engine {
 
-std::string generate_world_name();
+class UniverseGenerator
+{
+public:
+	UniverseGenerator() {}
+	inline static UniverseGenerator *instance()
+	{
+		if (!UniverseGenerator::s_univgen) {
+			// Don't permit to use non setted seed
+			assert(s_seed != 0);
+			UniverseGenerator::s_univgen = new UniverseGenerator();
+		}
 
+		return UniverseGenerator::s_univgen;
+	}
+
+	inline static void SetSeed(uint64_t seed) { s_seed = seed; }
+
+	std::string generate_world_name();
+private:
+	void InitRandomGeneratorIfNot();
+
+	bool m_random_generator_inited = false;
+	std::mt19937 m_random_generator;
+	std::uniform_int_distribution<uint16_t> m_name_generators[4];
+	static UniverseGenerator *s_univgen;
+	static uint64_t s_seed;
+};
 }
 }
 
