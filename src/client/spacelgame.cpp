@@ -65,13 +65,13 @@ void SpacelGame::Setup()
 	engineParameters_["LogQuiet"] = m_config->getBool(BSETTING_LOGQUIET);
 	engineParameters_["LogName"] = GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "logs") +
 		"SpacelGame.log";
-	GetSubsystem<Input>()->SetMouseVisible(true);
 	InitLocales();
 }
 
 void SpacelGame::Start()
 {
 	ChangeGameGlobalUI(GLOBALUI_MAINMENU);
+	GetSubsystem<Input>()->SetMouseVisible(true);
 }
 
 void SpacelGame::Stop()
