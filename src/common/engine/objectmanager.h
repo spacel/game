@@ -41,7 +41,7 @@ public:
 	}
 
 	bool RegisterItem(ItemDefPtr def);
-	const ItemDefPtr GetItem(const uint32_t item_id);
+	const ItemDefPtr GetItem(const uint32_t item_id) const;
 private:
 	static ObjectMgr *s_objmgr;
 	std::unordered_map<uint32_t, ItemDefPtr> m_itemdefs;

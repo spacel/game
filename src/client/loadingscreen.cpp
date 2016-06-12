@@ -98,6 +98,7 @@ static const char *loading_texts[engine::SERVERLOADINGSTEP_COUNT] = {
 	"Not started.",
 	"Loading...",
 	"Game DB backend inited.",
+	"Game datas loaded.",
 	"Started!",
 	"Failed!"
 };
@@ -124,6 +125,11 @@ void LoadingScreen::HandleUpdate(StringHash, VariantMap &eventData)
 				break;
 			case engine::SERVERLOADINGSTEP_DB_INITED:
 				m_progress_bar->SetValue(10);
+				m_loading_text->SetText(
+						m_l10n->Get(loading_texts[m_server->getLoadingStep()]));
+				break;
+			case engine::SERVERLOADINGSTEP_GAMEDATAS_LOADED:
+				m_progress_bar->SetValue(30);
 				m_loading_text->SetText(
 						m_l10n->Get(loading_texts[m_server->getLoadingStep()]));
 				break;

@@ -26,6 +26,7 @@
 
 #include "databases/database-sqlite3.h"
 #include "namegenerator.h"
+#include "objectmanager.h"
 
 namespace spacel {
 namespace engine {
@@ -58,9 +59,25 @@ const bool Server::InitServer()
 		std::cout << generate_world_name() << std::endl;
 	}
 
-	// @TODO
+	if (!LoadGameDatas()) {
+		m_loading_step = SERVERLOADINGSTEP_FAILED;
+	}
+
+	m_loading_step = SERVERLOADINGSTEP_GAMEDATAS_LOADED;
+
+	// @TODO more ?
 
 	m_loading_step = SERVERLOADINGSTEP_STARTED;
+	return true;
+}
+
+const bool Server::LoadGameDatas()
+{
+	ItemDefPtr test_def = std::make_shared<ItemDef>();
+	test_def->type = ITEMTYPE_USELESS;
+	test_def->name = "engine:stone";
+	test_def->description = "A raw stone";
+	ObjectMgr::instance()->RegisterItem(test_def);
 	return true;
 }
 

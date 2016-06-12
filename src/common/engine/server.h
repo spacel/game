@@ -33,6 +33,7 @@ enum ServerLoadingStep
 	SERVERLOADINGSTEP_NOT_STARTED = 0,
 	SERVERLOADINGSTEP_BEGIN_START,
 	SERVERLOADINGSTEP_DB_INITED,
+	SERVERLOADINGSTEP_GAMEDATAS_LOADED,
 	SERVERLOADINGSTEP_STARTED,
 	SERVERLOADINGSTEP_FAILED,
 	SERVERLOADINGSTEP_COUNT,
@@ -46,6 +47,7 @@ public:
 	inline const ServerLoadingStep getLoadingStep() const { return m_loading_step; }
 private:
 	const bool InitServer();
+	const bool LoadGameDatas();
 	void StopServer();
 	void Step(const float dtime);
 

@@ -8,6 +8,7 @@ namespace engine {
 
 enum ItemType {
 	ITEMTYPE_NONE,
+	ITEMTYPE_USELESS,
 	ITEMTYPE_RESOURCE,
 	ITEMTYPE_CURRENCY,
 	ITEMTYPE_TOOL,
@@ -19,6 +20,8 @@ struct ItemDef
 	~ItemDef() {}
 	uint32_t id = 0;
 	ItemType type = ITEMTYPE_NONE;
+	std::string name;
+	std::string description;
 	uint32_t stack_max = 99;
 };
 

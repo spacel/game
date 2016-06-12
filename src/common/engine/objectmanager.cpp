@@ -39,7 +39,7 @@ bool ObjectMgr::RegisterItem(ItemDefPtr def)
 	return true;
 }
 
-const ItemDefPtr ObjectMgr::GetItem(const uint32_t item_id)
+const ItemDefPtr ObjectMgr::GetItem(const uint32_t item_id) const
 {
 	auto idef_it = m_itemdefs.find(item_id);
 	if (idef_it == m_itemdefs.end()) {
