@@ -3,6 +3,7 @@ set(common_sources
 	porting.cpp
 	engine/inventory.cpp
 	engine/namegenerator.cpp
+	engine/objectmanager.cpp
 	engine/server.cpp
 	engine/space.cpp
 	engine/databases/database-sqlite3.cpp

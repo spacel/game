@@ -17,22 +17,26 @@
  * along with Spacel.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <cassert>
 #include "item.h"
+#include "objectmanager.h"
 
 namespace spacel {
 namespace engine {
 
 uint16_t ItemStack::AddItems(const uint16_t count)
 {
-	// @TODO: check we don't exceed ItemDef stack size
-	if (m_item_count == UINT16_MAX) {
+	ItemDefPtr idef = ObjectMgr::instance()->GetItem(m_item_id);
+	assert(idef);
+
+	if (m_item_count == idef->stack_max) {
 		return count;
 	}
 
-	if ((uint32_t)m_item_count + (uint32_t)count > UINT16_MAX) {
+	if ((uint32_t)m_item_count + (uint32_t)count > idef->stack_max) {
 		// Calculate the item overhead
-		uint32_t diff = m_item_count + count - (uint16_t)UINT16_MAX;
-		m_item_count = UINT16_MAX;
+		uint32_t diff = m_item_count + count - (uint16_t)idef->stack_max;
+		m_item_count = idef->stack_max;
 		return (uint16_t) diff;
 	}
 
@@ -56,7 +60,8 @@ bool ItemStack::RemoveItems(const uint16_t count)
 
 void ItemStack::SetItemCount(const uint16_t count)
 {
-	// @TODO: check we don't exceed ItemDef stack size
+	ItemDefPtr idef = ObjectMgr::instance()->GetItem(m_item_id);
+	assert(idef && count <= idef->stack_max);
 	m_item_count = count;
 }
 }

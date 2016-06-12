@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 
 namespace spacel {
 namespace engine {
@@ -20,6 +21,8 @@ struct ItemDef
 	ItemType type = ITEMTYPE_NONE;
 	uint32_t stack_max = 99;
 };
+
+typedef std::shared_ptr<ItemDef> ItemDefPtr;
 
 class ItemStack
 {
