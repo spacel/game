@@ -71,7 +71,6 @@ void SpacelGame::Setup()
 void SpacelGame::Start()
 {
 	ChangeGameGlobalUI(GLOBALUI_MAINMENU);
-	GetSubsystem<Input>()->SetMouseVisible(true);
 }
 
 void SpacelGame::Stop()

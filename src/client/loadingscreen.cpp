@@ -24,6 +24,7 @@
 #include <Urho3D/UI/Text.h>
 #include <Urho3D/UI/UI.h>
 #include <common/macro_utils.h>
+#include <Urho3D/Input/Input.h>
 
 #include "loadingscreen.h"
 
@@ -49,6 +50,7 @@ void LoadingScreen::Start()
 	ShowTips();
 
 	SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(LoadingScreen, HandleUpdate));
+	GetSubsystem<Input>()->SetMouseVisible(false);
 }
 
 void LoadingScreen::ShowBackground()

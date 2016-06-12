@@ -31,6 +31,7 @@
 #include <Urho3D/UI/UIEvents.h>
 
 #include <project_defines.h>
+#include <Urho3D/Input/Input.h>
 #include "spacelgame.h"
 
 using namespace Urho3D;
@@ -85,6 +86,7 @@ void MainMenu::Start()
 	m_ui_elem->AddChild(m_music_button);
 	m_music_button->SetStyle(m_enable_menu_music ? "SoundButton": "SoundButtonOff");
 	PlayMusic(m_enable_menu_music);
+	GetSubsystem<Input>()->SetMouseVisible(true);
 }
 
 void MainMenu::Background()
