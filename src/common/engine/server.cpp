@@ -23,6 +23,8 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include <fstream>
+#include <json/json.h>
 
 #include "databases/database-sqlite3.h"
 #include "namegenerator.h"
@@ -33,8 +35,10 @@ namespace engine {
 
 #define SERVER_LOOP_TIME 0.025f
 
-Server::Server(const std::string &datapath, const std::string &universe_name):
+Server::Server(const std::string &gamedatapath, const std::string &datapath,
+		const std::string &universe_name):
 		Thread(),
+		m_gamedatapath(gamedatapath),
 		m_datapath(datapath),
 		m_universe_name(universe_name)
 {
@@ -73,12 +77,90 @@ const bool Server::InitServer()
 
 const bool Server::LoadGameDatas()
 {
-	ItemDefPtr test_def = std::make_shared<ItemDef>();
-	test_def->type = ITEMTYPE_USELESS;
-	test_def->name = "engine:stone";
-	test_def->description = "A raw stone";
-	ObjectMgr::instance()->RegisterItem(test_def);
-	return true;
+
+
+	try {
+		std::ifstream cfg_file(m_gamedatapath + "items.json", std::ifstream::binary);
+		if (!cfg_file.good()) {
+			URHO3D_LOGERROR("Unable to read items from game datas");
+			return false;
+		}
+		Json::Value root;
+		cfg_file >> root;
+		cfg_file.close();
+
+		if (!root.isMember("items") && !root["items"].isObject()) {
+			URHO3D_LOGERROR("No valid items root key found for items game datas");
+			return false;
+		}
+
+		Json::Value item_root = root["items"];
+		for (const auto &item_name: item_root.getMemberNames()) {
+			Json::Value item_v = item_root[item_name];
+
+			if (!item_v.isObject() || !item_v.isMember("id") || !item_v["id"].isUInt()) {
+				std::cout << "error !" << std::endl;
+				URHO3D_LOGERRORF("Invalid item found! '%s' is not valid", item.c_str());
+				continue;
+			}
+
+			ItemDefPtr def = std::make_shared<ItemDef>();
+			def->name = item_name;
+			if (item_v.isMember("description")) {
+				if (!item_v["description"].isString()) {
+					URHO3D_LOGWARNINGF("Invalid description for %d (%s)", def->id,
+						def->type);
+					continue;
+				}
+				def->description = item_v["description"].asString();
+			}
+
+			if (item_v.isMember("type")) {
+				if (!item_v["type"].isString()) {
+					URHO3D_LOGWARNINGF("Invalid type for %d (%s)", def->id,
+						def->type);
+					continue;
+				}
+
+				std::string item_v_type = item_v["type"].asString();
+				if (item_v_type.compare("resource") == 0) {
+					def->type = ITEMTYPE_RESOURCE;
+				}
+				else if (item_v_type.compare("tool") == 0) {
+					def->type = ITEMTYPE_TOOL;
+				}
+				else if (item_v_type.compare("currency") == 0) {
+					def->type = ITEMTYPE_CURRENCY;
+				}
+				else if (item_v_type.compare("useless") == 0) {
+					def->type = ITEMTYPE_USELESS;
+				}
+				else {
+					URHO3D_LOGWARNINGF("Invalid item type %s for item %d (%s)",
+						item_v_type.c_str(), def->id, def->name.c_str());
+					continue;
+				}
+			}
+
+			if (item_v.isMember("stack_max")) {
+				if (!item_v["stack_max"].isUInt()) {
+					URHO3D_LOGWARNINGF("Invalid stack_max for %d (%s)", def->id,
+					   def->type);
+					continue;
+				}
+
+					def->stack_max = item_v["stack_max"].asUInt();
+			}
+
+			ObjectMgr::instance()->RegisterItem(def);
+		}
+
+		URHO3D_LOGINFOF("%d items registered", ObjectMgr::instance()->GetRegisteredItemsCount());
+		return true;
+	}
+	catch (std::exception &e) {
+		return false;
+	}
 }
 
 void Server::StopServer()

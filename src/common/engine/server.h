@@ -42,7 +42,8 @@ enum ServerLoadingStep
 class Server: public Urho3D::Thread
 {
 public:
-	Server(const std::string &datapath, const std::string &universe_name);
+	Server(const std::string &gamedatapath, const std::string &datapath,
+		   const std::string &universe_name);
 	void ThreadFunction();
 	inline const ServerLoadingStep getLoadingStep() const { return m_loading_step; }
 private:
@@ -51,8 +52,9 @@ private:
 	void StopServer();
 	void Step(const float dtime);
 
-	std::string m_datapath;
-	std::string m_universe_name;
+	std::string m_gamedatapath = "";
+	std::string m_datapath = "";
+	std::string m_universe_name = "";
 	Database *m_db = nullptr;
 	std::atomic<ServerLoadingStep> m_loading_step;
 };

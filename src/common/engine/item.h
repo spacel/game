@@ -7,7 +7,6 @@ namespace spacel {
 namespace engine {
 
 enum ItemType {
-	ITEMTYPE_NONE,
 	ITEMTYPE_USELESS,
 	ITEMTYPE_RESOURCE,
 	ITEMTYPE_CURRENCY,
@@ -19,7 +18,7 @@ struct ItemDef
 	ItemDef() {}
 	~ItemDef() {}
 	uint32_t id = 0;
-	ItemType type = ITEMTYPE_NONE;
+	ItemType type = ITEMTYPE_USELESS;
 	std::string name;
 	std::string description;
 	uint32_t stack_max = 99;

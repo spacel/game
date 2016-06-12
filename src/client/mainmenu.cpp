@@ -29,10 +29,8 @@
 #include <Urho3D/UI/Font.h>
 #include <Urho3D/UI/UI.h>
 #include <Urho3D/UI/UIEvents.h>
-
-#include <project_defines.h>
 #include <Urho3D/Input/Input.h>
-#include "spacelgame.h"
+#include <project_defines.h>
 
 using namespace Urho3D;
 

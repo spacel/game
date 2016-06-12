@@ -1,0 +1,7 @@
+{
+  "items": {
+	"core:stone": { "id": 1, "description": "A basic stone", "type": "resource" },
+	"core:cooper": { "id": 2, "description": "Cooper permits to make electrical utilities", "type": "resource" },
+	"core:iron": { "id": 3, "description": "Iron permits to make electrical utilities and tools", "type": "resource" }
+  }
+}

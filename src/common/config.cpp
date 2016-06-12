@@ -44,14 +44,12 @@ Config::Config(Urho3D::Context *context, uint32_t b_size, uint32_t u32_size,
 
 bool Config::load(const String &f)
 {
-	Json::Value root;
-
 	try {
 		std::ifstream cfg_file(f.CString(), std::ifstream::binary);
 		if (!cfg_file.good()) {
 			return false;
 		}
-
+		Json::Value root;
 		cfg_file >> root;
 		cfg_file.close();
 

@@ -100,7 +100,9 @@ void SpacelGame::ChangeGameGlobalUI(const GlobalUIId ui_id, void *param)
 		}
 		case GLOBALUI_LOADINGSCREEN: {
 			assert(param != nullptr);
+			String gamedatapath = GetSubsystem<FileSystem>()->GetProgramDir() + "Data/game/";
 			m_server = new engine::Server(
+					gamedatapath.CString(),
 					GetSubsystem<FileSystem>()->GetAppPreferencesDir(
 						"spacel", "universe").CString(),
 					std::string((const char *) param));
