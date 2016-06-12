@@ -20,7 +20,8 @@ struct ItemDef
 	uint32_t id = 0;
 	ItemType type = ITEMTYPE_USELESS;
 	std::string name;
-	std::string description;
+	std::string description = "";
+	std::string icon = "";
 	uint32_t stack_max = 99;
 };
 

@@ -115,6 +115,14 @@ const bool Server::LoadGameDatas()
 				def->description = item_v["description"].asString();
 			}
 
+			if (item_v.isMember("icon")) {
+				if (!item_v["icon"].isString()) {
+					URHO3D_LOGWARNINGF("Invalid icon for %d (%s)", def->id, def->type);
+					continue;
+				}
+				def->icon = item_v["icon"].asString();
+			}
+
 			if (item_v.isMember("type")) {
 				if (!item_v["type"].isString()) {
 					URHO3D_LOGWARNINGF("Invalid type for %d (%s)", def->id,
