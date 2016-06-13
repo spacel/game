@@ -19,6 +19,7 @@
 
 #include <cassert>
 #include "space.h"
+#include "generators.h"
 
 namespace spacel {
 namespace engine {
@@ -51,32 +52,33 @@ Universe::~Universe()
 	}
 }
 
-void Universe::CreateSolarSystem(const uint64_t galaxy_id)
+void Universe::CreateSolarSystem(Galaxy* galaxy)
 {
-	GalaxyMap::iterator galaxy_it = m_galaxies.find(galaxy_id);
-	assert(galaxy_it != m_galaxies.end());
-
 	// @TODO random
-	SolarSystem *ss = new SolarSystem();
-	ss->radius = 100;
-	ss->type = SOLAR_TYPE_BIG_BLUE;
-	ss->pos_x = 1;
-	ss->pos_y = 1;
-	ss->pos_z = 1;
-	ss->galaxy = (*galaxy_it).second;
-
-	// @TODO create planets
-
 	while (m_solar_systems.find(m_next_solarsystem_id) != m_solar_systems.end()) {
 		m_next_solarsystem_id++;
 	}
 
-	(*galaxy_it).second->solar_systems[m_next_solarsystem_id] = ss;
+	SolarSystem *ss = new SolarSystem();
+	ss->id = m_next_solarsystem_id;
+	ss->name = UniverseGenerator::instance()->generate_world_name();
+	ss->radius = UniverseGenerator::instance()->
+			generate_solarsystem_double(m_next_solarsystem_id);
+	ss->type = (SolarType) UniverseGenerator::instance()->
+			generate_solarsystem_type(m_next_solarsystem_id);
+	ss->pos_x = 1;
+	ss->pos_y = 1;
+	ss->pos_z = 1;
+	ss->galaxy = galaxy;
+
+	// @TODO create planets
+
+	galaxy->solar_systems[m_next_solarsystem_id] = ss;
 	m_solar_systems[m_next_solarsystem_id] = ss;
 	m_next_solarsystem_id++;
 }
 
-bool Universe::RemoveSolarSystem(const uint64_t id)
+bool Universe::RemoveSolarSystem(const uint64_t &id)
 {
 	SolarSystemMap::iterator ss_it = m_solar_systems.find(id);
 	if (ss_it == m_solar_systems.end()) {
@@ -96,23 +98,28 @@ bool Universe::RemoveSolarSystem(const uint64_t id)
 	return true;
 }
 
-void Universe::CreateGalaxy()
+void Universe::CreateGalaxy(const uint64_t &max_solar_systems)
 {
 	// Increment id if there is galaxies
 	while (m_galaxies.find(m_next_galaxy_id) != m_galaxies.end()) {
 		m_next_galaxy_id++;
 	}
 
-	m_galaxies[m_next_galaxy_id] = new Galaxy();
+	Galaxy* galaxy = new Galaxy();
+	galaxy->id = m_next_galaxy_id;
+	galaxy->name = UniverseGenerator::instance()->generate_world_name();
+
 	// Hardcoded but need some seed
-	for (uint32_t i = 0; i < 100 * 1000 * 1000; ++i) {
-		CreateSolarSystem(m_next_galaxy_id);
+	for (uint32_t i = 0; i < max_solar_systems; ++i) {
+		CreateSolarSystem(galaxy);
 	}
+
+	m_galaxies[m_next_galaxy_id] = galaxy;
 
 	m_next_galaxy_id++;
 }
 
-bool Universe::RemoveGalaxy(const uint64_t id)
+bool Universe::RemoveGalaxy(const uint64_t &id)
 {
 	GalaxyMap::iterator galaxy_it = m_galaxies.find(id);
 	if (galaxy_it == m_galaxies.end()) {

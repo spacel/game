@@ -31,6 +31,7 @@ namespace engine {
 struct StellarObject
 {
 	uint64_t id;
+	std::string name;
 	double radius;
 };
 
@@ -126,11 +127,11 @@ public:
 	Universe() {}
 	~Universe();
 
-	void CreateGalaxy();
-	bool RemoveGalaxy(const uint64_t id);
+	void CreateGalaxy(const uint64_t &max_solar_systems);
+	bool RemoveGalaxy(const uint64_t &id);
 
-	void CreateSolarSystem(const uint64_t galaxy_id);
-	bool RemoveSolarSystem(const uint64_t id);
+	void CreateSolarSystem(Galaxy* galaxy);
+	bool RemoveSolarSystem(const uint64_t &id);
 
 	inline static Universe *instance()
 	{

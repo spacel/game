@@ -29,6 +29,7 @@
 #include "databases/database-sqlite3.h"
 #include "generators.h"
 #include "objectmanager.h"
+#include "space.h"
 
 namespace spacel {
 namespace engine {
@@ -62,9 +63,12 @@ const bool Server::InitServer()
 	// @TODO get the seed from database
 	UniverseGenerator::instance()->SetSeed(180);
 
-	for (uint8_t i = 0; i < 10; i++) {
-		std::cout << UniverseGenerator::instance()->generate_world_name() << std::endl;
-	}
+	// Generate 1 galaxy with 1M solar systems
+	auto start = std::chrono::system_clock::now();
+	Universe::instance()->CreateGalaxy(1000 * 1000);
+	auto end = std::chrono::system_clock::now();
+	std::chrono::duration<double> elapsed_seconds = end - start;
+	std::cout << "Loading time: " << elapsed_seconds.count() << "s" << std::endl;
 
 	if (!LoadGameDatas()) {
 		m_loading_step = SERVERLOADINGSTEP_FAILED;

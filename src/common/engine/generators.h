@@ -44,6 +44,8 @@ public:
 	inline static void SetSeed(uint64_t seed) { s_seed = seed; }
 
 	std::string generate_world_name();
+	uint8_t generate_solarsystem_type(const uint64_t &ss_id);
+	double generate_solarsystem_double(const uint64_t &ss_id);
 private:
 	void InitRandomGeneratorIfNot();
 

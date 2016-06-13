@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include "generators.h"
+#include "space.h"
 
 namespace spacel {
 namespace engine {
@@ -79,6 +80,21 @@ std::string UniverseGenerator::generate_world_name()
 	res += name_suffixes[m_name_generators[1](m_random_generator)];
 
 	return res;
+}
+
+uint8_t UniverseGenerator::generate_solarsystem_type(const uint64_t &ss_id)
+{
+	std::mt19937 rndgen(s_seed + ss_id + 4096);
+	std::uniform_int_distribution<uint8_t> rnd(0, SOLAR_TYPE_MAX - 1);
+	return rnd(rndgen);
+}
+
+double UniverseGenerator::generate_solarsystem_double(const uint64_t &ss_id)
+{
+	std::mt19937 rndgen(s_seed + ss_id + 4096 * 4096);
+	// 20 Billion kilometers
+	std::uniform_real_distribution<double> rnd(0, 20.0f * 1000.0f * 1000.0f * 1000.0f);
+	return rnd(rndgen);
 }
 
 }
