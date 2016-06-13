@@ -49,6 +49,7 @@ private:
 
 	bool m_random_generator_inited = false;
 	std::mt19937 m_random_generator;
+	std::uniform_int_distribution<uint8_t> m_vowel_generator;
 	std::uniform_int_distribution<uint16_t> m_name_generators[4];
 	static UniverseGenerator *s_univgen;
 	static uint64_t s_seed;

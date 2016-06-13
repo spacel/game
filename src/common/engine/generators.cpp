@@ -43,12 +43,11 @@ static const char *name_suffixes[] = {
 };
 
 static const char *name_stem[] = {
-		"ad", "af", "am", "ass", "ast", "atr", "al", "aj",
-		"ed", "ef", "em", "ess", "est", "etr", "el", "ej",
-		"id", "if", "im", "iss", "ist", "itr", "il", "ij",
-		"od", "of", "om", "oss", "ost", "otr", "ol", "oj",
-		"ud", "uf", "um", "uss", "ust", "utr", "ul", "uj",
-		"yd", "yf", "ym", "yss", "yst", "ytr", "yl", "yj"
+		"d", "f", "m", "ss", "st", "tr", "l", "j"
+};
+
+static const char *vowels[] = {
+		"a", "e", "i", "o", "u", "y", "ou", "ae", "ie", "io"
 };
 
 void UniverseGenerator::InitRandomGeneratorIfNot()
@@ -56,6 +55,7 @@ void UniverseGenerator::InitRandomGeneratorIfNot()
 	if (!m_random_generator_inited) {
 		m_random_generator = std::mt19937(s_seed);
 
+		m_vowel_generator = std::uniform_int_distribution<uint8_t>(0, ARRLEN(vowels) - 1);
 		m_name_generators[0] = std::uniform_int_distribution<uint16_t>(0, ARRLEN(name_prefixes) - 1);
 		m_name_generators[1] = std::uniform_int_distribution<uint16_t>(0, ARRLEN(name_suffixes) - 1);
 		m_name_generators[2] = std::uniform_int_distribution<uint16_t>(0, ARRLEN(name_stem) - 1);
@@ -72,6 +72,7 @@ std::string UniverseGenerator::generate_world_name()
 	uint8_t stem_number = m_name_generators[3](m_random_generator) % 2;
 
 	for (uint8_t i = 0; i < stem_number; i++) {
+		res += vowels[m_vowel_generator(m_random_generator)];
 		res += name_stem[m_name_generators[2](m_random_generator)];
 	}
 
