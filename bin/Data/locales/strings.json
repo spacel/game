@@ -91,5 +91,23 @@
   },
   "Failed!": {
 	"fr": "Echec !"
+  },
+  "Full screen": {
+    "fr": "Plein écran "
+  },
+  "Sound Master : ":{
+    "fr": "Son principal : "
+  },
+  "Sound Music : ":{
+    "fr": "Son musique  : "
+  },
+  "Sound Effect : ":{
+    "fr": "Son effet : "
+  },
+  "Sound Ambient : ":{
+    "fr": "Son d'ambiance : "
+  },
+  "Sound Voice : ":{
+    "fr": "Son voix : "
   }
 }

@@ -38,7 +38,11 @@ static SettingDefault<uint32_t> s_u32settings[U32SETTINGS_MAX] = {
 
 static SettingDefault<float> s_floatsettings[FLOATSETTINGS_MAX] = {
 		{ "sound_ui_gain", 0.75f },
+		{ "sound_master_gain", 0.75f },
+		{ "sound_effect_gain", 0.75f },
 		{ "sound_music_gain", 0.75f },
+		{ "sound_ambient_gain", 0.75f },
+		{ "sound_voice_gain", 0.75f },
 		{ "timer_error_bubble", 15000.0f },
 };
 

@@ -22,6 +22,7 @@
 
 #include <Urho3D/Audio/Sound.h>
 #include <Urho3D/Audio/SoundSource.h>
+#include <Urho3D/Audio/Audio.h>
 #include <Urho3D/Core/CoreEvents.h>
 #include <Urho3D/Graphics/Texture2D.h>
 #include <Urho3D/Input/InputEvents.h>
@@ -31,6 +32,8 @@
 #include <Urho3D/UI/UIEvents.h>
 #include <Urho3D/Input/Input.h>
 #include <project_defines.h>
+#include <Urho3D/UI/CheckBox.h>
+#include <Urho3D/UI/Slider.h>
 
 using namespace Urho3D;
 
@@ -60,7 +63,7 @@ MainMenu::MainMenu(Context *context, ClientSettings *config, SpacelGame *main) :
 	m_window_menu = new Window(context_);
 	m_title = new Text(context_);
 	m_music_button = new Button(context_);
-	m_error_bubble_timer  = new Timer();
+	m_error_bubble_timer = new Timer();
 	except_unsubscribe.Push("E_KEYDOWN");
 }
 
@@ -82,7 +85,7 @@ void MainMenu::Start()
 
 	// Main menu music
 	m_ui_elem->AddChild(m_music_button);
-	m_music_button->SetStyle(m_enable_menu_music ? "SoundButton": "SoundButtonOff");
+	m_music_button->SetStyle(m_enable_menu_music ? "SoundButton" : "SoundButtonOff");
 	PlayMusic(m_enable_menu_music);
 	GetSubsystem<Input>()->SetMouseVisible(true);
 }
@@ -172,7 +175,8 @@ void MainMenu::HandleKeyDown(StringHash, VariantMap &eventData)
 				case MAINMENUID_SETTINGS_SOUND:
 					HandleSettingsPressed(StringHash(), eventData);
 					break;
-				default: break;
+				default:
+					break;
 			}
 			break;
 		case KEY_F12:
@@ -206,7 +210,7 @@ void MainMenu::HandleSingleplayerPressed(StringHash, VariantMap &eventData)
 	Button *back = CreateMainMenuButton("Back");
 	back->SetPosition(0, loadgame->GetPosition().y_ + back->GetSize().y_ + MAINMENU_BUTTON_SPACE);
 
-	SubscribeToEvent(newgame, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleNewGamePressed ));
+	SubscribeToEvent(newgame, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleNewGamePressed));
 	SubscribeToEvent(loadgame, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleLoadGamePressed));
 	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleMasterMenu));
 }
@@ -221,15 +225,14 @@ void MainMenu::HandleNewGamePressed(StringHash, VariantMap &eventData)
 
 	LineEdit *universename = CreateMainMenuLineEdit("universe_name", "Universe Name: ", 0, 65);
 
-	CreateMainMenuLineEdit("create_universe_seed", "Seed : ", 0,
-		universename->GetPosition().y_ + universename->GetSize().y_ + MAINMENU_BUTTON_SPACE);
+	CreateMainMenuLineEdit("create_universe_seed", "Seed : ", 0, universename->GetPosition().y_ + universename->GetSize().y_ + MAINMENU_BUTTON_SPACE);
 
 	Button *generateSeed = CreateMainMenuButton("Generate seed", "ButtonInLine", "TextButtonInLine");
-	generateSeed->SetPosition( -20,  universename->GetPosition().y_ + universename->GetSize().y_ + MAINMENU_BUTTON_SPACE);
+	generateSeed->SetPosition(-20, universename->GetPosition().y_ + universename->GetSize().y_ + MAINMENU_BUTTON_SPACE);
 	generateSeed->SetHorizontalAlignment(HA_RIGHT);
 
 	Button *create = CreateMainMenuButton("Create", "ButtonInLine", "TextButtonInLine");
-	create->SetPosition(0 + 50,  m_window_menu->GetSize().y_ - create->GetSize().y_ - MAINMENU_BUTTON_SPACE);
+	create->SetPosition(0 + 50, m_window_menu->GetSize().y_ - create->GetSize().y_ - MAINMENU_BUTTON_SPACE);
 	create->SetHorizontalAlignment(HA_LEFT);
 
 	Button *back = CreateMainMenuButton("Cancel", "ButtonInLine", "TextButtonInLine");
@@ -255,7 +258,7 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 		universe_creation = true;
 	}
 	else {
-		ListView * lv = dynamic_cast<ListView *>(m_window_menu->GetChild("loading_univerise_listview", true));
+		ListView *lv = dynamic_cast<ListView *>(m_window_menu->GetChild("loading_univerise_listview", true));
 		assert(lv);
 
 		universe_name = lv->GetSelectedItem()->GetName();
@@ -295,7 +298,7 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 		GetSubsystem<FileSystem>()->CreateDir(path_universe);
 	}
 
-	m_main->ChangeGameGlobalUI(GLOBALUI_LOADINGSCREEN, (void *)universe_name.CString());
+	m_main->ChangeGameGlobalUI(GLOBALUI_LOADINGSCREEN, (void *) universe_name.CString());
 }
 
 void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
@@ -319,7 +322,7 @@ void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
 
 	// TODO: WIP
 	if (!list_universe.Empty()) {
-		for (Vector<String>::Iterator it = list_universe.Begin() ; it != list_universe.End(); ++it) {
+		for (Vector<String>::Iterator it = list_universe.Begin(); it != list_universe.End(); ++it) {
 			if (it->Compare(".") != 0 && it->Compare("..") != 0) {
 				Text *text = new Text(context_);
 				universes_listview->AddItem(text);
@@ -343,7 +346,7 @@ void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
 	m_preview = m_window_menu->CreateChild<Sprite>();
 	m_preview->SetTexture(PreviewTexture);
 	m_preview->SetSize(150, 150);
-	m_preview->SetPosition(-m_preview->GetSize().x_ -35, m_window_menu->GetPosition().y_ + 15);
+	m_preview->SetPosition(-m_preview->GetSize().x_ - 35, m_window_menu->GetPosition().y_ + 15);
 	m_preview->SetHorizontalAlignment(HA_RIGHT);
 	m_preview->SetPriority(-90);
 
@@ -351,14 +354,14 @@ void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
 	Text *text = new Text(context_);
 	m_window_menu->AddChild(text);
 	text->SetStyle("Text");
-	text->SetPosition(-text->GetSize().x_ -35, m_window_menu->GetPosition().y_ + m_preview->GetSize().y_ + 25);
+	text->SetPosition(-text->GetSize().x_ - 35, m_window_menu->GetPosition().y_ + m_preview->GetSize().y_ + 25);
 	text->SetHorizontalAlignment(HA_RIGHT);
 	text->SetSize(20, 50);
 	text->SetText("Server Age : ");
 
 
 	Button *launch = CreateMainMenuButton("Launch", "ButtonInLine", "TextButtonInLine");
-	launch->SetPosition(0 + 50,  m_window_menu->GetSize().y_ - launch->GetSize().y_ - MAINMENU_BUTTON_SPACE);
+	launch->SetPosition(0 + 50, m_window_menu->GetSize().y_ - launch->GetSize().y_ - MAINMENU_BUTTON_SPACE);
 	launch->SetHorizontalAlignment(HA_LEFT);
 
 	Button *back = CreateMainMenuButton("Cancel", "ButtonInLine", "TextButtonInLine");
@@ -416,9 +419,32 @@ void MainMenu::HandleGraphicsPressed(StringHash, VariantMap &eventData)
 	SetTitle("Graphics");
 
 	Button *back = CreateMainMenuButton("Back");
-	back->SetPosition(0,  back->GetSize().y_ + 65);
+	back->SetPosition(0, back->GetSize().y_ + 65);
+
+	Text *text_full_screen = new Text(context_);
+	//full_screen->AddChild(text_full_screen);
+	text_full_screen->SetPosition(0, back->GetPosition().y_ + back->GetPosition().y_ + MAINMENU_BUTTON_SPACE);
+	text_full_screen->SetStyle("Text");
+	text_full_screen->SetText(m_l10n->Get("Full screen"));
+
+	CheckBox *full_screen = new CheckBox(context_);
+	full_screen->SetPosition(text_full_screen->GetPosition().x_ + 150,
+							 back->GetPosition().y_ + back->GetPosition().y_ + MAINMENU_BUTTON_SPACE);
+	full_screen->SetName("CheckBox");
+	full_screen->SetChecked(m_config->getBool(BSETTING_FULLSCREEN));
+
+	m_window_menu->AddChild(full_screen);
+	m_window_menu->AddChild(text_full_screen);
+
+	full_screen->SetStyleAuto();
 
 	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSettingsPressed));
+	SubscribeToEvent(full_screen, E_TOGGLED, URHO3D_HANDLER(MainMenu, HandleFullScreenPressed));
+}
+
+void MainMenu::HandleFullScreenPressed(StringHash eventType, VariantMap &eventData)
+{
+	m_config->setBool(BSETTING_FULLSCREEN, !m_config->getBool(BSETTING_FULLSCREEN));
 }
 
 void MainMenu::HandleSoundsPressed(StringHash, VariantMap &eventData)
@@ -428,11 +454,63 @@ void MainMenu::HandleSoundsPressed(StringHash, VariantMap &eventData)
 	UnsubscribeFromAllEventsExcept(except_unsubscribe, true);
 
 	SetTitle("Sound");
+	// master sound
+	Slider *slider_sound_master = CreateSliderWithLabels("Master", "Sound Master : ", 0, MAINMENU_BUTTON_SPACE, FLOATSETTINGS_SOUND_MASTER_GAIN);
+
+	// sound music
+	Slider *slider_sound_music = CreateSliderWithLabels("Music", "Sound Music : ", 0,
+														slider_sound_master->GetPosition().y_ + slider_sound_master->GetSize().y_ + MAINMENU_BUTTON_SPACE,
+														FLOATSETTINGS_SOUND_MUSIC_GAIN);
+	// sound effect
+	Slider *slider_sound_effect = CreateSliderWithLabels("Effect", "Sound Effect : ", 0,
+														 slider_sound_music->GetPosition().y_ + slider_sound_music->GetSize().y_ + MAINMENU_BUTTON_SPACE,
+														 FLOATSETTINGS_SOUND_EFFECT_GAIN);
+	// sound ambient
+	Slider *slider_sound_ambient = CreateSliderWithLabels("Ambient", "Sound Ambient : ", 0,
+														  slider_sound_effect->GetPosition().y_ + slider_sound_effect->GetSize().y_ + MAINMENU_BUTTON_SPACE,
+														  FLOATSETTINGS_SOUND_AMBIENT_GAIN);
+	// sound voice
+	Slider *slider_sound_voice = CreateSliderWithLabels("Voice", "Sound Voice : ", 0,
+														slider_sound_ambient->GetPosition().y_ + slider_sound_ambient->GetSize().y_ + MAINMENU_BUTTON_SPACE,
+														FLOATSETTINGS_SOUND_VOICE_GAIN);
 
 	Button *back = CreateMainMenuButton("Back");
-	back->SetPosition(0, back->GetSize().y_ + 65);
+	back->SetPosition(0, slider_sound_voice->GetSize().y_ + slider_sound_voice->GetPosition().y_ + MAINMENU_BUTTON_SPACE);
+
 
 	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSettingsPressed));
+	SubscribeToEvent(slider_sound_master, E_DRAGMOVE, URHO3D_HANDLER(MainMenu, HandleSoundsVolume));
+	SubscribeToEvent(slider_sound_music, E_DRAGMOVE, URHO3D_HANDLER(MainMenu, HandleSoundsVolume));
+	SubscribeToEvent(slider_sound_effect, E_DRAGMOVE, URHO3D_HANDLER(MainMenu, HandleSoundsVolume));
+	SubscribeToEvent(slider_sound_ambient, E_DRAGMOVE, URHO3D_HANDLER(MainMenu, HandleSoundsVolume));
+	SubscribeToEvent(slider_sound_voice, E_DRAGMOVE, URHO3D_HANDLER(MainMenu, HandleSoundsVolume));
+}
+
+void MainMenu::HandleSoundsVolume(StringHash eventType, VariantMap &eventData)
+{
+	Slider *slider_sound_music = static_cast<Slider *>(eventData[SliderChanged::P_ELEMENT].GetPtr());
+	String name = slider_sound_music->GetName();
+	Text *value_sound_music = static_cast<Text *>(m_window_menu->GetChild("value" + name, false));
+	value_sound_music->SetText(Urho3D::ToString("%f %%", floor(slider_sound_music->GetValue())));
+
+	GetSubsystem<Audio>()->SetMasterGain(name, (slider_sound_music->GetValue() / 100));
+
+	if (name == "Master") {
+		m_config->setFloat(FLOATSETTINGS_SOUND_MASTER_GAIN, slider_sound_music->GetValue());
+	}
+	else if (name == "Music") {
+		m_config->setFloat(FLOATSETTINGS_SOUND_MUSIC_GAIN, slider_sound_music->GetValue());
+	}
+	else if (name == "Effect") {
+		m_config->setFloat(FLOATSETTINGS_SOUND_EFFECT_GAIN, slider_sound_music->GetValue());
+	}
+	else if (name == "Ambient") {
+		m_config->setFloat(FLOATSETTINGS_SOUND_AMBIENT_GAIN, slider_sound_music->GetValue());
+	}
+	else if (name == "Voice") {
+		m_config->setFloat(FLOATSETTINGS_SOUND_VOICE_GAIN, slider_sound_music->GetValue());
+	}
+
 }
 
 void MainMenu::HandleGenerateSeedPressed(StringHash eventType, VariantMap &eventData)
@@ -446,8 +524,8 @@ void MainMenu::HandleUpdate(StringHash, VariantMap &eventData)
 	m_menu_background->SetSize(m_ui_elem->GetSize().x_, m_ui_elem->GetSize().y_);
 
 	if (m_enable_error_bubble_timer &&
-			m_error_bubble_timer->GetMSec(false) >= m_config->getFloat(FLOATSETTINGS_TIMER_ERROR_BUBBLE)) {
-		if (Window * error_bubble_window = dynamic_cast<Window *>(
+		m_error_bubble_timer->GetMSec(false) >= m_config->getFloat(FLOATSETTINGS_TIMER_ERROR_BUBBLE)) {
+		if (Window *error_bubble_window = dynamic_cast<Window *>(
 				m_window_menu->GetChild("error_window_bubble", true))) {
 			error_bubble_window->SetVisible(false);
 		}
@@ -460,7 +538,7 @@ void MainMenu::HandleMusicPressed(StringHash, VariantMap &eventData)
 {
 	m_enable_menu_music = !m_enable_menu_music;
 	m_config->setBool(BSETTING_ENABLE_MUSIC, m_enable_menu_music);
-	m_music_button->SetStyle(m_enable_menu_music ? "SoundButton": "SoundButtonOff");
+	m_music_button->SetStyle(m_enable_menu_music ? "SoundButton" : "SoundButtonOff");
 	PlayMusic(m_enable_menu_music);
 }
 
@@ -493,8 +571,7 @@ inline void MainMenu::SetTitle(const String &t)
 	m_title->SetText(m_l10n->Get(t));
 }
 
-Button *MainMenu::CreateMainMenuButton(const String &label, const String &button_style,
-		const String &label_style)
+Button *MainMenu::CreateMainMenuButton(const String &label, const String &button_style, const String &label_style)
 {
 	Button *b = new Button(context_);
 	b->SetStyle(button_style);
@@ -515,5 +592,45 @@ LineEdit *MainMenu::CreateMainMenuLineEdit(const String &name, const String &lab
 	CreateLineEditLabel(le, label);
 
 	return le;
+}
+
+Text *MainMenu::CreateText(const String &text, const String &name, const String &style)
+{
+	Text *t = new Text(context_);
+	t->SetText(m_l10n->Get(text));
+	t->SetName(name);
+	t->SetStyle(style);
+	return t;
+}
+
+Slider *MainMenu::CreateSlider(const String &name,
+							   const float value, const float range, const String &style)
+{
+	Slider *s = new Slider(context_);
+	//m_window_menu->AddChild(s);
+	s->SetName(name);
+	s->SetRange(range);
+	s->SetValue(value);
+	s->SetStyle(style);
+	s->SetEditable(true);
+	s->SetSelected(true);
+	return s;
+}
+
+Slider *MainMenu::CreateSliderWithLabels(const String &name, const String &label, const int x, const int y, const int setting)
+{
+	Text *text_sound = CreateText(label);
+	text_sound->SetPosition(x, y);
+	m_window_menu->AddChild(text_sound);
+
+	Text *value_sound = CreateText(Urho3D::ToString("%f %%", floor(m_config->getFloat(setting))), "value" + name);
+	value_sound->SetPosition(text_sound->GetSize().x_, text_sound->GetPosition().y_);
+	m_window_menu->AddChild(value_sound);
+
+	Slider *slider_sound = CreateSlider(name, m_config->getFloat(setting));
+	m_window_menu->AddChild(slider_sound);
+	slider_sound->SetPosition(-10, text_sound->GetPosition().y_);
+
+	return slider_sound;
 }
 }

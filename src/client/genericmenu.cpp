@@ -20,6 +20,7 @@
 
 #include <Urho3D/Audio/Sound.h>
 #include <Urho3D/Audio/SoundSource.h>
+#include <Urho3D/Audio/Audio.h>
 #include <Urho3D/Graphics/Graphics.h>
 #include <Urho3D/IO/FileSystem.h>
 #include <Urho3D/Scene/Node.h>
@@ -103,6 +104,7 @@ void GenericMenu::PlayMusic(const bool activate)
 		// Set the sound type to music so that master volume control works correctly
 		musicSource->SetSoundType(SOUND_MUSIC);
 		musicSource->Play(music);
+		GetSubsystem<Audio>()->SetMasterGain(SOUND_MUSIC, m_config->getFloat(FLOATSETTINGS_SOUND_MUSIC_GAIN) / 100);
 	} else {
 		m_scene->RemoveChild(m_scene->GetChild("Music"));
 	}

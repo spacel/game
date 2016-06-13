@@ -26,6 +26,7 @@
 #include <Urho3D/UI/Sprite.h>
 #include <Urho3D/UI/Text.h>
 #include <Urho3D/UI/Window.h>
+#include <Urho3D/UI/Slider.h>
 
 #include "genericmenu.h"
 #include "spacelgame.h"
@@ -57,6 +58,8 @@ private:
 	void HandleSettingsPressed(StringHash eventType, VariantMap &eventData);
 	void HandleGraphicsPressed(StringHash eventType, VariantMap &eventData);
 	void HandleSoundsPressed(StringHash eventType, VariantMap &eventData);
+	void HandleFullScreenPressed(StringHash eventType, VariantMap &eventData);
+	void HandleSoundsVolume(StringHash eventType, VariantMap &eventData);
 	void HandleUpdate(StringHash eventType, VariantMap &eventData);
 	void HandleMusicPressed(StringHash eventType, VariantMap &eventData);
 	void HandleGenerateSeedPressed(StringHash eventType, VariantMap &eventData);
@@ -73,6 +76,11 @@ private:
 			const String &label,
 			const int x,
 			const int y);
+	Text *CreateText(const String &text, const String &name = "Text",
+			const String &style = "Text");
+	Slider *CreateSlider(const String &name,
+			const float value = 100, const float range = 100, const String &style = "Slider");
+	Slider *CreateSliderWithLabels(const String &name, const String &label, const int x, const int y, const int SETTING);
 	void SetTitle(const String &t);
 
 	// Attributes
