@@ -134,6 +134,15 @@ public:
 	void CreateSolarSystem(Galaxy *galaxy);
 	bool RemoveSolarSystem(const uint64_t &id);
 
+	void SetUniverseName(const std::string &name) {	m_name = name; }
+	const std::string GetUniverseName() const { return m_name; }
+
+	void SetUniverseSeed(const uint64_t &seed) { m_seed = seed;	}
+	const uint64_t GetUniverseSeed() const { return m_seed; }
+
+	void SetUniverseBirth(const uint32_t birth) { m_birth = birth; }
+	const uint32_t GetUniverseBirth() const { return m_birth; }
+
 	inline static Universe *instance()
 	{
 		if (!Universe::s_universe) {
@@ -148,6 +157,10 @@ private:
 
 	uint64_t m_next_solarsystem_id = 1;
 	uint64_t m_next_galaxy_id = 1;
+
+	std::string m_name;
+	uint64_t m_seed;
+	uint32_t m_birth;
 
 	static Universe *s_universe;
 };

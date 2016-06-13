@@ -44,6 +44,9 @@
   "Load universe": {
     "fr": "Chargement d'un univers"
   },
+  "Universe age: ": {
+    "fr": "Age de l'univers: "
+  },
   "Create": {
     "fr": "Créer"
   },
@@ -53,8 +56,8 @@
   "Universe Name: ": {
     "fr": "Nom de l'univers : "
   },
-  "Seed : ": {
-    "fr": "Seed : "
+  "Seed: ": {
+    "fr": "Seed: "
   },
   "Generate seed": {
     "fr": "Générer un seed"
@@ -65,8 +68,11 @@
   "Universe name is empty": {
     "fr": "Le nom de l'univers est vide"
   },
+  "Universe seed is empty": {
+    "fr": "Le seed est vide"
+  },
   "You must select a universe.": {
-	"fr": "Vous devez sélectionner un univers."
+    "fr": "Vous devez sélectionner un univers."
   },
   "Launch": {
     "fr": "Lancer"
@@ -78,36 +84,36 @@
     "fr": "Textures/no_preview_fr.png"
   },
   "Loading...": {
-	"fr": "Chargement..."
+    "fr": "Chargement..."
   },
   "Not started.": {
-	"fr": "Non démarré."
+    "fr": "Non démarré."
   },
   "Game DB backend inited.": {
-	"fr": "Base de données du jeu initialisée."
+    "fr": "Base de données du jeu initialisée."
   },
   "Started!": {
-	"fr": "Démarré !"
+    "fr": "Démarré !"
   },
   "Failed!": {
-	"fr": "Echec !"
+    "fr": "Echec !"
   },
   "Full screen": {
     "fr": "Plein écran "
   },
-  "Sound Master : ":{
-    "fr": "Son principal : "
+  "Sound Master: ":{
+    "fr": "Son principal: "
   },
-  "Sound Music : ":{
-    "fr": "Son musique  : "
+  "Sound Music: ":{
+    "fr": "Son musique: "
   },
-  "Sound Effect : ":{
-    "fr": "Son effet : "
+  "Sound Effect: ":{
+    "fr": "Son effet: "
   },
-  "Sound Ambient : ":{
-    "fr": "Son d'ambiance : "
+  "Sound Ambient: ":{
+    "fr": "Son d'ambiance: "
   },
-  "Sound Voice : ":{
-    "fr": "Son voix : "
+  "Sound Voice: ":{
+    "fr": "Son voix: "
   }
 }

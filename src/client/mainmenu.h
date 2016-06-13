@@ -21,6 +21,7 @@
 #pragma once
 
 #include <Urho3D/Engine/Application.h>
+#include <Urho3D/Resource/Image.h>
 #include <Urho3D/Resource/Localization.h>
 #include <Urho3D/UI/ListView.h>
 #include <Urho3D/UI/Sprite.h>
@@ -28,6 +29,7 @@
 #include <Urho3D/UI/Window.h>
 #include <Urho3D/UI/Slider.h>
 
+#include <common/engine/databases/database-sqlite3.h>
 #include "genericmenu.h"
 #include "spacelgame.h"
 
@@ -62,6 +64,7 @@ private:
 	void HandleSoundsVolume(StringHash eventType, VariantMap &eventData);
 	void HandleUpdate(StringHash eventType, VariantMap &eventData);
 	void HandleMusicPressed(StringHash eventType, VariantMap &eventData);
+	void HandleInfosUniverseClicked(StringHash, VariantMap &eventData);
 	void HandleGenerateSeedPressed(StringHash eventType, VariantMap &eventData);
 	void Background();
 	void Title();
@@ -90,11 +93,13 @@ private:
 	SharedPtr<UIElement> m_ui_elem;
 	SharedPtr<Window> m_window_menu;
 	SharedPtr<Text> m_title;
+	SharedPtr<Text> m_universe_infos;
 	SharedPtr<Button> m_music_button;
 	bool m_enable_menu_music;
 	Timer *m_error_bubble_timer;
 	bool m_enable_error_bubble_timer = false;
 	SharedPtr<Sprite> m_menu_background;
+	SharedPtr<Image> m_preview_image;
 	SharedPtr<Sprite> m_preview;
 	PODVector<StringHash> except_unsubscribe;
 };

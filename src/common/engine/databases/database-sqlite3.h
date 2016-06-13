@@ -43,6 +43,8 @@ enum SQLite3Stmt
 	SQLITE3STMT_CREATE_SOLARSYSTEM,
 	SQLITE3STMT_LOAD_SOLARSYSTEM,
 	SQLITE3STMT_LOAD_SOLARSYSTEMS_FOR_GALAXY,
+	SQLITE3STMT_CREATE_UNIVERSE,
+	SQLITE3STMT_LOAD_UNIVERSE,
 	SQLITE3STMT_COUNT,
 };
 
@@ -61,6 +63,8 @@ public:
 	void CreateSolarSystem(engine::SolarSystem *ss);
 	SolarSystem *LoadSolarSystem(const uint64_t &ss_id);
 	void LoadSolarSystemsForGalaxy(Galaxy *galaxy);
+	void CreateUniverse(const std::string &name, const uint64_t &seed);
+	void LoadUniverse(const std::string &name);
 
 private:
 	void Open();

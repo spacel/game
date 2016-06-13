@@ -17,11 +17,12 @@
  * along with Spacel.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
 #include <sqlite3.h>
 #include "porting.h"
 #include "database-sqlite3.h"
 #include "time_utils.h"
-#include "engine/space.h"
+#include "../../engine/space.h"
 
 namespace spacel {
 namespace engine {
@@ -33,7 +34,9 @@ static const char* stmt_list[SQLITE3STMT_COUNT] = {
 		"SELECT `galaxy_name`,`pos_x`,`pos_y`,`pos_z` FROM `galaxies` WHERE galaxy_id = ?",
 		"INSERT INTO `solar_systems`(`solarsystem_id`,`galaxy_id`,`solarsystem_name`,`type`,`pos_x`,`pos_y`,`pos_z`,`radius`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 		"SELECT `galaxy_id`,`solarsystem_name`,`type`,`pos_x`,`pos_y`,`pos_z`,`radius` FROM `solar_systems` WHERE `solarsystem_id` = ?",
-		"SELECT `solarsystem_id`,`solarsystem_name`,`type`,`pos_x`,`pos_y`,`pos_z`,`radius` FROM `solar_systems` WHERE `galaxy_id` = ?"
+		"SELECT `solarsystem_id`,`solarsystem_name`,`type`,`pos_x`,`pos_y`,`pos_z`,`radius` FROM `solar_systems` WHERE `galaxy_id` = ?",
+		"INSERT INTO `gameconfig` (`universe_name`, `seed`, `universe_birth`) VALUES (?, ?, ?)",
+		"SELECT `seed`, `universe_birth` FROM `gameconfig` WHERE `universe_name` = ?"
 };
 
 #define BUSY_INFO_THRESHOLD	100	// Print first informational message after 100ms.
@@ -77,70 +80,70 @@ bool DatabaseSQLite3::Close()
 void DatabaseSQLite3::UpdateSchema()
 {
 	static const char *dbcreate_sql = "CREATE TABLE IF NOT EXISTS `gameversion` ("
-			 "	version INT NOT NULL"
-			 ");"
-			 "INSERT INTO `gameversion` (`version`) VALUES (1);";
+		"	version INT NOT NULL"
+		");"
+		"INSERT INTO `gameversion` (`version`) VALUES (1);";
 
 	sqlite3_verify(sqlite3_exec(m_database, dbcreate_sql, NULL, NULL, NULL));
 
 	static const char *gameconfig_table_sql = "CREATE TABLE IF NOT EXISTS `gameconfig` ("
-			"	universe_id INTEGER NOT NULL PRIMARY KEY,"
-			"	universe_name VARCHAR(32) NOT NULL,"
-			"	seed BIGINT NOT NULL,"
-			"	galaxy_generated SMALLINT NOT NULL DEFAULT(0)"
-			");";
+		"	universe_name VARCHAR(32) NOT NULL UNIQUE,"
+		"	seed BIGINT NOT NULL,"
+		"	galaxy_generated SMALLINT NOT NULL DEFAULT(0),"
+		"	universe_birth BIGINT NOT NULL"
+		");";
 
 	sqlite3_verify(sqlite3_exec(m_database, gameconfig_table_sql, NULL, NULL, NULL));
 
 	static const char *galaxy_table_sql = "CREATE TABLE IF NOT EXISTS `galaxies` ("
-			"	galaxy_id BIGINT NOT NULL PRIMARY KEY,"
-			"	galaxy_name VARCHAR(32) NOT NULL,"
-			"	pos_x REAL NOT NULL,"
-			"	pos_y REAL NOT NULL,"
-			"	pos_z REAL NOT NULL"
-			");";
+		"	galaxy_id BIGINT NOT NULL PRIMARY KEY,"
+		"	galaxy_name VARCHAR(32) NOT NULL,"
+		"	pos_x REAL NOT NULL,"
+		"	pos_y REAL NOT NULL,"
+		"	pos_z REAL NOT NULL"
+		");";
 
 	sqlite3_verify(sqlite3_exec(m_database, galaxy_table_sql, NULL, NULL, NULL));
 
 	static const char *solarsystem_table_sql = "CREATE TABLE IF NOT EXISTS `solar_systems` ("
-			"	solarsystem_id BIGINT NOT NULL PRIMARY KEY,"
-			"	galaxy_id INTEGER NOT NULL,"
-			"	solarsystem_name VARCHAR(48) NOT NULL,"
-			"	type SMALLINT NOT NULL,"
-			"	pos_x REAL NOT NULL,"
-			"	pos_y REAL NOT NULL,"
-			"	pos_z REAL NOT NULL,"
-			"	radius REAL NOT NULL,"
-			"	FOREIGN KEY (galaxy_id) REFERENCES `galaxies` (galaxy_id) ON DELETE CASCADE"
-			");";
+		"	solarsystem_id BIGINT NOT NULL PRIMARY KEY,"
+		"	galaxy_id INTEGER NOT NULL,"
+		"	solarsystem_name VARCHAR(48) NOT NULL,"
+		"	type SMALLINT NOT NULL,"
+		"	pos_x REAL NOT NULL,"
+		"	pos_y REAL NOT NULL,"
+		"	pos_z REAL NOT NULL,"
+		"	radius REAL NOT NULL,"
+		"	FOREIGN KEY (galaxy_id) REFERENCES `galaxies` (galaxy_id) ON DELETE CASCADE"
+		");";
 
 	sqlite3_verify(sqlite3_exec(m_database, solarsystem_table_sql, NULL, NULL, NULL));
 
 	static const char *planet_table_sql = "CREATE TABLE IF NOT EXISTS `planets` ("
-			"	planet_id BIGINT NOT NULL PRIMARY KEY,"
-			"	solarsystem_id INTEGER NOT NULL,"
-			"	type SMALLINT NOT NULL,"
-			"	pos_x REAL NOT NULL,"
-			"	pos_y REAL NOT NULL,"
-			"	pos_z REAL NOT NULL,"
-			"	distance_to_parent REAL NOT NULL,"
-			"	radius REAL NOT NULL,"
-			"	FOREIGN KEY (solarsystem_id) REFERENCES `solar_systems` (solarsystem_id) ON DELETE CASCADE"
-			");";
+		"	planet_id BIGINT NOT NULL PRIMARY KEY,"
+		"	solarsystem_id INTEGER NOT NULL,"
+		"	type SMALLINT NOT NULL,"
+		"	pos_x REAL NOT NULL,"
+		"	pos_y REAL NOT NULL,"
+		"	pos_z REAL NOT NULL,"
+		"	distance_to_parent REAL NOT NULL,"
+		"	radius REAL NOT NULL,"
+		"	FOREIGN KEY (solarsystem_id) REFERENCES `solar_systems` (solarsystem_id) ON DELETE CASCADE"
+		");";
 
 	sqlite3_verify(sqlite3_exec(m_database, planet_table_sql, NULL, NULL, NULL));
 
 	static const char *moon_table_sql = "CREATE TABLE IF NOT EXISTS `moons` ("
-			"	moon_id BIGINT NOT NULL PRIMARY KEY,"
-			"	planet_id INTEGER NOT NULL,"
-			"	type SMALLINT NOT NULL,"
-			"	pos_x REAL NOT NULL,"
-			"	pos_y REAL NOT NULL,"
-			"	pos_z REAL NOT NULL,"
-			"	distance_to_parent REAL NOT NULL,"
-			"	radius REAL NOT NULL,"
-			"	FOREIGN KEY (planet_id) REFERENCES `planets` (planet_id) ON DELETE CASCADE"
-			");";
+		"	moon_id BIGINT NOT NULL PRIMARY KEY,"
+		"	planet_id INTEGER NOT NULL,"
+		"	type SMALLINT NOT NULL,"
+		"	pos_x REAL NOT NULL,"
+		"	pos_y REAL NOT NULL,"
+		"	pos_z REAL NOT NULL,"
+		"	distance_to_parent REAL NOT NULL,"
+		"	radius REAL NOT NULL,"
+		"	FOREIGN KEY (planet_id) REFERENCES `planets` (planet_id) ON DELETE CASCADE"
+		");";
 
 	sqlite3_verify(sqlite3_exec(m_database, moon_table_sql, NULL, NULL, NULL));
 }
@@ -291,5 +294,28 @@ void DatabaseSQLite3::LoadSolarSystemsForGalaxy(Galaxy *galaxy)
 	reset_stmt(SQLITE3STMT_LOAD_GALAXY);
 }
 
+void DatabaseSQLite3::CreateUniverse(const std::string &name, const uint64_t &seed)
+{
+	CheckDatabase();
+	str_to_sqlite(SQLITE3STMT_CREATE_UNIVERSE, 1, name);
+	uint64_to_sqlite(SQLITE3STMT_CREATE_UNIVERSE, 2, seed);
+	uint64_to_sqlite(SQLITE3STMT_CREATE_UNIVERSE, 3, get_current_time());
+	sqlite3_verify(stmt_step(SQLITE3STMT_CREATE_UNIVERSE), SQLITE_DONE);
+	reset_stmt(SQLITE3STMT_CREATE_UNIVERSE);
+}
+
+void DatabaseSQLite3::LoadUniverse(const std::string &name)
+{
+	CheckDatabase();
+	str_to_sqlite(SQLITE3STMT_LOAD_UNIVERSE, 1, name);
+	if (stmt_step(SQLITE3STMT_LOAD_UNIVERSE) == SQLITE_ROW) {
+		engine::Universe::instance()->SetUniverseName(name);
+		engine::Universe::instance()->SetUniverseSeed(sqlite_to_uint64(SQLITE3STMT_LOAD_UNIVERSE, 0));
+		engine::Universe::instance()->SetUniverseBirth(sqlite_to_int(SQLITE3STMT_LOAD_UNIVERSE, 1));
+		reset_stmt(SQLITE3STMT_LOAD_UNIVERSE);
+		return;
+	}
+	reset_stmt(SQLITE3STMT_LOAD_UNIVERSE);
+}
 }
 }

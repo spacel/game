@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "exception_utils.h"
+#include "../../exception_utils.h"
 
 namespace spacel {
 

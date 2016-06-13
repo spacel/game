@@ -19,6 +19,9 @@
  */
 
 #include "mainmenu.h"
+#include <common/engine/generators.h>
+#include <common/engine/space.h>
+#include <common/time_utils.h>
 
 #include <Urho3D/Audio/Sound.h>
 #include <Urho3D/Audio/SoundSource.h>
@@ -53,7 +56,7 @@ enum MainMenuIds
 
 #define MAINMENU_BUTTON_SPACE 20
 
-MainMenu::MainMenu(Context *context, ClientSettings *config, SpacelGame *main) :
+MainMenu::MainMenu(Context *context, ClientSettings *config, SpacelGame *main):
 		GenericMenu(context, config),
 		m_main(main),
 		m_enable_menu_music(m_config->getBool(BSETTING_ENABLE_MUSIC))
@@ -62,6 +65,7 @@ MainMenu::MainMenu(Context *context, ClientSettings *config, SpacelGame *main) :
 	m_ui_elem->SetDefaultStyle(m_cache->GetResource<XMLFile>("UI/MainMenuStyle.xml"));
 	m_window_menu = new Window(context_);
 	m_title = new Text(context_);
+	m_universe_infos = new Text(context_);
 	m_music_button = new Button(context_);
 	m_error_bubble_timer = new Timer();
 	except_unsubscribe.Push("E_KEYDOWN");
@@ -224,9 +228,11 @@ void MainMenu::HandleNewGamePressed(StringHash, VariantMap &eventData)
 	SetTitle("New universe");
 
 	LineEdit *universename = CreateMainMenuLineEdit("universe_name", "Universe Name: ", 0, 65);
+	universename->SetMaxLength(32);
 
-	CreateMainMenuLineEdit("create_universe_seed", "Seed : ", 0,
+	LineEdit *universeseed = CreateMainMenuLineEdit("create_universe_seed", "Seed: ", 0,
 		universename->GetPosition().y_ + universename->GetSize().y_ + MAINMENU_BUTTON_SPACE);
+	universeseed->SetMaxLength(20);
 
 	Button *generateSeed = CreateMainMenuButton("Generate seed", "ButtonInLine", "TextButtonInLine");
 	generateSeed->SetPosition(-20, universename->GetPosition().y_ + universename->GetSize().y_ + MAINMENU_BUTTON_SPACE);
@@ -249,12 +255,16 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 {
 	// @TODO Find the better way to load & creator universe here
 	String universe_name = "";
+	String universe_seed = "";
+	uint64_t seed = 0;
 	bool universe_creation = false;
 
 	// Universe creation
-	LineEdit *le = dynamic_cast<LineEdit *>(m_window_menu->GetChild("universe_name", true));
-	if (le != nullptr) {
-		universe_name = le->GetText();
+	LineEdit *name_le = dynamic_cast<LineEdit *>(m_window_menu->GetChild("universe_name", true));
+	LineEdit *seed_le = dynamic_cast<LineEdit *>(m_window_menu->GetChild("create_universe_seed", true));
+	if (name_le != nullptr) {
+		universe_name = name_le->GetText();
+		universe_seed = seed_le->GetText();
 		URHO3D_LOGDEBUGF("User wants to create universe %s", universe_name.CString());
 		universe_creation = true;
 	}
@@ -262,8 +272,12 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 		ListView *lv = dynamic_cast<ListView *>(m_window_menu->GetChild("loading_univerise_listview", true));
 		assert(lv);
 
-		universe_name = lv->GetSelectedItem()->GetName();
-		URHO3D_LOGDEBUGF("User wants to load universe %s", universe_name.CString());
+		// @TODO: Segfault if not selected item
+		if (lv->GetSelectedItem() != nullptr) {
+			universe_name = lv->GetSelectedItem()->GetName();
+			engine::UniverseGenerator::SetSeed(engine::Universe::instance()->GetUniverseSeed());
+			URHO3D_LOGDEBUGF("User wants to load universe %s", universe_name.CString());
+		}
 		// @TODO find a way to retrieve the universe_name selected for loading
 	}
 
@@ -288,18 +302,27 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 			URHO3D_LOGERROR("Universe name is empty");
 			return;
 		}
-	}
-	else if (universe_name.Empty()) {
+
+		if (universe_seed.Empty()) {
+			seed = engine::UniverseGenerator::generate_seed();
+		} else {
+			seed  = std::stoull(seed_le->GetText().CString());
+		}
+		engine::UniverseGenerator::SetSeed(seed);
+
+		if (!GetSubsystem<FileSystem>()->DirExists(path_universe)) {
+			GetSubsystem<FileSystem>()->CreateDir(path_universe);
+		}
+
+		engine::DatabaseSQLite3 game_database(std::string(path_universe.CString()));
+		game_database.CreateUniverse(std::string(universe_name.CString()), seed);
+	} else if (universe_name.Empty()) {
 		ShowErrorBubble("You must select a universe.");
 		URHO3D_LOGERROR("No universe selected when loading.");
 		return;
 	}
 
-	if (!GetSubsystem<FileSystem>()->DirExists(path_universe)) {
-		GetSubsystem<FileSystem>()->CreateDir(path_universe);
-	}
-
-	m_main->ChangeGameGlobalUI(GLOBALUI_LOADINGSCREEN, (void *) universe_name.CString());
+	m_main->ChangeGameGlobalUI(GLOBALUI_LOADINGSCREEN, (void *)universe_name.CString());
 }
 
 void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
@@ -318,10 +341,8 @@ void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
 	m_window_menu->AddChild(universes_listview);
 	universes_listview->SetStyle("ListView");
 	universes_listview->SetName("loading_univerise_listview");
-	universes_listview->SetMultiselect(false);
-	universes_listview->SetHighlightMode(HM_ALWAYS);
+	universes_listview->SetSize(m_window_menu->GetSize().x_ / 2, m_window_menu->GetSize().y_ - 125);
 
-	// TODO: WIP
 	if (!list_universe.Empty()) {
 		for (Vector<String>::Iterator it = list_universe.Begin(); it != list_universe.End(); ++it) {
 			if (it->Compare(".") != 0 && it->Compare("..") != 0) {
@@ -347,19 +368,14 @@ void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
 	m_preview = m_window_menu->CreateChild<Sprite>();
 	m_preview->SetTexture(PreviewTexture);
 	m_preview->SetSize(150, 150);
-	m_preview->SetPosition(-m_preview->GetSize().x_ - 35, m_window_menu->GetPosition().y_ + 15);
-	m_preview->SetHorizontalAlignment(HA_RIGHT);
+	m_preview->SetPosition(universes_listview->GetSize().x_ + (universes_listview->GetSize().x_ / 2), m_window_menu->GetPosition().y_ + MAINMENU_BUTTON_SPACE);
 	m_preview->SetPriority(-90);
 
 	// TODO: Information universe (WIP)
-	Text *text = new Text(context_);
-	m_window_menu->AddChild(text);
-	text->SetStyle("Text");
-	text->SetPosition(-text->GetSize().x_ - 35, m_window_menu->GetPosition().y_ + m_preview->GetSize().y_ + 25);
-	text->SetHorizontalAlignment(HA_RIGHT);
-	text->SetSize(20, 50);
-	text->SetText("Server Age : ");
-
+	m_window_menu->AddChild(m_universe_infos);
+	m_universe_infos->SetStyle("TextUnivInfo");
+	m_universe_infos->SetPosition(universes_listview->GetSize().x_ + 50, m_preview->GetPosition().y_ + m_preview->GetSize().y_ + 50);
+	m_universe_infos->SetText(m_l10n->Get("Universe age: ") + "\n" + m_l10n->Get("Seed: "));
 
 	Button *launch = CreateMainMenuButton("Launch", "ButtonInLine", "TextButtonInLine");
 	launch->SetPosition(0 + 50, m_window_menu->GetSize().y_ - launch->GetSize().y_ - MAINMENU_BUTTON_SPACE);
@@ -369,7 +385,7 @@ void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
 	back->SetPosition(0 - 50, m_window_menu->GetSize().y_ - back->GetSize().y_ - MAINMENU_BUTTON_SPACE);
 	back->SetHorizontalAlignment(HA_RIGHT);
 
-	//SubscribeToEvent(listview_univers, E_ITEMSELECTED, URHO3D_HANDLER(MainMenu, HandleUniversSelectionItemClick));
+	SubscribeToEvent(universes_listview, E_ITEMCLICKED, URHO3D_HANDLER(MainMenu, HandleInfosUniverseClicked));
 	SubscribeToEvent(universes_listview, E_ITEMDOUBLECLICKED, URHO3D_HANDLER(MainMenu, HandleLaunchGamePressed));
 	SubscribeToEvent(launch, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleLaunchGamePressed));
 	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSingleplayerPressed));
@@ -456,32 +472,31 @@ void MainMenu::HandleSoundsPressed(StringHash, VariantMap &eventData)
 
 	SetTitle("Sound");
 	// master sound
-	Slider *slider_sound_master = CreateSliderWithLabels("Master", "Sound Master : ", 0, MAINMENU_BUTTON_SPACE,
+	Slider *slider_sound_master = CreateSliderWithLabels("Master", "Sound Master: ", 0, MAINMENU_BUTTON_SPACE,
 		FLOATSETTINGS_SOUND_MASTER_GAIN);
 
 	// sound music
-	Slider *slider_sound_music = CreateSliderWithLabels("Music", "Sound Music : ", 0,
+	Slider *slider_sound_music = CreateSliderWithLabels("Music", "Sound Music: ", 0,
 		slider_sound_master->GetPosition().y_ + slider_sound_master->GetSize().y_ + MAINMENU_BUTTON_SPACE,
 		FLOATSETTINGS_SOUND_MUSIC_GAIN);
 
 	// sound effect
-	Slider *slider_sound_effect = CreateSliderWithLabels("Effect", "Sound Effect : ", 0,
+	Slider *slider_sound_effect = CreateSliderWithLabels("Effect", "Sound Effect: ", 0,
 		slider_sound_music->GetPosition().y_ + slider_sound_music->GetSize().y_ + MAINMENU_BUTTON_SPACE,
 		FLOATSETTINGS_SOUND_EFFECT_GAIN);
 
 	// sound ambient
-	Slider *slider_sound_ambient = CreateSliderWithLabels("Ambient", "Sound Ambient : ", 0,
+	Slider *slider_sound_ambient = CreateSliderWithLabels("Ambient", "Sound Ambient: ", 0,
 		slider_sound_effect->GetPosition().y_ + slider_sound_effect->GetSize().y_ + MAINMENU_BUTTON_SPACE,
 		FLOATSETTINGS_SOUND_AMBIENT_GAIN);
 
 	// sound voice
-	Slider *slider_sound_voice = CreateSliderWithLabels("Voice", "Sound Voice : ", 0,
+	Slider *slider_sound_voice = CreateSliderWithLabels("Voice", "Sound Voice: ", 0,
 		slider_sound_ambient->GetPosition().y_ + slider_sound_ambient->GetSize().y_ + MAINMENU_BUTTON_SPACE,
 		FLOATSETTINGS_SOUND_VOICE_GAIN);
 
 	Button *back = CreateMainMenuButton("Back");
 	back->SetPosition(0, slider_sound_voice->GetSize().y_ + slider_sound_voice->GetPosition().y_ + MAINMENU_BUTTON_SPACE);
-
 
 	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSettingsPressed));
 	SubscribeToEvent(slider_sound_master, E_DRAGMOVE, URHO3D_HANDLER(MainMenu, HandleSoundsVolume));
@@ -520,7 +535,7 @@ void MainMenu::HandleSoundsVolume(StringHash eventType, VariantMap &eventData)
 
 void MainMenu::HandleGenerateSeedPressed(StringHash eventType, VariantMap &eventData)
 {
-	String seed_str = std::to_string(Rand()).c_str();
+	String seed_str = ToString(std::to_string(engine::UniverseGenerator::generate_seed()).c_str());
 	static_cast<LineEdit *>(m_window_menu->GetChild("create_universe_seed", true))->SetText(seed_str);
 }
 
@@ -547,6 +562,24 @@ void MainMenu::HandleMusicPressed(StringHash, VariantMap &eventData)
 	PlayMusic(m_enable_menu_music);
 }
 
+void MainMenu::HandleInfosUniverseClicked(StringHash, VariantMap &eventData)
+{
+	ListView *lv = static_cast<ListView *>(eventData[ItemSelected::P_ELEMENT].GetPtr());
+	assert(lv);
+
+	String universe_name = lv->GetSelectedItem()->GetName();
+	const String path_universe = GetSubsystem<FileSystem>()->GetAppPreferencesDir(
+			"spacel", "universe") + universe_name;
+
+	engine::DatabaseSQLite3 game_database(std::string(path_universe.CString()));
+	game_database.LoadUniverse(std::string(universe_name.CString()));
+
+	m_universe_infos->SetText(m_l10n->Get("Universe age: ") +
+		ToString("%s", timestamp_to_string(engine::Universe::instance()->GetUniverseBirth()).c_str()) + "\n" +
+		m_l10n->Get("Seed: ") +
+		ToString("%s", std::to_string(engine::Universe::instance()->GetUniverseSeed()).c_str()));
+}
+
 void MainMenu::ShowErrorBubble(const String &message, ...)
 {
 	m_enable_error_bubble_timer = true;
@@ -555,10 +588,9 @@ void MainMenu::ShowErrorBubble(const String &message, ...)
 	Window *error_bubble_window = dynamic_cast<Window *>(m_window_menu->GetChild("error_window_bubble", true));
 	if (!error_bubble_window) {
 		error_bubble_window = new Window(context_);
+		m_window_menu->AddChild(error_bubble_window);
 		error_bubble_window->SetStyle("ErrorBubble");
 		error_bubble_window->SetName("error_window_bubble");
-		error_bubble_window->SetPosition(0, 15);
-		m_window_menu->AddChild(error_bubble_window);
 
 		Text *error_txt = new Text(context_);
 		error_txt->SetStyle("ErrorBubbleText");
@@ -566,7 +598,7 @@ void MainMenu::ShowErrorBubble(const String &message, ...)
 		error_txt->SetText(m_l10n->Get(message));
 		error_bubble_window->AddChild(error_txt);
 	} else {
-		static_cast<Text *>(m_window_menu->GetChild("error_bubble_text", true))->SetText(message);
+		static_cast<Text *>(m_window_menu->GetChild("error_bubble_text", true))->SetText(m_l10n->Get(message));
 	}
 	error_bubble_window->SetVisible(true);
 }
