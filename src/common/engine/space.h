@@ -130,7 +130,7 @@ public:
 	void CreateGalaxy(const uint64_t &max_solar_systems);
 	bool RemoveGalaxy(const uint64_t &id);
 
-	void CreateSolarSystem(Galaxy* galaxy);
+	void CreateSolarSystem(Galaxy *galaxy);
 	bool RemoveSolarSystem(const uint64_t &id);
 
 	inline static Universe *instance()

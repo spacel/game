@@ -52,7 +52,7 @@ Universe::~Universe()
 	}
 }
 
-void Universe::CreateSolarSystem(Galaxy* galaxy)
+void Universe::CreateSolarSystem(Galaxy *galaxy)
 {
 	// @TODO random
 	while (m_solar_systems.find(m_next_solarsystem_id) != m_solar_systems.end()) {
@@ -105,7 +105,7 @@ void Universe::CreateGalaxy(const uint64_t &max_solar_systems)
 		m_next_galaxy_id++;
 	}
 
-	Galaxy* galaxy = new Galaxy();
+	Galaxy *galaxy = new Galaxy();
 	galaxy->id = m_next_galaxy_id;
 	galaxy->name = UniverseGenerator::instance()->generate_world_name();
 
