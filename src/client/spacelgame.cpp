@@ -68,7 +68,7 @@ void SpacelGame::Setup()
 	engineParameters_["LogLevel"] = LOG_DEBUG;
 	engineParameters_["LogQuiet"] = m_config->getBool(BSETTING_LOGQUIET);
 	engineParameters_["LogName"] = GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "logs") +
-		"SpacelGame.log";
+		"SpacelGame_" + Time::GetTimeStamp().Replaced(':', '_').Replaced('.', '_').Replaced(' ', '_') + ".log";
 	InitLocales();
 }
 
