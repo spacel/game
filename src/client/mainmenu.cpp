@@ -429,7 +429,7 @@ void MainMenu::HandleGraphicsPressed(StringHash, VariantMap &eventData)
 
 	CheckBox *full_screen = new CheckBox(context_);
 	full_screen->SetPosition(text_full_screen->GetPosition().x_ + 150,
-							 back->GetPosition().y_ + back->GetPosition().y_ + MAINMENU_BUTTON_SPACE);
+		back->GetPosition().y_ + back->GetPosition().y_ + MAINMENU_BUTTON_SPACE);
 	full_screen->SetName("CheckBox");
 	full_screen->SetChecked(m_config->getBool(BSETTING_FULLSCREEN));
 
@@ -526,7 +526,7 @@ void MainMenu::HandleUpdate(StringHash, VariantMap &eventData)
 	if (m_enable_error_bubble_timer &&
 		m_error_bubble_timer->GetMSec(false) >= m_config->getFloat(FLOATSETTINGS_TIMER_ERROR_BUBBLE)) {
 		if (Window *error_bubble_window = dynamic_cast<Window *>(
-				m_window_menu->GetChild("error_window_bubble", true))) {
+			m_window_menu->GetChild("error_window_bubble", true))) {
 			error_bubble_window->SetVisible(false);
 		}
 
