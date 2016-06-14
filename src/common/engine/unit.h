@@ -1,7 +1,7 @@
 /*
  * This file is part of Spacel game.
  *
- * Copyright 2016, Loic Blot <loic.blot@unix-experience.fr>
+ * Copyright 2016, Vincent Glize <vincent.glize@live.fr>
  *
  * Spacel is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,28 +19,22 @@
 
 #pragma once
 
-#include <cstdint>
-#include <memory>
-#include <unordered_map>
-#include "item.h"
+#include "object.h"
 
 namespace spacel {
+
 namespace engine {
 
-class Inventory
-{
+class Unit : public Object {
 public:
-	Inventory(uint16_t size);
-	~Inventory() {}
+	Unit() {};
+	~Unit() {};
+	virtual const ObjectType GetType() const { return OBJECT_TYPE_UNIT; }
+protected:
+	float m_velocity = 100;
 
-	bool AddItemIntoFirstAvailableSlot(ItemStackPtr stack);
-	ItemStackPtr GetItem(const uint16_t slot_id);
-	bool AddItem(const uint16_t slot_id, ItemStackPtr stack);
-private:
-	uint16_t m_size = 0;
-	std::unordered_map<uint16_t, ItemStackPtr> m_items;
 };
 
-typedef std::shared_ptr<Inventory> InventoryPtr;
 }
+
 }

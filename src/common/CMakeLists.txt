@@ -4,10 +4,11 @@ set(common_sources
 	engine/inventory.cpp
 	engine/generators.cpp
 	engine/objectmanager.cpp
+	engine/player.cpp
 	engine/server.cpp
 	engine/space.cpp
 	engine/databases/database-sqlite3.cpp
-)
+	engine/gameobject.cpp)
 
 find_package(Urho3D REQUIRED)
 
