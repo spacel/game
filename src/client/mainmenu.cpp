@@ -225,7 +225,8 @@ void MainMenu::HandleNewGamePressed(StringHash, VariantMap &eventData)
 
 	LineEdit *universename = CreateMainMenuLineEdit("universe_name", "Universe Name: ", 0, 65);
 
-	CreateMainMenuLineEdit("create_universe_seed", "Seed : ", 0, universename->GetPosition().y_ + universename->GetSize().y_ + MAINMENU_BUTTON_SPACE);
+	CreateMainMenuLineEdit("create_universe_seed", "Seed : ", 0,
+		universename->GetPosition().y_ + universename->GetSize().y_ + MAINMENU_BUTTON_SPACE);
 
 	Button *generateSeed = CreateMainMenuButton("Generate seed", "ButtonInLine", "TextButtonInLine");
 	generateSeed->SetPosition(-20, universename->GetPosition().y_ + universename->GetSize().y_ + MAINMENU_BUTTON_SPACE);
@@ -455,24 +456,28 @@ void MainMenu::HandleSoundsPressed(StringHash, VariantMap &eventData)
 
 	SetTitle("Sound");
 	// master sound
-	Slider *slider_sound_master = CreateSliderWithLabels("Master", "Sound Master : ", 0, MAINMENU_BUTTON_SPACE, FLOATSETTINGS_SOUND_MASTER_GAIN);
+	Slider *slider_sound_master = CreateSliderWithLabels("Master", "Sound Master : ", 0, MAINMENU_BUTTON_SPACE,
+		FLOATSETTINGS_SOUND_MASTER_GAIN);
 
 	// sound music
 	Slider *slider_sound_music = CreateSliderWithLabels("Music", "Sound Music : ", 0,
-														slider_sound_master->GetPosition().y_ + slider_sound_master->GetSize().y_ + MAINMENU_BUTTON_SPACE,
-														FLOATSETTINGS_SOUND_MUSIC_GAIN);
+		slider_sound_master->GetPosition().y_ + slider_sound_master->GetSize().y_ + MAINMENU_BUTTON_SPACE,
+		FLOATSETTINGS_SOUND_MUSIC_GAIN);
+
 	// sound effect
 	Slider *slider_sound_effect = CreateSliderWithLabels("Effect", "Sound Effect : ", 0,
-														 slider_sound_music->GetPosition().y_ + slider_sound_music->GetSize().y_ + MAINMENU_BUTTON_SPACE,
-														 FLOATSETTINGS_SOUND_EFFECT_GAIN);
+		slider_sound_music->GetPosition().y_ + slider_sound_music->GetSize().y_ + MAINMENU_BUTTON_SPACE,
+		FLOATSETTINGS_SOUND_EFFECT_GAIN);
+
 	// sound ambient
 	Slider *slider_sound_ambient = CreateSliderWithLabels("Ambient", "Sound Ambient : ", 0,
-														  slider_sound_effect->GetPosition().y_ + slider_sound_effect->GetSize().y_ + MAINMENU_BUTTON_SPACE,
-														  FLOATSETTINGS_SOUND_AMBIENT_GAIN);
+		slider_sound_effect->GetPosition().y_ + slider_sound_effect->GetSize().y_ + MAINMENU_BUTTON_SPACE,
+		FLOATSETTINGS_SOUND_AMBIENT_GAIN);
+
 	// sound voice
 	Slider *slider_sound_voice = CreateSliderWithLabels("Voice", "Sound Voice : ", 0,
-														slider_sound_ambient->GetPosition().y_ + slider_sound_ambient->GetSize().y_ + MAINMENU_BUTTON_SPACE,
-														FLOATSETTINGS_SOUND_VOICE_GAIN);
+		slider_sound_ambient->GetPosition().y_ + slider_sound_ambient->GetSize().y_ + MAINMENU_BUTTON_SPACE,
+		FLOATSETTINGS_SOUND_VOICE_GAIN);
 
 	Button *back = CreateMainMenuButton("Back");
 	back->SetPosition(0, slider_sound_voice->GetSize().y_ + slider_sound_voice->GetPosition().y_ + MAINMENU_BUTTON_SPACE);
@@ -493,7 +498,7 @@ void MainMenu::HandleSoundsVolume(StringHash eventType, VariantMap &eventData)
 	Text *value_sound_music = static_cast<Text *>(m_window_menu->GetChild("value" + name, false));
 	value_sound_music->SetText(Urho3D::ToString("%f %%", floor(slider_sound_music->GetValue())));
 
-	GetSubsystem<Audio>()->SetMasterGain(name, (slider_sound_music->GetValue() / 100));
+	GetSubsystem<Audio>()->SetMasterGain(name, slider_sound_music->GetValue() / 100);
 
 	if (name == "Master") {
 		m_config->setFloat(FLOATSETTINGS_SOUND_MASTER_GAIN, slider_sound_music->GetValue());
@@ -607,7 +612,7 @@ Slider *MainMenu::CreateSlider(const String &name,
 							   const float value, const float range, const String &style)
 {
 	Slider *s = new Slider(context_);
-	//m_window_menu->AddChild(s);
+	m_window_menu->AddChild(s);
 	s->SetName(name);
 	s->SetRange(range);
 	s->SetValue(value);
@@ -617,7 +622,8 @@ Slider *MainMenu::CreateSlider(const String &name,
 	return s;
 }
 
-Slider *MainMenu::CreateSliderWithLabels(const String &name, const String &label, const int x, const int y, const int setting)
+Slider *MainMenu::CreateSliderWithLabels(const String &name, const String &label,
+										 const int x, const int y, const int setting)
 {
 	Text *text_sound = CreateText(label);
 	text_sound->SetPosition(x, y);

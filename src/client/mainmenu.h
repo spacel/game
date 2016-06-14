@@ -80,7 +80,8 @@ private:
 			const String &style = "Text");
 	Slider *CreateSlider(const String &name,
 			const float value = 100, const float range = 100, const String &style = "Slider");
-	Slider *CreateSliderWithLabels(const String &name, const String &label, const int x, const int y, const int SETTING);
+	Slider *CreateSliderWithLabels(const String &name, const String &label,
+			const int x, const int y, const int SETTING);
 	void SetTitle(const String &t);
 
 	// Attributes
