@@ -25,6 +25,9 @@ namespace spacel {
 
 namespace engine {
 
+struct Galaxy;
+struct SolarSystem;
+
 class Database
 {
 public:
@@ -39,6 +42,11 @@ private:
 	// transactions
 	virtual void BeginTransaction() = 0;
 	virtual void CommitTransaction() = 0;
+
+	virtual void CreateGalaxy(Galaxy *galaxy) = 0;
+	virtual bool LoadGalaxy(const uint64_t &galaxy_id) = 0;
+	virtual void CreateSolarSystem(engine::SolarSystem *ss) = 0;
+	virtual bool LoadSolarSystem(const uint64_t &ss_id) = 0;
 };
 }
 }

@@ -37,7 +37,11 @@ public:
 enum SQLite3Stmt
 {
 	SQLITE3STMT_BEGIN = 0,
-	SQLITE3STMT_END = 1,
+	SQLITE3STMT_END,
+	SQLITE3STMT_CREATE_GALAXY,
+	SQLITE3STMT_LOAD_GALAXY,
+	SQLITE3STMT_CREATE_SOLARSYSTEM,
+	SQLITE3STMT_LOAD_SOLARSYSTEM,
 	SQLITE3STMT_COUNT,
 };
 
@@ -56,7 +60,12 @@ private:
 	void BeginTransaction();
 	void CommitTransaction();
 
+	void CreateGalaxy(Galaxy *galaxy);
+	bool LoadGalaxy(const uint64_t &galaxy_id);
+	void CreateSolarSystem(engine::SolarSystem *ss);
+	bool LoadSolarSystem(const uint64_t &ss_id);
 
+	// Common Sqlite interfaces
 	static int busyHandler(void *data, int count);
 
 	inline void sqlite3_verify(const int s, const int r = SQLITE_OK) const
