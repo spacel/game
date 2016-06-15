@@ -31,7 +31,7 @@ static const char* stmt_list[SQLITE3STMT_COUNT] = {
 		"END",
 		"INSERT INTO `galaxies`(`galaxy_id`,`galaxy_name`,`pos_x`,`pos_y`,`pos_z`) VALUES (?, ?, ?, ?, ?)",
 		"SELECT `galaxy_name`,`pos_x`,`pos_y`,`pos_z` FROM `galaxies` WHERE galaxy_id = ?",
-		"INSERT INTO `solar_systems`(`solarsystem_id`,`galaxy_id`,`solarsystem_name`,`type`,`pos_x`,`pos_y`,`pos_z`,`radius`) VALUES (?, ?, ?, ?, ?, ?, ?)",
+		"INSERT INTO `solar_systems`(`solarsystem_id`,`galaxy_id`,`solarsystem_name`,`type`,`pos_x`,`pos_y`,`pos_z`,`radius`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 		"SELECT `galaxy_id`,`solarsystem_name`,`type`,`pos_x`,`pos_y`,`pos_z`,`radius` FROM `solar_systems` WHERE `solarsystem_id` = ?"
 };
 
@@ -217,27 +217,56 @@ void DatabaseSQLite3::CreateGalaxy(Galaxy *galaxy)
 
 Galaxy *DatabaseSQLite3::LoadGalaxy(const uint64_t &galaxy_id)
 {
+	Galaxy *galaxy = nullptr;
 	uint64_to_sqlite(SQLITE3STMT_LOAD_GALAXY, 1, galaxy_id);
 	if (stmt_step(SQLITE3STMT_LOAD_GALAXY) == SQLITE_ROW) {
-		Galaxy *galaxy = new Galaxy();
+		galaxy = new Galaxy();
 		galaxy->name = sqlite_to_string(SQLITE3STMT_LOAD_GALAXY, 0);
 		galaxy->pos_x = sqlite_to_double(SQLITE3STMT_LOAD_GALAXY, 1);
 		galaxy->pos_y = sqlite_to_double(SQLITE3STMT_LOAD_GALAXY, 2);
 		galaxy->pos_z = sqlite_to_double(SQLITE3STMT_LOAD_GALAXY, 3);
-		return galaxy;
 	}
 
-	return nullptr;
+	reset_stmt(SQLITE3STMT_LOAD_GALAXY);
+
+	return galaxy;
 }
 
 void DatabaseSQLite3::CreateSolarSystem(engine::SolarSystem *ss)
 {
+	assert(ss->galaxy);
 
+	uint64_to_sqlite(SQLITE3STMT_CREATE_SOLARSYSTEM, 1, ss->id);
+	uint64_to_sqlite(SQLITE3STMT_CREATE_SOLARSYSTEM, 2, ss->galaxy->id);
+	str_to_sqlite(SQLITE3STMT_CREATE_SOLARSYSTEM, 3, ss->name.c_str());
+	uint16_to_sqlite(SQLITE3STMT_CREATE_SOLARSYSTEM, 4, ss->type);
+	double_to_sqlite(SQLITE3STMT_CREATE_SOLARSYSTEM, 5, ss->pos_x);
+	double_to_sqlite(SQLITE3STMT_CREATE_SOLARSYSTEM, 6, ss->pos_y);
+	double_to_sqlite(SQLITE3STMT_CREATE_SOLARSYSTEM, 7, ss->pos_z);
+	double_to_sqlite(SQLITE3STMT_CREATE_SOLARSYSTEM, 8, ss->radius);
+
+	sqlite3_verify(stmt_step(SQLITE3STMT_CREATE_SOLARSYSTEM), SQLITE_DONE);
+	reset_stmt(SQLITE3STMT_CREATE_SOLARSYSTEM);
 }
 
 SolarSystem *DatabaseSQLite3::LoadSolarSystem(const uint64_t &ss_id)
 {
-	return nullptr;
+	SolarSystem *solar_system = nullptr;
+	uint64_to_sqlite(SQLITE3STMT_LOAD_SOLARSYSTEM, 1, ss_id);
+	if (stmt_step(SQLITE3STMT_LOAD_SOLARSYSTEM) == SQLITE_ROW) {
+		solar_system = new SolarSystem();
+		// Warning we don't load solar system galaxy_id there
+		solar_system->name = sqlite_to_string(SQLITE3STMT_LOAD_SOLARSYSTEM, 1);
+		solar_system->type = (SolarType)sqlite_to_uint16(SQLITE3STMT_LOAD_SOLARSYSTEM, 2);
+		solar_system->pos_x = sqlite_to_double(SQLITE3STMT_LOAD_SOLARSYSTEM, 3);
+		solar_system->pos_y = sqlite_to_double(SQLITE3STMT_LOAD_SOLARSYSTEM, 4);
+		solar_system->pos_z = sqlite_to_double(SQLITE3STMT_LOAD_SOLARSYSTEM, 5);
+		solar_system->radius = sqlite_to_double(SQLITE3STMT_LOAD_SOLARSYSTEM, 6);
+	}
+
+	reset_stmt(SQLITE3STMT_LOAD_GALAXY);
+
+	return solar_system;
 }
 
 }

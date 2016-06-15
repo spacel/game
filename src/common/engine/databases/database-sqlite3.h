@@ -99,11 +99,23 @@ private:
 		sqlite3_verify(sqlite3_bind_int64(m_stmt[s], iCol, (sqlite3_uint64)val));
 	}
 
+	inline void uint16_to_sqlite(const SQLite3Stmt s, const int iCol, const uint16_t val) const
+	{
+		assert(s < SQLITE3STMT_COUNT);
+		sqlite3_verify(sqlite3_bind_int(m_stmt[s], iCol, (int)val));
+	}
+
 	inline const std::string sqlite_to_string(const SQLite3Stmt s, int iCol)
 	{
 		assert(s < SQLITE3STMT_COUNT);
 		const char* text = reinterpret_cast<const char*>(sqlite3_column_text(m_stmt[s], iCol));
 		return std::string(text ? text : "");
+	}
+
+	inline const uint16_t sqlite_to_uint16(const SQLite3Stmt s, int iCol)
+	{
+		assert(s < SQLITE3STMT_COUNT);
+		return (uint16_t)sqlite3_column_int(m_stmt[s], iCol);
 	}
 
 	inline const int32_t sqlite_to_int(const SQLite3Stmt s, int iCol)
