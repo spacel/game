@@ -21,16 +21,17 @@
 #include "porting.h"
 #include "database-sqlite3.h"
 #include "time_utils.h"
+#include "engine/space.h"
 
 namespace spacel {
 namespace engine {
 
 static const char* stmt_list[SQLITE3STMT_COUNT] = {
 		"BEGIN",
-		"END"
-		"INSERT INTO `galaxies`(`galaxy_name`,`pos_x`,`pos_y`,`pos_z`) VALUES (?, ?, ?, ?)",
+		"END",
+		"INSERT INTO `galaxies`(`galaxy_id`,`galaxy_name`,`pos_x`,`pos_y`,`pos_z`) VALUES (?, ?, ?, ?, ?)",
 		"SELECT `galaxy_name`,`pos_x`,`pos_y`,`pos_z` FROM `galaxies` WHERE galaxy_id = ?",
-		"INSERT INTO `solar_systems`(`galaxy_id`,`solarsystem_name`,`type`,`pos_x`,`pos_y`,`pos_z`,`radius`) VALUES (?, ?, ?, ?, ?, ?, ?)",
+		"INSERT INTO `solar_systems`(`solarsystem_id`,`galaxy_id`,`solarsystem_name`,`type`,`pos_x`,`pos_y`,`pos_z`,`radius`) VALUES (?, ?, ?, ?, ?, ?, ?)",
 		"SELECT `galaxy_id`,`solarsystem_name`,`type`,`pos_x`,`pos_y`,`pos_z`,`radius` FROM `solar_systems` WHERE `solarsystem_id` = ?"
 };
 
@@ -75,9 +76,9 @@ bool DatabaseSQLite3::Close()
 void DatabaseSQLite3::UpdateSchema()
 {
 	static const char *dbcreate_sql = "CREATE TABLE IF NOT EXISTS `gameversion` ("
-		 "	version INT NOT NULL"
-		 ");"
-		 "INSERT INTO `gameversion` (`version`) VALUES (1);";
+			 "	version INT NOT NULL"
+			 ");"
+			 "INSERT INTO `gameversion` (`version`) VALUES (1);";
 
 	sqlite3_verify(sqlite3_exec(m_database, dbcreate_sql, NULL, NULL, NULL));
 
@@ -90,26 +91,26 @@ void DatabaseSQLite3::UpdateSchema()
 	sqlite3_verify(sqlite3_exec(m_database, gameconfig_table_sql, NULL, NULL, NULL));
 
 	static const char *galaxy_table_sql = "CREATE TABLE IF NOT EXISTS `galaxies` ("
-		"	galaxy_id BIGINT NOT NULL PRIMARY KEY,"
-		"	galaxy_name VARCHAR(32) NOT NULL,"
-		"	pos_x REAL NOT NULL,"
-		"	pos_y REAL NOT NULL,"
-		"	pos_z REAL NOT NULL"
-		");";
+			"	galaxy_id BIGINT NOT NULL PRIMARY KEY,"
+			"	galaxy_name VARCHAR(32) NOT NULL,"
+			"	pos_x REAL NOT NULL,"
+			"	pos_y REAL NOT NULL,"
+			"	pos_z REAL NOT NULL"
+			");";
 
 	sqlite3_verify(sqlite3_exec(m_database, galaxy_table_sql, NULL, NULL, NULL));
 
 	static const char *solarsystem_table_sql = "CREATE TABLE IF NOT EXISTS `solar_systems` ("
-		"	solarsystem_id BIGINT NOT NULL PRIMARY KEY,"
-		"	galaxy_id INTEGER NOT NULL,"
-		"	solarsystem_name VARCHAR(48) NOT NULL,"
-		"	type SMALLINT NOT NULL,"
-		"	pos_x REAL NOT NULL,"
-		"	pos_y REAL NOT NULL,"
-		"	pos_z REAL NOT NULL,"
-		"	radius REAL NOT NULL,"
-		"	FOREIGN KEY (galaxy_id) REFERENCES `galaxies` (galaxy_id) ON DELETE CASCADE"
-		");";
+			"	solarsystem_id BIGINT NOT NULL PRIMARY KEY,"
+			"	galaxy_id INTEGER NOT NULL,"
+			"	solarsystem_name VARCHAR(48) NOT NULL,"
+			"	type SMALLINT NOT NULL,"
+			"	pos_x REAL NOT NULL,"
+			"	pos_y REAL NOT NULL,"
+			"	pos_z REAL NOT NULL,"
+			"	radius REAL NOT NULL,"
+			"	FOREIGN KEY (galaxy_id) REFERENCES `galaxies` (galaxy_id) ON DELETE CASCADE"
+			");";
 
 	sqlite3_verify(sqlite3_exec(m_database, solarsystem_table_sql, NULL, NULL, NULL));
 
@@ -204,12 +205,29 @@ void DatabaseSQLite3::CommitTransaction()
 
 void DatabaseSQLite3::CreateGalaxy(Galaxy *galaxy)
 {
+	uint64_to_sqlite(SQLITE3STMT_CREATE_GALAXY, 1, galaxy->id);
+	str_to_sqlite(SQLITE3STMT_CREATE_GALAXY, 2, galaxy->name.c_str());
+	double_to_sqlite(SQLITE3STMT_CREATE_GALAXY, 3, galaxy->pos_x);
+	double_to_sqlite(SQLITE3STMT_CREATE_GALAXY, 4, galaxy->pos_y);
+	double_to_sqlite(SQLITE3STMT_CREATE_GALAXY, 5, galaxy->pos_z);
 
+	sqlite3_verify(stmt_step(SQLITE3STMT_CREATE_GALAXY), SQLITE_DONE);
+	reset_stmt(SQLITE3STMT_CREATE_GALAXY);
 }
 
-bool DatabaseSQLite3::LoadGalaxy(const uint64_t &galaxy_id)
+Galaxy *DatabaseSQLite3::LoadGalaxy(const uint64_t &galaxy_id)
 {
-	return false;
+	uint64_to_sqlite(SQLITE3STMT_LOAD_GALAXY, 1, galaxy_id);
+	if (stmt_step(SQLITE3STMT_LOAD_GALAXY) == SQLITE_ROW) {
+		Galaxy *galaxy = new Galaxy();
+		galaxy->name = sqlite_to_string(SQLITE3STMT_LOAD_GALAXY, 0);
+		galaxy->pos_x = sqlite_to_double(SQLITE3STMT_LOAD_GALAXY, 1);
+		galaxy->pos_y = sqlite_to_double(SQLITE3STMT_LOAD_GALAXY, 2);
+		galaxy->pos_z = sqlite_to_double(SQLITE3STMT_LOAD_GALAXY, 3);
+		return galaxy;
+	}
+
+	return nullptr;
 }
 
 void DatabaseSQLite3::CreateSolarSystem(engine::SolarSystem *ss)
@@ -217,9 +235,9 @@ void DatabaseSQLite3::CreateSolarSystem(engine::SolarSystem *ss)
 
 }
 
-bool DatabaseSQLite3::LoadSolarSystem(const uint64_t &ss_id)
+SolarSystem *DatabaseSQLite3::LoadSolarSystem(const uint64_t &ss_id)
 {
-	return false;
+	return nullptr;
 }
 
 }

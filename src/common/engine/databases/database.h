@@ -44,9 +44,9 @@ private:
 	virtual void CommitTransaction() = 0;
 
 	virtual void CreateGalaxy(Galaxy *galaxy) = 0;
-	virtual bool LoadGalaxy(const uint64_t &galaxy_id) = 0;
+	virtual Galaxy *LoadGalaxy(const uint64_t &galaxy_id) = 0;
 	virtual void CreateSolarSystem(engine::SolarSystem *ss) = 0;
-	virtual bool LoadSolarSystem(const uint64_t &ss_id) = 0;
+	virtual SolarSystem *LoadSolarSystem(const uint64_t &ss_id) = 0;
 };
 }
 }

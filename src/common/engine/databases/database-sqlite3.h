@@ -61,9 +61,9 @@ private:
 	void CommitTransaction();
 
 	void CreateGalaxy(Galaxy *galaxy);
-	bool LoadGalaxy(const uint64_t &galaxy_id);
+	Galaxy *LoadGalaxy(const uint64_t &galaxy_id);
 	void CreateSolarSystem(engine::SolarSystem *ss);
-	bool LoadSolarSystem(const uint64_t &ss_id);
+	SolarSystem *LoadSolarSystem(const uint64_t &ss_id);
 
 	// Common Sqlite interfaces
 	static int busyHandler(void *data, int count);
@@ -85,6 +85,61 @@ private:
 	{
 		assert(s < SQLITE3STMT_COUNT);
 		return sqlite3_reset(m_stmt[s]);
+	}
+
+	inline void str_to_sqlite(const SQLite3Stmt s, const int iCol, const std::string &str) const
+	{
+		assert(s < SQLITE3STMT_COUNT);
+		sqlite3_verify(sqlite3_bind_text(m_stmt[s], iCol, str.c_str(), str.size(), NULL));
+	}
+
+	inline void uint64_to_sqlite(const SQLite3Stmt s, const int iCol, const uint64_t val) const
+	{
+		assert(s < SQLITE3STMT_COUNT);
+		sqlite3_verify(sqlite3_bind_int64(m_stmt[s], iCol, (sqlite3_uint64)val));
+	}
+
+	inline const std::string sqlite_to_string(const SQLite3Stmt s, int iCol)
+	{
+		assert(s < SQLITE3STMT_COUNT);
+		const char* text = reinterpret_cast<const char*>(sqlite3_column_text(m_stmt[s], iCol));
+		return std::string(text ? text : "");
+	}
+
+	inline const int32_t sqlite_to_int(const SQLite3Stmt s, int iCol)
+	{
+		assert(s < SQLITE3STMT_COUNT);
+		return sqlite3_column_int(m_stmt[s], iCol);
+	}
+
+	inline const uint64_t sqlite_to_uint64(const SQLite3Stmt s, int iCol)
+	{
+		assert(s < SQLITE3STMT_COUNT);
+		return (uint64_t)sqlite3_column_int64(m_stmt[s], iCol);
+	}
+
+	inline const float sqlite_to_float(const SQLite3Stmt s, int iCol)
+	{
+		assert(s < SQLITE3STMT_COUNT);
+		return sqlite3_column_double(m_stmt[s], iCol);
+	}
+
+	inline const double sqlite_to_double(const SQLite3Stmt s, int iCol)
+	{
+		assert(s < SQLITE3STMT_COUNT);
+		return sqlite3_column_double(m_stmt[s], iCol);
+	}
+
+	inline void double_to_sqlite(const SQLite3Stmt s, const int iCol, const float val) const
+	{
+		assert(s < SQLITE3STMT_COUNT);
+		sqlite3_verify(sqlite3_bind_double(m_stmt[s], iCol, (double)val));
+	}
+
+	inline void double_to_sqlite(const SQLite3Stmt s, const int iCol, const double val) const
+	{
+		assert(s < SQLITE3STMT_COUNT);
+		sqlite3_verify(sqlite3_bind_double(m_stmt[s], iCol, val));
 	}
 
 	std::string m_db_path = "";
