@@ -63,9 +63,16 @@ const bool Server::InitServer()
 	// @TODO get the seed from database
 	UniverseGenerator::instance()->SetSeed(180);
 
-	// Generate 1 galaxy with 1M solar systems
 	auto start = std::chrono::system_clock::now();
-	Universe::instance()->CreateGalaxy(1000 * 1000);
+	// Generate 1 galaxy with 1M solar systems
+	Galaxy* galaxy = Universe::instance()->CreateGalaxy(1000 * 1000);
+	// Save the galaxy and solar systems
+	m_db->BeginTransaction();
+	m_db->CreateGalaxy(galaxy);
+	for (const auto &ss: galaxy->solar_systems) {
+		m_db->CreateSolarSystem(ss.second);
+	}
+	m_db->CommitTransaction();
 	auto end = std::chrono::system_clock::now();
 	std::chrono::duration<double> elapsed_seconds = end - start;
 	std::cout << "Loading time: " << elapsed_seconds.count() << "s" << std::endl;

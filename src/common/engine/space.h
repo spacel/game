@@ -127,7 +127,7 @@ public:
 	Universe() {}
 	~Universe();
 
-	void CreateGalaxy(const uint64_t &max_solar_systems);
+	Galaxy *CreateGalaxy(const uint64_t &max_solar_systems);
 	bool RemoveGalaxy(const uint64_t &id);
 
 	void CreateSolarSystem(Galaxy *galaxy);

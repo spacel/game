@@ -94,7 +94,8 @@ double UniverseGenerator::generate_solarsystem_double(const uint64_t &ss_id)
 {
 	std::mt19937 rndgen(s_seed + ss_id + 4096 * 4096);
 	// 20 Billion kilometers
-	std::uniform_real_distribution<double> rnd(0, 20.0f * 1000.0f * 1000.0f * 1000.0f);
+	std::uniform_real_distribution<double> rnd(10 * 1000.0f * 1000.0f,
+		20.0f * 1000.0f * 1000.0f * 1000.0f);
 	return rnd(rndgen);
 }
 

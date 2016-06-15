@@ -33,11 +33,6 @@ class Database
 public:
 	Database() {}
 	virtual ~Database() {}
-private:
-	virtual void Open() = 0;
-	virtual void UpdateSchema() = 0;
-	virtual bool Close() = 0;
-	virtual void CheckDatabase() = 0;
 
 	// transactions
 	virtual void BeginTransaction() = 0;
@@ -47,6 +42,13 @@ private:
 	virtual Galaxy *LoadGalaxy(const uint64_t &galaxy_id) = 0;
 	virtual void CreateSolarSystem(engine::SolarSystem *ss) = 0;
 	virtual SolarSystem *LoadSolarSystem(const uint64_t &ss_id) = 0;
+
+private:
+	virtual void Open() = 0;
+	virtual void UpdateSchema() = 0;
+	virtual bool Close() = 0;
+	virtual void CheckDatabase() = 0;
+
 };
 }
 }

@@ -98,7 +98,7 @@ bool Universe::RemoveSolarSystem(const uint64_t &id)
 	return true;
 }
 
-void Universe::CreateGalaxy(const uint64_t &max_solar_systems)
+Galaxy *Universe::CreateGalaxy(const uint64_t &max_solar_systems)
 {
 	// Increment id if there is galaxies
 	while (m_galaxies.find(m_next_galaxy_id) != m_galaxies.end()) {
@@ -117,6 +117,7 @@ void Universe::CreateGalaxy(const uint64_t &max_solar_systems)
 	m_galaxies[m_next_galaxy_id] = galaxy;
 
 	m_next_galaxy_id++;
+	return galaxy;
 }
 
 bool Universe::RemoveGalaxy(const uint64_t &id)

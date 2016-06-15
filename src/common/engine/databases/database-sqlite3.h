@@ -50,11 +50,6 @@ class DatabaseSQLite3: public Database
 public:
 	DatabaseSQLite3(const std::string &db_path);
 	~DatabaseSQLite3() { Close(); }
-private:
-	void Open();
-	bool Close();
-	void UpdateSchema();
-	void CheckDatabase() {}
 
 	// Transactions related
 	void BeginTransaction();
@@ -64,6 +59,12 @@ private:
 	Galaxy *LoadGalaxy(const uint64_t &galaxy_id);
 	void CreateSolarSystem(engine::SolarSystem *ss);
 	SolarSystem *LoadSolarSystem(const uint64_t &ss_id);
+
+private:
+	void Open();
+	bool Close();
+	void UpdateSchema();
+	void CheckDatabase() {}
 
 	// Common Sqlite interfaces
 	static int busyHandler(void *data, int count);
