@@ -85,7 +85,8 @@ void DatabaseSQLite3::UpdateSchema()
 	static const char *gameconfig_table_sql = "CREATE TABLE IF NOT EXISTS `gameconfig` ("
 			"	universe_id INTEGER NOT NULL PRIMARY KEY,"
 			"	universe_name VARCHAR(32) NOT NULL,"
-			"	seed BIGINT NOT NULL"
+			"	seed BIGINT NOT NULL,"
+			"	galaxy_generated SMALLINT NOT NULL DEFAULT(0)"
 			");";
 
 	sqlite3_verify(sqlite3_exec(m_database, gameconfig_table_sql, NULL, NULL, NULL));
