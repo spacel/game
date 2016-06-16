@@ -37,6 +37,11 @@ cmake .. -DURHO3D_SAMPLES=0 -DURHO3D_C++11=1 -DURHO3D_DATABASE_SQLITE=1 -DURHO3D
 make
 ```
 
+You will need the following dependencies for unit tests
+```
+apt-get install libcppunit-dev
+```
+
 And now you can compile the game
 
 ```
@@ -46,6 +51,10 @@ cd build
 cmake ..
 make
 ```
+
+## Compilation options
+
+* BUILD_UNITTESTS (TRUE): build the unit tests
 
 ## Included libraries
 

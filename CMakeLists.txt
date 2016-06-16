@@ -13,6 +13,8 @@ if(NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type: Debug or Release" FORCE)
 endif()
 
+set(BUILD_UNITTESTS TRUE CACHE BOOL "Build unittests")
+
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules )
 set(URHO3D_HOME ${CMAKE_CURRENT_SOURCE_DIR}/lib/Urho3D/build)
 
@@ -30,3 +32,6 @@ configure_file(src/project_defines.h.in ${CMAKE_CURRENT_SOURCE_DIR}/src/project_
 
 add_subdirectory(src/common)
 add_subdirectory(src/client)
+if(BUILD_UNITTESTS)
+	add_subdirectory(src/unittests)
+endif()
