@@ -35,12 +35,17 @@ inline static uint64_t get_current_time_ms()
 		std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
-inline static std::string timestamp_to_string(const uint64_t &timestamp)
+inline static std::string timestamp_to_string(const uint64_t &timestamp, bool localtime = true)
 {
 	std::chrono::system_clock::time_point date = std::chrono::system_clock::from_time_t(timestamp);
 	std::time_t t = std::chrono::system_clock::to_time_t(date);
 	char mbstr[50];
-	std::strftime(mbstr, sizeof(mbstr), "%d/%m/%y %H:%M", std::localtime(&t));
+	if (localtime) {
+		std::strftime(mbstr, sizeof(mbstr), "%d/%m/%y %H:%M", std::localtime(&t));
+	}
+	else {
+		std::strftime(mbstr, sizeof(mbstr), "%d/%m/%y %H:%M", std::gmtime(&t));
+	}
 	return std::string(mbstr);
 }
 }

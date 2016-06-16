@@ -73,8 +73,8 @@ protected:
 
 	void test_timestampToString()
 	{
-		std::string ts_str = timestamp_to_string(1500000);
-		CPPUNIT_ASSERT(ts_str == "18/01/70 09:40");
+		std::string ts_str = timestamp_to_string(1500000, false);
+		CPPUNIT_ASSERT(ts_str == "18/01/70 08:40");
 	}
 };
 
