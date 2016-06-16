@@ -26,13 +26,13 @@ namespace spacel {
 inline static uint64_t get_current_time()
 {
 	return (uint64_t) std::chrono::duration_cast<std::chrono::seconds>(
-	       std::chrono::system_clock::now().time_since_epoch()).count();
+		std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
 inline static uint64_t get_current_time_ms()
 {
 	return (uint64_t) std::chrono::duration_cast<std::chrono::milliseconds>(
-	       std::chrono::system_clock::now().time_since_epoch()).count();
+		std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
 inline static std::string timestamp_to_string(const uint64_t &timestamp)
