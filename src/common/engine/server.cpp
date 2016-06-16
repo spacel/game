@@ -78,7 +78,7 @@ const bool Server::InitServer()
 		m_db->CommitTransaction();
 	}
 	else {
-		Galaxy* galaxy = m_db->LoadGalaxy(1);
+		Galaxy *galaxy = m_db->LoadGalaxy(1);
 		m_db->LoadSolarSystemsForGalaxy(galaxy);
 		Universe::instance()->SetGalaxy(galaxy);
 	}
