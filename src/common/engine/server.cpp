@@ -78,7 +78,9 @@ const bool Server::InitServer()
 		m_db->CommitTransaction();
 	}
 	else {
-		// @TODO load galaxy & solar systems
+		Galaxy* galaxy = m_db->LoadGalaxy(1);
+		m_db->LoadSolarSystemsForGalaxy(galaxy);
+		Universe::instance()->SetGalaxy(galaxy);
 	}
 	auto end = std::chrono::system_clock::now();
 	std::chrono::duration<double> elapsed_seconds = end - start;

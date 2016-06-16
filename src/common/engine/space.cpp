@@ -98,6 +98,16 @@ bool Universe::RemoveSolarSystem(const uint64_t &id)
 	return true;
 }
 
+bool Universe::SetGalaxy(Galaxy *galaxy)
+{
+	if (m_galaxies.find(galaxy->id) != m_galaxies.end()) {
+		return false;
+	}
+
+	m_galaxies[galaxy->id] = galaxy;
+	return true;
+}
+
 Galaxy *Universe::CreateGalaxy(const uint64_t &max_solar_systems)
 {
 	// Increment id if there is galaxies

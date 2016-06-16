@@ -127,6 +127,7 @@ public:
 	Universe() {}
 	~Universe();
 
+	bool SetGalaxy(Galaxy *galaxy);
 	Galaxy *CreateGalaxy(const uint64_t &max_solar_systems);
 	bool RemoveGalaxy(const uint64_t &id);
 
