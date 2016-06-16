@@ -39,12 +39,15 @@ public:
 	virtual ~TimeUnitTest() {}
 
 	static CppUnit::Test *suite() {
-		CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("Test2dLinearEquationSolver");
+		CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("Time");
 		suiteOfTests->addTest(new CppUnit::TestCaller<TimeUnitTest>("Test1 - Current Time.",
 				&TimeUnitTest::test_currentTime));
 
 		suiteOfTests->addTest(new CppUnit::TestCaller<TimeUnitTest>("Test2 - Current Time MS.",
 				&TimeUnitTest::test_currentTimeMs));
+
+		suiteOfTests->addTest(new CppUnit::TestCaller<TimeUnitTest>("Test3 - Timestamp to string.",
+				&TimeUnitTest::test_timestampToString));
 
 		return suiteOfTests;
 	}
@@ -64,6 +67,12 @@ protected:
 	void test_currentTimeMs() {
 		uint64_t current_time_ms = get_current_time_ms();
 		CPPUNIT_ASSERT(current_time_ms != 0);
+	}
+
+	void test_timestampToString() {
+		std::string ts_str = timestamp_to_string(1500000);
+		std::cout << ts_str << std::endl;
+		CPPUNIT_ASSERT(ts_str == "18/01/70 09:40");
 	}
 };
 
