@@ -9,10 +9,11 @@ addons:
     packages:
       - libasound2-dev
       - libxrandr-dev
+      - libcppunit-dev
 
 dist: trusty
 before_install: ./util/travis/before_install.sh
-script: python ./util/travis/checkstyle.py && ./util/travis/script.sh
+script: python ./util/travis/checkstyle.py && ./util/travis/script.sh && ./util/travis/unittests.sh
 sudo: required
 notifications:
   email: false
