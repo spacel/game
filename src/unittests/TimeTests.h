@@ -20,7 +20,6 @@
 
 #pragma once
 
-#include <iostream>
 #include <cppunit/TestFixture.h>
 #include <cppunit/TestAssert.h>
 #include <cppunit/TestCaller.h>
@@ -38,7 +37,8 @@ public:
 	TimeUnitTest() {}
 	virtual ~TimeUnitTest() {}
 
-	static CppUnit::Test *suite() {
+	static CppUnit::Test *suite()
+	{
 		CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("Time");
 		suiteOfTests->addTest(new CppUnit::TestCaller<TimeUnitTest>("Test1 - Current Time.",
 				&TimeUnitTest::test_currentTime));
@@ -59,19 +59,21 @@ public:
 	void tearDown() {}
 
 protected:
-	void test_currentTime() {
+	void test_currentTime()
+	{
 		uint64_t current_time = get_current_time();
-		CPPUNIT_ASSERT(current_time != 0);
+		CPPUNIT_ASSERT(current_time > 0);
 	}
 
-	void test_currentTimeMs() {
+	void test_currentTimeMs()
+	{
 		uint64_t current_time_ms = get_current_time_ms();
-		CPPUNIT_ASSERT(current_time_ms != 0);
+		CPPUNIT_ASSERT(current_time_ms > 0);
 	}
 
-	void test_timestampToString() {
+	void test_timestampToString()
+	{
 		std::string ts_str = timestamp_to_string(1500000);
-		std::cout << ts_str << std::endl;
 		CPPUNIT_ASSERT(ts_str == "18/01/70 09:40");
 	}
 };

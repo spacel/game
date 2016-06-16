@@ -53,7 +53,7 @@ uint64_t engine::UniverseGenerator::s_seed = 0;
 
 void SpacelGame::Setup()
 {
-	m_config = new ClientSettings(context_);
+	m_config = new ClientSettings();
 	m_config->load(GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "config") +
 		"client.json");
 

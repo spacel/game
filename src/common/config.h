@@ -23,7 +23,7 @@
 #include <cstdint>
 #include <cassert>
 #include <string>
-#include <Urho3D/Core/Context.h>
+#include <Urho3D/Container/Str.h>
 
 namespace spacel {
 
@@ -37,7 +37,7 @@ class Config
 {
 public:
 	Config() {}
-	Config(Urho3D::Context *context, uint32_t b_size, uint32_t u32_size, uint32_t f_size);
+	Config(uint32_t b_size, uint32_t u32_size, uint32_t f_size);
 	virtual ~Config() {}
 
 	bool load(const Urho3D::String &f);
@@ -100,7 +100,6 @@ public:
 private:
 	virtual void init() = 0;
 
-	Urho3D::Context *m_context = nullptr;
 	std::vector<bool> m_bool_settings;
 	std::vector<std::string> m_bool_names;
 	std::vector<uint32_t> m_u32_settings;

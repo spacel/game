@@ -30,8 +30,7 @@ using namespace Urho3D;
 namespace spacel
 {
 
-Config::Config(Urho3D::Context *context, uint32_t b_size, uint32_t u32_size,
-		uint32_t f_size): m_context(context)
+Config::Config(uint32_t b_size, uint32_t u32_size, uint32_t f_size)
 {
 	m_bool_settings.resize(b_size);
 	m_u32_settings.resize(u32_size);
