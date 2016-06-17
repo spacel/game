@@ -24,6 +24,7 @@
 #include <Urho3D/Resource/Image.h>
 #include <Urho3D/Resource/Localization.h>
 #include <Urho3D/UI/ListView.h>
+#include <Urho3D/UI/MessageBox.h>
 #include <Urho3D/UI/Sprite.h>
 #include <Urho3D/UI/Text.h>
 #include <Urho3D/UI/Window.h>
@@ -32,6 +33,7 @@
 #include <common/engine/databases/database-sqlite3.h>
 #include "genericmenu.h"
 #include "spacelgame.h"
+#include "ui/ModalWindow.h"
 
 using namespace Urho3D;
 
@@ -51,7 +53,6 @@ private:
 	// Handlers
 	void HandleClosePressed(StringHash eventType, VariantMap &eventData);
 	void HandleKeyDown(StringHash eventType, VariantMap &eventData);
-	void HandleControlClicked(StringHash eventType, VariantMap &eventData);
 	void HandleLaunchGamePressed(StringHash eventType, VariantMap &eventData);
 	void HandleSingleplayerPressed(StringHash eventType, VariantMap &eventData);
 	void HandleNewGamePressed(StringHash, VariantMap &eventData);
@@ -65,11 +66,13 @@ private:
 	void HandleUpdate(StringHash eventType, VariantMap &eventData);
 	void HandleMusicPressed(StringHash eventType, VariantMap &eventData);
 	void HandleInfosUniverseClicked(StringHash, VariantMap &eventData);
+	void HandleDeleteUniversePressed(StringHash eventType, VariantMap &eventData);
 	void HandleGenerateSeedPressed(StringHash eventType, VariantMap &eventData);
+	void DeleteUniverse();
 	void Background();
 	void Title();
 	void HandleMasterMenu(StringHash, VariantMap &);
-	void ShowErrorBubble(const String &message, ...);
+	void ShowErrorBubble(const String &message);
 
 	// Helpers
 	Button *CreateMainMenuButton(const String &label,

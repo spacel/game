@@ -146,7 +146,6 @@ void MainMenu::HandleMasterMenu(StringHash, VariantMap &)
 	SubscribeToEvent(multiplayer, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleMultiplayerPressed));
 	SubscribeToEvent(settings, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSettingsPressed));
 	SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(MainMenu, HandleUpdate));
-	SubscribeToEvent(E_UIMOUSECLICK, URHO3D_HANDLER(MainMenu, HandleControlClicked));
 }
 
 void MainMenu::HandleClosePressed(StringHash, VariantMap &eventData)
@@ -183,18 +182,17 @@ void MainMenu::HandleKeyDown(StringHash, VariantMap &eventData)
 					break;
 			}
 			break;
+		case KEY_DELETE:
+			if (m_menu_id == MAINMENUID_SINGLEPLAYER_LOADGAME) {
+				DeleteUniverse();
+			}
+			break;
 		case KEY_F12:
 			TakeScreenshot();
 			break;
 		default:
 			break;
 	}
-}
-
-void MainMenu::HandleControlClicked(StringHash, VariantMap &eventData)
-{
-	// Get control that was clicked
-	//UIElement *clicked = static_cast<UIElement *>(eventData[UIMouseClick::P_ELEMENT].GetPtr());
 }
 
 void MainMenu::HandleSingleplayerPressed(StringHash, VariantMap &eventData)
@@ -292,7 +290,7 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 				URHO3D_LOGERRORF("Universe %s already exists", universe_name.CString());
 				//TODO : Send parameter variables
 				ShowErrorBubble(
-						Urho3D::ToString("Universe %s already exists", universe_name.CString()));
+						Urho3D::ToString(m_l10n->Get("Universe %s already exists").CString(), universe_name.CString()));
 				return;
 			}
 		}
@@ -367,7 +365,8 @@ void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
 	m_preview = m_window_menu->CreateChild<Sprite>();
 	m_preview->SetTexture(PreviewTexture);
 	m_preview->SetSize(150, 150);
-	m_preview->SetPosition(universes_listview->GetSize().x_ + (universes_listview->GetSize().x_ / 2), m_window_menu->GetPosition().y_ + MAINMENU_BUTTON_SPACE);
+	m_preview->SetPosition(universes_listview->GetSize().x_ + (universes_listview->GetSize().x_ / 2),
+		m_window_menu->GetPosition().y_ + MAINMENU_BUTTON_SPACE);
 	m_preview->SetPriority(-90);
 
 	// TODO: Information universe (WIP)
@@ -579,7 +578,63 @@ void MainMenu::HandleInfosUniverseClicked(StringHash, VariantMap &eventData)
 		ToString("%s", std::to_string(engine::Universe::instance()->GetUniverseSeed()).c_str()));
 }
 
-void MainMenu::ShowErrorBubble(const String &message, ...)
+void MainMenu::HandleDeleteUniversePressed(StringHash eventType, VariantMap &eventData)
+{
+	if (eventData[MessageACK::P_OK].GetBool()) {
+		ListView *lv = dynamic_cast<ListView *>(m_window_menu->GetChild("loading_univerise_listview", true));
+		assert(lv);
+		String universe_name = lv->GetSelectedItem()->GetName();
+		Vector<String> list_files_universe;
+		const String path_universe = GetSubsystem<FileSystem>()->GetAppPreferencesDir(
+			"spacel", "universe") + universe_name;
+		GetSubsystem<FileSystem>()->ScanDir(list_files_universe, path_universe, "*", SCAN_FILES | SCAN_DIRS | SCAN_HIDDEN, true);
+
+		if (!list_files_universe.Empty() && GetSubsystem<FileSystem>()->DirExists(path_universe)) {
+			for (Vector<String>::Iterator it = list_files_universe.Begin(); it != list_files_universe.End(); ++it) {
+				if (it->Compare(".") != 0 && it->Compare("..") != 0) {
+					String file = ToString("/%s", it->CString());
+					GetSubsystem<FileSystem>()->Delete(path_universe + file);
+				}
+			}
+			if (GetSubsystem<FileSystem>()->Delete(path_universe)) {
+				ShowErrorBubble(ToString(m_l10n->Get("Universe %s deleted").CString(), universe_name.CString()));
+				URHO3D_LOGINFOF("Universe %s deleted", universe_name.CString());
+			}
+		}
+		lv->UpdateLayout();
+	}
+	UnsubscribeFromEvent(E_MESSAGEACK);
+	UnsubscribeFromEvent(E_MODALCHANGED);
+	if (engine::ui::ModalWindow *modal_window = dynamic_cast<engine::ui::ModalWindow *>(m_ui_elem->GetChild("ModalWindow", true))) {
+		modal_window->Remove();
+		modal_window = nullptr;
+	}
+}
+
+void MainMenu::DeleteUniverse()
+{
+	ListView *lv = dynamic_cast<ListView *>(m_window_menu->GetChild("loading_univerise_listview", true));
+	assert(lv);
+	if (lv->GetSelectedItem() == nullptr) {
+		return;
+	}
+	String universe_name = lv->GetSelectedItem()->GetName();
+
+	// @TODO: ca peut pas fonctionner ca me faut un UIELEMNT
+	engine::ui::ModalWindow *modal_window = GetSubsystem<UI>()->LoadLayout(m_cache->GetResource<XMLFile>("UI/ModalWindow.xml"));
+	if (!modal_window) {
+		modal_window->SetStyle("ModalWindow", m_cache->GetResource<XMLFile>("UI/ModalWindow.xml"));
+		m_ui_elem->AddChild(modal_window);
+		modal_window->SetTitle("Delete universe");
+		//m_modal_window = new engine::ui::ModalWindow(context_,
+		//	"Delete universe",
+		//	ToString(m_l10n->Get("Do you want really delete universe: %s ?").CString(), universe_name.CString()));
+
+		SubscribeToEvent(modal_window, E_MESSAGEACK, URHO3D_HANDLER(MainMenu, HandleDeleteUniversePressed));
+	}
+}
+
+void MainMenu::ShowErrorBubble(const String &message)
 {
 	m_enable_error_bubble_timer = true;
 	m_error_bubble_timer->Reset();
@@ -590,15 +645,8 @@ void MainMenu::ShowErrorBubble(const String &message, ...)
 		m_window_menu->AddChild(error_bubble_window);
 		error_bubble_window->SetStyle("ErrorBubble");
 		error_bubble_window->SetName("error_window_bubble");
-
-		Text *error_txt = new Text(context_);
-		error_txt->SetStyle("ErrorBubbleText");
-		error_txt->SetName("error_bubble_text");
-		error_txt->SetText(m_l10n->Get(message));
-		error_bubble_window->AddChild(error_txt);
-	} else {
-		static_cast<Text *>(m_window_menu->GetChild("error_bubble_text", true))->SetText(m_l10n->Get(message));
 	}
+	static_cast<Text *>(m_window_menu->GetChild("error_bubble_text", true))->SetText(message);
 	error_bubble_window->SetVisible(true);
 }
 

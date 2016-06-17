@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<element type="ModalWindow">
+	<attribute name="Horiz Alignment" value="Center" />
+	<attribute name="Vert Alignment" value="Center" />
+	<attribute name="Min Size" value="180 50" />
+	<attribute name="Max Size" value="2147483647 200" />
+	<attribute name="Opacity" value="1" />
+	<attribute name="Layout Mode" value="Vertical" />
+	<attribute name="Layout Spacing" value="4" />
+	<attribute name="Layout Border" value="6 6 6 6" />
+	<attribute name="Resize Border" value="6 6 6 6" />
+	<attribute name="Is Movable" value="true" />
+	<attribute name="Modal Shade Color" value="0.3 0.4 0.7 0.4" />
+	<attribute name="Modal Frame Color" value="0.3 0.4 0.7" />
+	<attribute name="Modal Frame Size" value="2 2" />
+	<element style="HorizontalPanel">
+		<attribute name="Min Size" value="180 32" />
+		<attribute name="Max Size" value="2147483647 32" />
+		<element type="Text">
+			<attribute name="Name" value="TitleText" />
+			<attribute name="Text" value="Error" />
+			<attribute name="Horiz Alignment" value="Center" />
+			<attribute name="Vert Alignment" value="Center" />
+		</element>
+		<element type="Button" style="CloseButton">
+			<attribute name="Name" value="CloseButton" />
+			<attribute name="Horiz Alignment" value="Right" />
+			<attribute name="Vert Alignment" value="Top" />
+		</element>
+	</element>
+	<element type="BorderImage" style="EditorDivider">
+		<attribute name="Max Size" value="2147483647 2" />
+	</element>
+	<element>
+		<attribute name="Layout Mode" value="Horizontal" />
+		<attribute name="Layout Border" value="5 0 5 0" />
+		<element type="Text">
+			<attribute name="Name" value="MessageText" />
+			<attribute name="Text" value="message text" />
+			<attribute name="Text Alignment" value="Center" />
+		</element>
+	</element>
+	<element style="HorizontalPanel">
+		<attribute name="Min Size" value="180 40" />
+		<attribute name="Max Size" value="2147483647 40" />
+		<element type="Button">
+			<attribute name="Name" value="OkButton" />
+			<attribute name="Position" value="-180 0" />
+			<attribute name="Size" value="140 30" />
+			<attribute name="Is Selected" value="false" />
+			<element type="Text">
+				<attribute name="Name" value="OkButtonText" />
+				<attribute name="Horiz Alignment" value="Center" />
+				<attribute name="Vert Alignment" value="Center" />
+				<attribute name="Text" value="OK" />
+			</element>
+		</element>
+		<element type="Button">
+			<attribute name="Name" value="CancelButton" />
+			<attribute name="Position" value="180 0" />
+			<attribute name="Size" value="140 30" />
+			<attribute name="Is Selected" value="true" />
+			<element type="Text">
+				<attribute name="Name" value="CancelButtonText" />
+				<attribute name="Horiz Alignment" value="Center" />
+				<attribute name="Vert Alignment" value="Center" />
+				<attribute name="Text" value="Cancel" />
+			</element>
+		</element>
+	</element>
+</element>

@@ -42,16 +42,16 @@ public:
 	{
 		CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("Settings");
 		suiteOfTests->addTest(new CppUnit::TestCaller<SettingsTest>("Test1 - Bool settings.",
-				&SettingsTest::test_setting_bool));
+		        &SettingsTest::test_setting_bool));
 
 		suiteOfTests->addTest(new CppUnit::TestCaller<SettingsTest>("Test2 - U32 settings.",
-				&SettingsTest::test_setting_u32));
+		        &SettingsTest::test_setting_u32));
 
 		suiteOfTests->addTest(new CppUnit::TestCaller<SettingsTest>("Test3 - Float settings.",
-				&SettingsTest::test_setting_float));
+		        &SettingsTest::test_setting_float));
 
 		suiteOfTests->addTest(new CppUnit::TestCaller<SettingsTest>("Test4 - Save & Load.",
-				&SettingsTest::test_setting_save_load));
+		        &SettingsTest::test_setting_save_load));
 
 		return suiteOfTests;
 	}
@@ -107,4 +107,5 @@ protected:
 
 }
 }
+
 
