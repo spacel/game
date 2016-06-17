@@ -51,8 +51,6 @@ void LoadingScreen::Start()
 	ShowTips();
 
 	SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(LoadingScreen, HandleUpdate));
-	// Mouse is activate if loader is busy
-	GetSubsystem<Input>()->SetMouseVisible(true);
 }
 
 void LoadingScreen::ShowBackground()

@@ -115,5 +115,14 @@
   },
   "Sound Voice: ":{
     "fr": "Son voix: "
+  },
+  "Delete universe":{
+    "fr": "Effacer l'univers"
+  },
+  "Do you want really delete universe: %s ?":{
+    "fr": "Voulez-vous vraiment effacer l'univers: %s ?"
+  },
+  "Universe %s deleted":{
+    "fr": "Univers %s effacé"
   }
 }

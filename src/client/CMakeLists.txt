@@ -31,6 +31,7 @@ else ()
 endif ()
 
 set(client_sources
+	ui/ModalWindow.cpp
 	ui/ProgressBar.cpp
 	genericmenu.cpp
 	game.cpp
