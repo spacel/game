@@ -46,8 +46,11 @@ public:
 		suiteOfTests->addTest(new CppUnit::TestCaller<GeneratorsUnitTest>("Test2 - Generate World Name.",
 				&GeneratorsUnitTest::test_generate_worldname));
 
-		suiteOfTests->addTest(new CppUnit::TestCaller<GeneratorsUnitTest>("Test2 - Generate Solar System Double.",
+		suiteOfTests->addTest(new CppUnit::TestCaller<GeneratorsUnitTest>("Test3 - Generate Solar System Double.",
 				&GeneratorsUnitTest::test_generate_solarsystemdouble));
+
+		suiteOfTests->addTest(new CppUnit::TestCaller<GeneratorsUnitTest>("Test4 - Generate Solar System Type.",
+				&GeneratorsUnitTest::test_generate_solarsystemtype));
 		return suiteOfTests;
 	}
 
@@ -68,16 +71,22 @@ protected:
 	{
 		engine::UniverseGenerator::SetSeed(engine::UniverseGenerator::generate_seed());
 		std::string name = engine::UniverseGenerator::instance()->generate_world_name();
-		CPPUNIT_ASSERT(name.length() > 4);
+		CPPUNIT_ASSERT(name.length() > 3);
 	}
 
 	void test_generate_solarsystemdouble()
 	{
-		engine::UniverseGenerator::SetSeed(engine::UniverseGenerator::generate_seed());
-		double result = engine::UniverseGenerator::instance()->generate_solarsystem_double(50);
-		CPPUNIT_ASSERT(result > 0);
+		engine::UniverseGenerator::SetSeed(44887799);
+		double result = engine::UniverseGenerator::instance()->generate_solarsystem_double(5448855);
+		CPPUNIT_ASSERT(result == 6075898096.2088031769);
 	}
 
+	void test_generate_solarsystemtype()
+	{
+		engine::UniverseGenerator::SetSeed(487597);
+		uint8_t result = engine::UniverseGenerator::instance()->generate_solarsystem_type(12487904);
+		CPPUNIT_ASSERT(result == 3);
+	}
 };
 
 }
