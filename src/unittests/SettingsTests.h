@@ -40,7 +40,7 @@ public:
 
 	static CppUnit::Test *suite()
 	{
-		CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("Time");
+		CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("Settings");
 		suiteOfTests->addTest(new CppUnit::TestCaller<SettingsTest>("Test1 - Bool settings.",
 				&SettingsTest::test_setting_bool));
 

@@ -4,6 +4,7 @@ set(unittests_sources
 
 set(unitests_required_sources
 	../client/settings.cpp
+	../common/engine/generators.cpp
 )
 
 # Find Urho3D library
@@ -12,6 +13,7 @@ find_package(Urho3D REQUIRED)
 include_directories(
 	${URHO3D_INCLUDE_DIRS}
 	..
+	../common
 )
 
 set(UNITTESTS_LIBRARIES
