@@ -19,6 +19,7 @@
  */
 
 #include "mainmenu.h"
+#include <iostream>
 #include <common/engine/generators.h>
 #include <common/engine/space.h>
 #include <common/time_utils.h>
@@ -36,8 +37,9 @@
 #include <Urho3D/Input/Input.h>
 #include <project_defines.h>
 #include <Urho3D/UI/CheckBox.h>
-#include <Urho3D/UI/Slider.h>
-#include <iostream>
+#include <Urho3D/Graphics/Graphics.h>
+#include <Urho3D/UI/DropDownList.h>
+#include <stdlib.h>
 
 using namespace Urho3D;
 
@@ -436,26 +438,51 @@ void MainMenu::HandleGraphicsPressed(StringHash, VariantMap &eventData)
 
 	SetTitle("Graphics");
 
-	Button *back = CreateMainMenuButton("Back");
-	back->SetPosition(0, back->GetSize().y_ + 65);
+	Button *apply = CreateMainMenuButton("Apply");
+	apply->SetPosition(0, apply->GetSize().y_ + 65);
 
 	Text *text_full_screen = new Text(context_);
 	//full_screen->AddChild(text_full_screen);
-	text_full_screen->SetPosition(0, back->GetPosition().y_ + back->GetPosition().y_ + MAINMENU_BUTTON_SPACE);
+	text_full_screen->SetPosition(0, apply->GetPosition().y_ + apply->GetPosition().y_ + MAINMENU_BUTTON_SPACE);
 	text_full_screen->SetStyle("Text");
 	text_full_screen->SetText(m_l10n->Get("Full screen"));
 
 	CheckBox *full_screen = new CheckBox(context_);
 	full_screen->SetPosition(text_full_screen->GetPosition().x_ + 150,
-		back->GetPosition().y_ + back->GetPosition().y_ + MAINMENU_BUTTON_SPACE);
+		apply->GetPosition().y_ + apply->GetPosition().y_ + MAINMENU_BUTTON_SPACE);
 	full_screen->SetName("CheckBox");
 	full_screen->SetChecked(m_config->getBool(BSETTING_FULLSCREEN));
 
+	Text *text_resolution = new Text(context_);
+	text_resolution->SetPosition(0, full_screen->GetPosition().y_ + full_screen->GetSize().y_ + MAINMENU_BUTTON_SPACE);
+	text_resolution->SetStyle("Text");
+	text_resolution->SetText(m_l10n->Get("Resolution"));
+
+	DropDownList *resolution = new DropDownList(context_);
+	resolution->SetPosition(text_resolution->GetSize().x_ + 150, text_resolution->GetPosition().y_);
+	resolution->SetName("resolution");
+	PODVector<IntVector2> list_coord = GetSubsystem<Graphics>()->GetResolutions();
+	for (const auto &coord: list_coord) {
+		Text *text = new Text(context_);
+		text->SetText(Urho3D::ToString("%d : %d",coord.x_, coord.y_));
+		m_window_menu->AddChild(text);
+		text->SetStyleAuto();
+		resolution->AddItem(text);
+	}
+
+	Button *back = CreateMainMenuButton("Back");
+	back->SetPosition(0, resolution->GetSize().y_ + resolution->GetPosition().y_ + MAINMENU_BUTTON_SPACE);
+
+	m_window_menu->AddChild(apply);
 	m_window_menu->AddChild(full_screen);
 	m_window_menu->AddChild(text_full_screen);
+	m_window_menu->AddChild(text_resolution);
+	m_window_menu->AddChild(resolution);
 
 	full_screen->SetStyleAuto();
+	resolution->SetStyleAuto();
 
+	SubscribeToEvent(apply, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleApplyGraphicsPressed));
 	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSettingsPressed));
 	SubscribeToEvent(full_screen, E_TOGGLED, URHO3D_HANDLER(MainMenu, HandleFullScreenPressed));
 }
@@ -463,6 +490,20 @@ void MainMenu::HandleGraphicsPressed(StringHash, VariantMap &eventData)
 void MainMenu::HandleFullScreenPressed(StringHash eventType, VariantMap &eventData)
 {
 	m_config->setBool(BSETTING_FULLSCREEN, !m_config->getBool(BSETTING_FULLSCREEN));
+}
+
+void MainMenu::HandleApplyGraphicsPressed(StringHash eventType, VariantMap &eventData)
+{
+	DropDownList *resolution = static_cast<DropDownList *>(m_window_menu->GetChild("resolution", true));
+
+	PODVector<IntVector2> list_coord = GetSubsystem<Graphics>()->GetResolutions();
+	int32_t selection_id = resolution->GetSelection();
+	if (selection_id >= 0 && selection_id < list_coord.Size()) {
+		Urho3D::IntVector2 coord = list_coord.At(selection_id);
+		GetSubsystem<Graphics>()->SetMode(coord.x_, coord.y_);
+		m_config->setU32(U32SETTING_WINDOW_WIDTH, coord.x_);
+		m_config->setU32(U32SETTING_WINDOW_HEIGHT, coord.y_);
+	}
 }
 
 void MainMenu::HandleSoundsPressed(StringHash, VariantMap &eventData)

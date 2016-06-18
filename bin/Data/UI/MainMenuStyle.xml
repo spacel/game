@@ -169,4 +169,27 @@
 			<attribute name="Hover Image Offset" value="0 16" />
 		</element>
 	</element>
+	  <element type="DropDownList" style="BorderImage">
+        <attribute name="Image Rect" value="16 0 32 16" />
+        <attribute name="Border" value="4 4 4 4" />
+        <attribute name="Pressed Image Offset" value="16 0" />
+        <attribute name="Hover Image Offset" value="0 16" />
+        <attribute name="Pressed Child Offset" value="-1 1" />
+        <attribute name="Layout Mode" value="Horizontal" />
+        <attribute name="Layout Border" value="7 10 7 10" />
+        <element internal="true">
+            <element type="Text" internal="true" />
+        </element>
+        <element type="Window" internal="true" popup="true">
+			<attribute name="Horiz Alignment" value="Center" />
+			<attribute name="Vert Alignment" value="Center" />
+            <element type="ListView" internal="true">
+                <attribute name="Highlight Mode" value="Always" />
+                <element type="BorderImage" internal="true">    <!-- Override scroll panel attributes from default ListView -->
+                    <attribute name="Opacity" value="0" />
+                    <attribute name="Clip Border" value="2 0 2 0" />
+                </element>
+            </element>
+        </element>
+    </element>
 </elements>

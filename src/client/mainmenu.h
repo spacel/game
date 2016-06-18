@@ -60,6 +60,7 @@ private:
 	void HandleMultiplayerPressed(StringHash, VariantMap &eventData);
 	void HandleSettingsPressed(StringHash eventType, VariantMap &eventData);
 	void HandleGraphicsPressed(StringHash eventType, VariantMap &eventData);
+	void HandleApplyGraphicsPressed(StringHash eventType, VariantMap &eventData);
 	void HandleSoundsPressed(StringHash eventType, VariantMap &eventData);
 	void HandleFullScreenPressed(StringHash eventType, VariantMap &eventData);
 	void HandleSoundsVolume(StringHash eventType, VariantMap &eventData);
