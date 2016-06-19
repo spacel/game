@@ -98,6 +98,12 @@ private:
 		return sqlite3_reset(m_stmt[s]);
 	}
 
+	inline void bool_to_sqlite(const SQLite3Stmt s, const int iCol, const bool val) const
+	{
+		assert(s < SQLITE3STMT_COUNT);
+		sqlite3_verify(sqlite3_bind_int(m_stmt[s], iCol, val ? 1 : 0));
+	}
+
 	inline const bool sqlite_to_bool(const SQLite3Stmt s, int iCol)
 	{
 		assert(s < SQLITE3STMT_COUNT);

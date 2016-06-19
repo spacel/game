@@ -131,8 +131,6 @@ void LoadingScreen::HandleUpdate(StringHash, VariantMap &eventData)
 				m_progress_bar->SetValue(10);
 				m_loading_text->SetText(
 						m_l10n->Get(loading_texts[m_server->getLoadingStep()]));
-				//@TODO: A supprimer
-				LaunchGame();
 				break;
 			case engine::SERVERLOADINGSTEP_GAMEDATAS_LOADED:
 				m_progress_bar->SetValue(30);
