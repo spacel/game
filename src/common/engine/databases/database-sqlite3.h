@@ -45,6 +45,8 @@ enum SQLite3Stmt
 	SQLITE3STMT_LOAD_SOLARSYSTEMS_FOR_GALAXY,
 	SQLITE3STMT_CREATE_UNIVERSE,
 	SQLITE3STMT_LOAD_UNIVERSE,
+	SQLITE3STMT_LOAD_UNIVERSE_GENERATED_FLAG,
+	SQLITE3STMT_SET_UNIVERSE_GENERATED_FLAG,
 	SQLITE3STMT_COUNT,
 };
 
@@ -65,6 +67,8 @@ public:
 	void LoadSolarSystemsForGalaxy(Galaxy *galaxy);
 	void CreateUniverse(const std::string &name, const uint64_t &seed);
 	void LoadUniverse(const std::string &name);
+	void SetUniverseGenerated(const std::string &name, bool generated);
+	const bool IsUniverseGenerated(const std::string &name);
 
 private:
 	void Open();
@@ -92,6 +96,12 @@ private:
 	{
 		assert(s < SQLITE3STMT_COUNT);
 		return sqlite3_reset(m_stmt[s]);
+	}
+
+	inline const bool sqlite_to_bool(const SQLite3Stmt s, int iCol)
+	{
+		assert(s < SQLITE3STMT_COUNT);
+		return (sqlite3_column_int(m_stmt[s], iCol) > 0);
 	}
 
 	inline void str_to_sqlite(const SQLite3Stmt s, const int iCol, const std::string &str) const
@@ -123,6 +133,12 @@ private:
 	{
 		assert(s < SQLITE3STMT_COUNT);
 		return (uint16_t)sqlite3_column_int(m_stmt[s], iCol);
+	}
+
+	inline const uint32_t sqlite_to_uint32(const SQLite3Stmt s, int iCol)
+	{
+		assert(s < SQLITE3STMT_COUNT);
+		return (uint32_t)sqlite3_column_int(m_stmt[s], iCol);
 	}
 
 	inline const int32_t sqlite_to_int(const SQLite3Stmt s, int iCol)

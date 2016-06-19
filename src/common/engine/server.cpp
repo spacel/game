@@ -63,7 +63,7 @@ const bool Server::InitServer()
 	// @TODO get the seed from database
 	UniverseGenerator::instance()->SetSeed(180);
 	// @TODO get the galaxy generated flag from database
-	bool galaxy_generated = false;
+	bool galaxy_generated = m_db->IsUniverseGenerated(m_universe_name);
 
 	auto start = std::chrono::system_clock::now();
 	if (!galaxy_generated) {
@@ -75,6 +75,7 @@ const bool Server::InitServer()
 		for (const auto &ss: galaxy->solar_systems) {
 			m_db->CreateSolarSystem(ss.second);
 		}
+		m_db->SetUniverseGenerated(m_universe_name, true);
 		m_db->CommitTransaction();
 	}
 	else {

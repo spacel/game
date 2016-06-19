@@ -36,7 +36,9 @@ static const char* stmt_list[SQLITE3STMT_COUNT] = {
 		"SELECT `galaxy_id`,`solarsystem_name`,`type`,`pos_x`,`pos_y`,`pos_z`,`radius` FROM `solar_systems` WHERE `solarsystem_id` = ?",
 		"SELECT `solarsystem_id`,`solarsystem_name`,`type`,`pos_x`,`pos_y`,`pos_z`,`radius` FROM `solar_systems` WHERE `galaxy_id` = ?",
 		"INSERT INTO `gameconfig` (`universe_name`, `seed`, `universe_birth`) VALUES (?, ?, ?)",
-		"SELECT `seed`, `universe_birth` FROM `gameconfig` WHERE `universe_name` = ?"
+		"SELECT `seed`, `universe_birth` FROM `gameconfig` WHERE `universe_name` = ?",
+		"SELECT `universe_generated` FROM `gameconfig` WHERE `universe_name` = ?",
+		"UPDATE `gameconfig` SET `universe_generated` = ? WHERE `universe_name` = ?"
 };
 
 #define BUSY_INFO_THRESHOLD	100	// Print first informational message after 100ms.
@@ -89,7 +91,7 @@ void DatabaseSQLite3::UpdateSchema()
 	static const char *gameconfig_table_sql = "CREATE TABLE IF NOT EXISTS `gameconfig` ("
 		"	universe_name VARCHAR(32) NOT NULL UNIQUE,"
 		"	seed BIGINT NOT NULL,"
-		"	galaxy_generated SMALLINT NOT NULL DEFAULT(0),"
+		"	universe_generated SMALLINT NOT NULL DEFAULT(0),"
 		"	universe_birth BIGINT NOT NULL"
 		");";
 
@@ -311,11 +313,30 @@ void DatabaseSQLite3::LoadUniverse(const std::string &name)
 	if (stmt_step(SQLITE3STMT_LOAD_UNIVERSE) == SQLITE_ROW) {
 		engine::Universe::instance()->SetUniverseName(name);
 		engine::Universe::instance()->SetUniverseSeed(sqlite_to_uint64(SQLITE3STMT_LOAD_UNIVERSE, 0));
-		engine::Universe::instance()->SetUniverseBirth(sqlite_to_int(SQLITE3STMT_LOAD_UNIVERSE, 1));
+		engine::Universe::instance()->SetUniverseBirth(sqlite_to_uint32(SQLITE3STMT_LOAD_UNIVERSE, 1));
 		reset_stmt(SQLITE3STMT_LOAD_UNIVERSE);
 		return;
 	}
 	reset_stmt(SQLITE3STMT_LOAD_UNIVERSE);
+}
+
+const bool DatabaseSQLite3::IsUniverseGenerated(const std::string &name)
+{
+	CheckDatabase();
+	str_to_sqlite(SQLITE3STMT_LOAD_UNIVERSE_GENERATED_FLAG, 1, name);
+	if (stmt_step(SQLITE3STMT_LOAD_UNIVERSE_GENERATED_FLAG) == SQLITE_ROW) {
+		return sqlite_to_bool(SQLITE3STMT_LOAD_UNIVERSE_GENERATED_FLAG, 0);
+	}
+	return false;
+}
+
+void DatabaseSQLite3::SetUniverseGenerated(const std::string &name, bool generated)
+{
+	CheckDatabase();
+	bool_to_sqlite(SQLITE3STMT_SET_UNIVERSE_GENERATED_FLAG, 1, generated);
+	str_to_sqlite(SQLITE3STMT_SET_UNIVERSE_GENERATED_FLAG, 2, name);
+	sqlite3_verify(stmt_step(SQLITE3STMT_SET_UNIVERSE_GENERATED_FLAG), SQLITE_DONE);
+	reset_stmt(SQLITE3STMT_SET_UNIVERSE_GENERATED_FLAG);
 }
 }
 }

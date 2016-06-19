@@ -43,6 +43,8 @@ public:
 	virtual void CreateSolarSystem(engine::SolarSystem *ss) = 0;
 	virtual SolarSystem *LoadSolarSystem(const uint64_t &ss_id) = 0;
 	virtual void LoadSolarSystemsForGalaxy(Galaxy *galaxy) = 0;
+	virtual void SetUniverseGenerated(const std::string &name, bool generated) = 0;
+	virtual const bool IsUniverseGenerated(const std::string &name) = 0;
 
 private:
 	virtual void Open() = 0;
