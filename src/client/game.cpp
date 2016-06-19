@@ -238,36 +238,41 @@ void Game::HandleKeyDown(StringHash eventType, VariantMap &eventData)
 	int key = eventData[P_KEY].GetInt();
 
 	switch (key) {
-		case KEY_ESCAPE:
-			{
-				Console *console = GetSubsystem<Console>();
-				if (console->IsVisible())
-					console->SetVisible(false);
-				else
-					m_engine->Exit();
+		case KEY_ESCAPE: {
+			Console *console = GetSubsystem<Console>();
+			if (console->IsVisible()) {
+				console->SetVisible(false);
+			}
+			else {
+				// @TODO show global main menu if no other GUI menu opened
+				m_engine->Exit();
 			}
 			break;
+		}
 		case KEY_F1:
 			GetSubsystem<Console>()->Toggle();
 			break;
-		case KEY_F2:
-			{
-				DebugHud *debugHud = GetSubsystem<DebugHud>();
-				if (debugHud->GetMode() == 0 || debugHud->GetMode() == DEBUGHUD_SHOW_ALL_MEMORY)
-					debugHud->SetMode(DEBUGHUD_SHOW_ALL);
-				else
-					debugHud->SetMode(DEBUGHUD_SHOW_NONE);
+		case KEY_F2: {
+			DebugHud *debugHud = GetSubsystem<DebugHud>();
+			if (debugHud->GetMode() == 0 ||
+				debugHud->GetMode() == DEBUGHUD_SHOW_ALL_MEMORY) {
+				debugHud->SetMode(DEBUGHUD_SHOW_ALL);
+			}
+			else {
+				debugHud->SetMode(DEBUGHUD_SHOW_NONE);
 			}
 			break;
-		case KEY_F3:
-			{
+		}
+		case KEY_F3: {
 				DebugHud *debugHud = GetSubsystem<DebugHud>();
-				if (debugHud->GetMode() == 0 || debugHud->GetMode() == DEBUGHUD_SHOW_ALL)
+				if (debugHud->GetMode() == 0 || debugHud->GetMode() == DEBUGHUD_SHOW_ALL) {
 					debugHud->SetMode(DEBUGHUD_SHOW_ALL_MEMORY);
-				else
+				}
+				else {
 					debugHud->SetMode(DEBUGHUD_SHOW_NONE);
+				}
+				break;
 			}
-			break;
 		case KEY_F12:
 			TakeScreenshot();
 			break;
@@ -295,9 +300,9 @@ void Game::MoveCamera(float timeStep)
 	Input *input = GetSubsystem<Input>();
 
 	// Movement speed as world units per second
-	const float MOVE_SPEED = 200.0f;
+	static const float MOVE_SPEED = 200.0f;
 	// Mouse sensitivity as degrees per pixel
-	const float MOUSE_SENSITIVITY = 0.1f;
+	static const float MOUSE_SENSITIVITY = 0.1f;
 
 	// Use this frame's mouse motion to adjust camera node yaw and pitch. Clamp the pitch between -90 and 90 degrees
 	IntVector2 mouseMove = input->GetMouseMove();
