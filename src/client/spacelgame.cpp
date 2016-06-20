@@ -52,6 +52,7 @@ engine::Universe *engine::Universe::s_universe = nullptr;
 engine::ObjectMgr *engine::ObjectMgr::s_objmgr = nullptr;
 engine::UniverseGenerator *engine::UniverseGenerator::s_univgen = nullptr;
 uint64_t engine::UniverseGenerator::s_seed = 0;
+Client *Client::s_client = nullptr;
 
 void SpacelGame::Setup()
 {
@@ -107,13 +108,9 @@ void SpacelGame::ChangeGameGlobalUI(const GlobalUIId ui_id, void *param)
 		case GLOBALUI_LOADINGSCREEN: {
 			assert(param != nullptr);
 			String gamedatapath = GetSubsystem<FileSystem>()->GetProgramDir() + "Data/game/";
-			m_server = new engine::Server(
-					gamedatapath.CString(),
-					GetSubsystem<FileSystem>()->GetAppPreferencesDir(
-						"spacel", "universe").CString(),
-					std::string((const char *) param));
-			m_server->Run();
-			LoadingScreen *loading_screen = new LoadingScreen(context_, m_config, m_server, this);
+
+			Client::instance()->Run();
+			LoadingScreen *loading_screen = new LoadingScreen(context_, m_config, this);
 			GetSubsystem<UI>()->GetRoot()->AddChild(loading_screen);
 			loading_screen->Start();
 			break;

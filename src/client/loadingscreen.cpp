@@ -25,18 +25,17 @@
 #include <Urho3D/UI/UI.h>
 #include <common/macro_utils.h>
 #include <Urho3D/Input/Input.h>
-#include <kNet/DataSerializer.h>
 
 #include "loadingscreen.h"
+#include "client.h"
 
 using namespace Urho3D;
 
 namespace spacel {
 
-LoadingScreen::LoadingScreen(Context *context, ClientSettings *config, engine::Server *server, SpacelGame *main) :
+LoadingScreen::LoadingScreen(Context *context, ClientSettings *config, SpacelGame *main) :
 	GenericMenu(context, config),
-	m_main(main),
-	m_server(server)
+	m_main(main)
 {
 	m_ui_elem = GetSubsystem<UI>()->GetRoot();
 	m_ui_elem->SetDefaultStyle(m_cache->GetResource<XMLFile>("UI/LoadingScreenStyle.xml"));
@@ -102,7 +101,7 @@ void LoadingScreen::ShowTips()
 static const char *loading_texts[engine::SERVERLOADINGSTEP_COUNT] = {
 	"Not started.",
 	"Loading...",
-	"Game DB backend inited.",
+	"Connecting...",
 	"Game datas loaded.",
 	"Started!",
 	"Failed!"
@@ -115,41 +114,41 @@ void LoadingScreen::HandleUpdate(StringHash, VariantMap &eventData)
 
 	m_progress_bar->SetSize(m_ui_elem->GetSize().x_ -50 , 20);
 
-	const auto loading_step = m_server->getLoadingStep();
+	const auto loading_step = Client::instance()->getLoadingStep();
 	if (m_last_loading_step != loading_step) {
 		switch (loading_step) {
-			case engine::SERVERLOADINGSTEP_NOT_STARTED:
+			case CLIENTLOADINGSTEP_NOT_STARTED:
 				m_progress_bar->SetValue(0);
 				m_loading_text->SetText(
-						m_l10n->Get(loading_texts[m_server->getLoadingStep()]));
+						m_l10n->Get(loading_texts[loading_step]));
 
 				break;
-			case engine::SERVERLOADINGSTEP_BEGIN_START: {
+			case CLIENTLOADINGSTEP_BEGIN_START: {
 				m_progress_bar->SetValue(5);
 				m_loading_text->SetText(
-						m_l10n->Get(loading_texts[m_server->getLoadingStep()]));
+						m_l10n->Get(loading_texts[loading_step]));
 				break;
 			}
-			case engine::SERVERLOADINGSTEP_DB_INITED:
+			case CLIENTLOADINGSTEP_CONNECTED:
 				m_progress_bar->SetValue(10);
 				m_loading_text->SetText(
-						m_l10n->Get(loading_texts[m_server->getLoadingStep()]));
+						m_l10n->Get(loading_texts[loading_step]));
 				break;
-			case engine::SERVERLOADINGSTEP_GAMEDATAS_LOADED:
+			case CLIENTLOADINGSTEP_GAMEDATAS_LOADED:
 				m_progress_bar->SetValue(30);
 				m_loading_text->SetText(
-						m_l10n->Get(loading_texts[m_server->getLoadingStep()]));
+						m_l10n->Get(loading_texts[loading_step]));
 				break;
-			case engine::SERVERLOADINGSTEP_STARTED:
+			case CLIENTLOADINGSTEP_STARTED:
 				m_progress_bar->SetValue(100);
 				m_loading_text->SetText(
-						m_l10n->Get(loading_texts[m_server->getLoadingStep()]));
+						m_l10n->Get(loading_texts[loading_step]));
 				LaunchGame();
 				break;
-			case engine::SERVERLOADINGSTEP_FAILED:
+			case CLIENTLOADINGSTEP_FAILED:
 				m_progress_bar->SetValue(0);
 				m_loading_text->SetText(
-						m_l10n->Get(loading_texts[m_server->getLoadingStep()]));
+						m_l10n->Get(loading_texts[loading_step]));
 				break;
 			default:
 				assert(false);
