@@ -47,7 +47,8 @@ ModalWindow::~ModalWindow()
 	Remove();
 }
 
-void ModalWindow::InitComponents(const String &title, const String &message)
+void ModalWindow::InitComponents(const String &title, const String &message,
+	bool show_close_button)
 {
 	assert(!m_ok_button); // ok button should not have been inited
 
@@ -73,30 +74,24 @@ void ModalWindow::InitComponents(const String &title, const String &message)
 	Button *close_button = dynamic_cast<Button *>(GetChild("CloseButton", true));
 	assert(close_button);
 
+	if (show_close_button) {
+		SubscribeToEvent(close_button, E_RELEASED, URHO3D_HANDLER(ModalWindow, HandleMessageAcknowledged));
+	}
+	else {
+		close_button->Remove();
+	}
+
 	SetModal(true);
 	SubscribeToEvent(this, E_MODALCHANGED, URHO3D_HANDLER(ModalWindow, HandleMessageAcknowledged));
 
 	SubscribeToEvent(m_ok_button, E_RELEASED, URHO3D_HANDLER(ModalWindow, HandleMessageAcknowledged));
 	SubscribeToEvent(cancel_button, E_RELEASED, URHO3D_HANDLER(ModalWindow, HandleMessageAcknowledged));
-	SubscribeToEvent(close_button, E_RELEASED, URHO3D_HANDLER(ModalWindow, HandleMessageAcknowledged));
 
 }
 void ModalWindow::RegisterObject(Context *context)
 {
 	context->RegisterFactory<ModalWindow>("UI");
 	URHO3D_COPY_BASE_ATTRIBUTES(Window);
-}
-
-void ModalWindow::SetTitle(const String &text)
-{
-	if (m_title_text)
-		m_title_text->SetText(m_l10n->Get(text));
-}
-
-void ModalWindow::SetMessage(const String &text)
-{
-	if (m_message_text)
-		m_message_text->SetText(m_l10n->Get(text));
 }
 
 void ModalWindow::HandleMessageAcknowledged(StringHash eventType, VariantMap &eventData)

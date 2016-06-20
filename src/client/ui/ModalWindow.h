@@ -36,9 +36,8 @@ public:
 	ModalWindow(Urho3D::Context *context);
 	virtual ~ModalWindow();
 	static void RegisterObject(Urho3D::Context *context);
-	void InitComponents(const Urho3D::String &title, const Urho3D::String &message = Urho3D::String::EMPTY);
-	void SetTitle(const Urho3D::String &text);
-	void SetMessage(const Urho3D::String &text);
+	void InitComponents(const Urho3D::String &title, const Urho3D::String &message,
+							bool show_close_button = false);
 
 private:
 	void HandleMessageAcknowledged(Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
