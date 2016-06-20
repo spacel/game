@@ -35,9 +35,10 @@ class ModalWindow : public Window
 URHO3D_OBJECT(ModalWindow, Window);
 
 public:
-	ModalWindow(Context *context, const String &title = String::EMPTY, const String &message = String::EMPTY);
-	virtual ~ModalWindow();
+	ModalWindow(Context *context);
+	virtual ~ModalWindow() {};
 	static void RegisterObject(Context *context);
+	void InitComponents(const String &title = String::EMPTY, const String &message = String::EMPTY);
 	void SetTitle(const String &text);
 	void SetMessage(const String &text);
 

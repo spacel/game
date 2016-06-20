@@ -98,6 +98,7 @@ private:
 	SharedPtr<Text> m_title;
 	SharedPtr<Text> m_universe_infos;
 	SharedPtr<Button> m_music_button;
+	SharedPtr<UIElement> m_modal_window;
 	bool m_enable_menu_music;
 	Timer *m_error_bubble_timer;
 	bool m_enable_error_bubble_timer = false;

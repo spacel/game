@@ -32,7 +32,7 @@ namespace spacel {
 namespace engine {
 namespace ui {
 
-ModalWindow::ModalWindow(Context *context, const String &title, const String &message) :
+ModalWindow::ModalWindow(Context *context) :
 	Window(context),
 	m_l10n(GetSubsystem<Localization>())
 {
@@ -41,6 +41,11 @@ ModalWindow::ModalWindow(Context *context, const String &title, const String &me
 	SetModal(true);
 	SubscribeToEvent(this, E_MODALCHANGED, URHO3D_HANDLER(ModalWindow, HandleMessageAcknowledged));
 
+
+}
+
+void ModalWindow::InitComponents(const String &title, const String &message)
+{
 	m_title_text = dynamic_cast<Text *>(GetChild("TitleText", true));
 	assert(m_title_text);
 	m_title_text->SetText(m_l10n->Get(title));
@@ -63,13 +68,8 @@ ModalWindow::ModalWindow(Context *context, const String &title, const String &me
 	if (close_button) {
 		SubscribeToEvent(close_button, E_RELEASED, URHO3D_HANDLER(ModalWindow, HandleMessageAcknowledged));
 	}
-}
-
-ModalWindow::~ModalWindow()
-{
 
 }
-
 void ModalWindow::RegisterObject(Context *context)
 {
 	context->RegisterFactory<ModalWindow>("UI");
