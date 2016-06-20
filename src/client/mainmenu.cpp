@@ -187,6 +187,7 @@ void MainMenu::HandleKeyDown(StringHash, VariantMap &eventData)
 		case KEY_DELETE:
 			if (m_menu_id == MAINMENUID_SINGLEPLAYER_LOADGAME) {
 				DeleteUniverse();
+				UnsubscribeFromEvent(E_KEYDOWN);
 			}
 			break;
 		case KEY_F12:
@@ -599,10 +600,10 @@ void MainMenu::HandleDeleteUniversePressed(StringHash eventType, VariantMap &eve
 				}
 			}
 
-			/*if (GetSubsystem<FileSystem>()->Delete(path_universe)) {
+			if (GetSubsystem<FileSystem>()->Delete(path_universe)) {
 				ShowErrorBubble(ToString(m_l10n->Get("Universe %s deleted").CString(), universe_name.CString()));
 				URHO3D_LOGINFOF("Universe %s deleted", universe_name.CString());
-			}*/
+			}
 		}
 
 		lv->RemoveItem(lv->GetSelectedItem());
@@ -613,6 +614,8 @@ void MainMenu::HandleDeleteUniversePressed(StringHash eventType, VariantMap &eve
 		m_modal_window->UnsubscribeFromEvent(E_MODALCHANGED);
 		m_modal_window = nullptr;
 	}
+
+	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(MainMenu, HandleKeyDown));
 }
 
 void MainMenu::DeleteUniverse()
