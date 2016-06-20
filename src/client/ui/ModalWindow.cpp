@@ -23,6 +23,7 @@
 #include <Urho3D/Resource/XMLFile.h>
 #include <Urho3D/UI/UI.h>
 #include <Urho3D/UI/UIEvents.h>
+#include <Urho3D/Input/InputEvents.h>
 
 #include "ModalWindow.h"
 
@@ -56,9 +57,6 @@ void ModalWindow::InitComponents(const String &title, const String &message,
 	assert(m_title_text);
 	m_title_text->SetText(m_l10n->Get(title));
 
-	//SetStyle("ModalWindow", cache->GetResource<XMLFile>("UI/ModalWindow.xml"));
-	//SetDefaultStyle(cache->GetResource<XMLFile>("UI/ModalWindow.xml"));
-
 	m_message_text = dynamic_cast<Text *>(GetChild("MessageText", true));
 	m_message_text->SetText(m_l10n->Get(message));
 
@@ -87,6 +85,8 @@ void ModalWindow::InitComponents(const String &title, const String &message,
 	SubscribeToEvent(m_ok_button, E_RELEASED, URHO3D_HANDLER(ModalWindow, HandleMessageAcknowledged));
 	SubscribeToEvent(cancel_button, E_RELEASED, URHO3D_HANDLER(ModalWindow, HandleMessageAcknowledged));
 
+	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(ModalWindow, HandleKeyDown));
+
 }
 void ModalWindow::RegisterObject(Context *context)
 {
@@ -94,7 +94,7 @@ void ModalWindow::RegisterObject(Context *context)
 	URHO3D_COPY_BASE_ATTRIBUTES(Window);
 }
 
-void ModalWindow::HandleMessageAcknowledged(StringHash eventType, VariantMap &eventData)
+void ModalWindow::HandleMessageAcknowledged(StringHash, VariantMap &eventData)
 {
 	using namespace MessageACK;
 
@@ -103,6 +103,32 @@ void ModalWindow::HandleMessageAcknowledged(StringHash eventType, VariantMap &ev
 	SendEvent(E_MESSAGEACK, newEventData);
 
 	this->ReleaseRef();
+}
+
+void ModalWindow::HandleKeyDown(StringHash, VariantMap &eventData)
+{
+	using namespace KeyDown;
+	using namespace MessageACK;
+
+	int key = eventData[P_KEY].GetInt();
+
+	switch (key) {
+		case KEY_ESCAPE: {
+			VariantMap &newEventData = GetEventDataMap();
+			newEventData[P_OK] = false;
+			SendEvent(E_MESSAGEACK, newEventData);
+			this->ReleaseRef();
+			break;
+		}
+		case KEY_RETURN: {
+			VariantMap &newEventData = GetEventDataMap();
+			newEventData[P_OK] = true;
+			SendEvent(E_MESSAGEACK, newEventData);
+			this->ReleaseRef();
+			break;
+		}
+		default: break;
+	}
 }
 
 }

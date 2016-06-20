@@ -41,6 +41,7 @@ public:
 
 private:
 	void HandleMessageAcknowledged(Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
+	void HandleKeyDown(Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
 
 	Urho3D::Localization *m_l10n;
 	Urho3D::SharedPtr<Urho3D::Button> m_ok_button;
