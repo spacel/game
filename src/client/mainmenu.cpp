@@ -269,7 +269,7 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 		universe_creation = true;
 	}
 	else {
-		ListView *lv = dynamic_cast<ListView *>(m_window_menu->GetChild("loading_univerise_listview", true));
+		ListView *lv = dynamic_cast<ListView *>(m_window_menu->GetChild("loading_universe_listview", true));
 		assert(lv);
 
 		if (lv->GetSelectedItem() != nullptr) {
@@ -339,7 +339,7 @@ void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
 	ListView *universes_listview = new ListView(context_);
 	m_window_menu->AddChild(universes_listview);
 	universes_listview->SetStyle("ListView");
-	universes_listview->SetName("loading_univerise_listview");
+	universes_listview->SetName("loading_universe_listview");
 	universes_listview->SetSize(m_window_menu->GetSize().x_ / 2, m_window_menu->GetSize().y_ - 125);
 
 	if (!list_universe.Empty()) {
@@ -583,7 +583,7 @@ void MainMenu::HandleInfosUniverseClicked(StringHash, VariantMap &eventData)
 void MainMenu::HandleDeleteUniversePressed(StringHash eventType, VariantMap &eventData)
 {
 	if (eventData[MessageACK::P_OK].GetBool()) {
-		ListView *lv = dynamic_cast<ListView *>(m_window_menu->GetChild("loading_univerise_listview", true));
+		ListView *lv = dynamic_cast<ListView *>(m_window_menu->GetChild("loading_universe_listview", true));
 		assert(lv);
 		String universe_name = lv->GetSelectedItem()->GetName();
 		Vector<String> list_files_universe;
@@ -605,8 +605,7 @@ void MainMenu::HandleDeleteUniversePressed(StringHash eventType, VariantMap &eve
 			}*/
 		}
 
-		lv->RemoveChild(lv->GetSelectedItem());
-		lv->UpdateLayout();
+		lv->RemoveItem(lv->GetSelectedItem());
 	}
 
 	if (m_modal_window != nullptr) {
@@ -618,7 +617,7 @@ void MainMenu::HandleDeleteUniversePressed(StringHash eventType, VariantMap &eve
 
 void MainMenu::DeleteUniverse()
 {
-	ListView *lv = dynamic_cast<ListView *>(m_window_menu->GetChild("loading_univerise_listview", true));
+	ListView *lv = dynamic_cast<ListView *>(m_window_menu->GetChild("loading_universe_listview", true));
 	assert(lv);
 	if (lv->GetSelectedItem() == nullptr) {
 		return;
