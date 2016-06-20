@@ -37,6 +37,7 @@
 #include <project_defines.h>
 #include <Urho3D/UI/CheckBox.h>
 #include <Urho3D/UI/Slider.h>
+#include <iostream>
 
 using namespace Urho3D;
 
@@ -69,6 +70,7 @@ MainMenu::MainMenu(Context *context, ClientSettings *config, SpacelGame *main):
 	m_music_button = new Button(context_);
 	m_error_bubble_timer = new Timer();
 	except_unsubscribe.Push("E_KEYDOWN");
+	m_modal_window = nullptr;
 }
 
 MainMenu::~MainMenu()
@@ -620,17 +622,20 @@ void MainMenu::DeleteUniverse()
 	}
 	String universe_name = lv->GetSelectedItem()->GetName();
 
-	// @TODO: ca peut pas fonctionner ca me faut un UIELEMNT
-	engine::ui::ModalWindow *modal_window = GetSubsystem<UI>()->LoadLayout(m_cache->GetResource<XMLFile>("UI/ModalWindow.xml"));
-	if (!modal_window) {
-		modal_window->SetStyle("ModalWindow", m_cache->GetResource<XMLFile>("UI/ModalWindow.xml"));
-		m_ui_elem->AddChild(modal_window);
-		modal_window->SetTitle("Delete universe");
+	if (!m_modal_window) {
+		m_modal_window = GetSubsystem<UI>()->LoadLayout(
+			m_cache->GetResource<XMLFile>("UI/ModalWindow.xml"));
+		m_modal_window->SetStyle("ModalWindow", m_cache->GetResource<XMLFile>("UI/ModalWindow.xml"));
+		m_ui_elem->AddChild(m_modal_window);
+		engine::ui::ModalWindow *modal_window = dynamic_cast<engine::ui::ModalWindow *>(m_modal_window.Get());
+		assert(modal_window);
+		modal_window->InitComponents("Delete universe");
 		//m_modal_window = new engine::ui::ModalWindow(context_,
 		//	"Delete universe",
 		//	ToString(m_l10n->Get("Do you want really delete universe: %s ?").CString(), universe_name.CString()));
 
-		SubscribeToEvent(modal_window, E_MESSAGEACK, URHO3D_HANDLER(MainMenu, HandleDeleteUniversePressed));
+		SubscribeToEvent(m_modal_window, E_MESSAGEACK,
+						 URHO3D_HANDLER(MainMenu, HandleDeleteUniversePressed));
 	}
 }
 
