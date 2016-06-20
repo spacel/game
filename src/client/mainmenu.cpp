@@ -598,11 +598,14 @@ void MainMenu::HandleDeleteUniversePressed(StringHash eventType, VariantMap &eve
 					GetSubsystem<FileSystem>()->Delete(path_universe + file);
 				}
 			}
-			if (GetSubsystem<FileSystem>()->Delete(path_universe)) {
+
+			/*if (GetSubsystem<FileSystem>()->Delete(path_universe)) {
 				ShowErrorBubble(ToString(m_l10n->Get("Universe %s deleted").CString(), universe_name.CString()));
 				URHO3D_LOGINFOF("Universe %s deleted", universe_name.CString());
-			}
+			}*/
 		}
+
+		lv->RemoveChild(lv->GetSelectedItem());
 		lv->UpdateLayout();
 	}
 
@@ -628,9 +631,9 @@ void MainMenu::DeleteUniverse()
 		m_ui_elem->AddChild(m_modal_window);
 		engine::ui::ModalWindow *modal_window = dynamic_cast<engine::ui::ModalWindow *>(m_modal_window.Get());
 		assert(modal_window);
-		modal_window->InitComponents("Delete universe",
-			ToString(m_l10n->Get("Do you want really delete universe: %s ?").CString(),
-					 universe_name.CString()));
+		modal_window->InitComponents("Delete universe", ToString(
+			m_l10n->Get("Do you want really delete universe: %s ?").CString(),
+			universe_name.CString()), false);
 
 		SubscribeToEvent(m_modal_window, E_MESSAGEACK,
 			URHO3D_HANDLER(MainMenu, HandleDeleteUniversePressed));
