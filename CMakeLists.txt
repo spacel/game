@@ -28,6 +28,9 @@ add_subdirectory(lib/jsoncpp)
 set(SQLITE3_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/Urho3D/Source/ThirdParty/SQLite/src")
 set(SQLITE3_LIBRARY sqlite3)
 
+set(KNET_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/Urho3D/Source/ThirdParty/kNet/include")
+set(KNET_LIBRARY kNet)
+
 configure_file(src/project_defines.h.in ${CMAKE_CURRENT_SOURCE_DIR}/src/project_defines.h)
 
 add_subdirectory(src/common)

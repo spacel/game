@@ -25,6 +25,7 @@
 #include <Urho3D/UI/UI.h>
 #include <common/macro_utils.h>
 #include <Urho3D/Input/Input.h>
+#include <kNet/DataSerializer.h>
 
 #include "loadingscreen.h"
 
@@ -121,12 +122,14 @@ void LoadingScreen::HandleUpdate(StringHash, VariantMap &eventData)
 				m_progress_bar->SetValue(0);
 				m_loading_text->SetText(
 						m_l10n->Get(loading_texts[m_server->getLoadingStep()]));
+
 				break;
-			case engine::SERVERLOADINGSTEP_BEGIN_START:
+			case engine::SERVERLOADINGSTEP_BEGIN_START: {
 				m_progress_bar->SetValue(5);
 				m_loading_text->SetText(
 						m_l10n->Get(loading_texts[m_server->getLoadingStep()]));
 				break;
+			}
 			case engine::SERVERLOADINGSTEP_DB_INITED:
 				m_progress_bar->SetValue(10);
 				m_loading_text->SetText(

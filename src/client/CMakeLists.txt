@@ -26,12 +26,14 @@ else ()
 		${X11_LIBRARIES}
 		${OPENGL_LIBRARIES}
 		${JSONCPP_LIBRARY}
-		sqlite3
+		${SQLITE3_LIBRARY}
+		${KNET_LIBRARY}
 		)
 endif ()
 
 set(client_sources
 	ui/ProgressBar.cpp
+	client.cpp
 	genericmenu.cpp
 	game.cpp
 	loadingscreen.cpp
@@ -43,7 +45,9 @@ set(client_sources
 # Hack due to the current cmake implementation of Urho3D library
 remove_definitions(-DURHO3D_SSE -DURHO3D_OPENGL)
 
-link_directories(${URHO3D_HOME}/lib ${URHO3D_HOME}/Source/ThirdParty/SQLite)
+link_directories(${URHO3D_HOME}/lib
+		${URHO3D_HOME}/Source/ThirdParty/SQLite
+		${URHO3D_HOME}/Source/ThirdParty/kNet)
 add_executable(${PROJECT_NAME} ${client_sources})
 
 add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}lib)

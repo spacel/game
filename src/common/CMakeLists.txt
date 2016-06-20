@@ -14,6 +14,7 @@ find_package(Urho3D REQUIRED)
 include_directories(
 	${URHO3D_INCLUDE_DIRS}
 	${JSONCPP_INCLUDE_DIR}
+	${KNET_INCLUDE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}
 )
 
