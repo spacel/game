@@ -17,14 +17,14 @@
  * along with Spacel.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ModalWindow.h"
-
 #include <Urho3D/Graphics/Graphics.h>
 #include <Urho3D/IO/Log.h>
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/Resource/XMLFile.h>
 #include <Urho3D/UI/UI.h>
 #include <Urho3D/UI/UIEvents.h>
+
+#include "ModalWindow.h"
 
 using namespace Urho3D;
 
@@ -33,46 +33,58 @@ namespace engine {
 namespace ui {
 
 ModalWindow::ModalWindow(Context *context) :
-	Window(context),
+	Urho3D::Window(context),
 	m_l10n(GetSubsystem<Localization>())
 {
-	ResourceCache *cache = GetSubsystem<ResourceCache>();
-	SetStyle("ModalWindow", cache->GetResource<XMLFile>("UI/ModalWindow.xml"));
-	SetModal(true);
-	SubscribeToEvent(this, E_MODALCHANGED, URHO3D_HANDLER(ModalWindow, HandleMessageAcknowledged));
+	m_ok_button = nullptr;
+	m_title_text = nullptr;
+	m_message_text = nullptr;
+}
 
-
+ModalWindow::~ModalWindow()
+{
+	RemoveAllChildren();
+	Remove();
 }
 
 void ModalWindow::InitComponents(const String &title, const String &message)
 {
+	assert(!m_ok_button); // ok button should not have been inited
+
 	m_title_text = dynamic_cast<Text *>(GetChild("TitleText", true));
 	assert(m_title_text);
 	m_title_text->SetText(m_l10n->Get(title));
+
+	//SetStyle("ModalWindow", cache->GetResource<XMLFile>("UI/ModalWindow.xml"));
+	//SetDefaultStyle(cache->GetResource<XMLFile>("UI/ModalWindow.xml"));
+
 	m_message_text = dynamic_cast<Text *>(GetChild("MessageText", true));
 	m_message_text->SetText(m_l10n->Get(message));
 
 	m_ok_button = dynamic_cast<Button *>(GetChild("OkButton", true));
-	if (m_ok_button) {
-		SubscribeToEvent(m_ok_button, E_RELEASED, URHO3D_HANDLER(ModalWindow, HandleMessageAcknowledged));
-	}
+	assert(m_ok_button);
 
 	Button *cancel_button = dynamic_cast<Button *>(GetChild("CancelButton", true));
-	if (cancel_button) {
-		Text *cancelButtonText = dynamic_cast<Text *>(GetChild("CancelButtonText", true));
-		cancelButtonText->SetText(m_l10n->Get(cancelButtonText->GetText()));
-		SubscribeToEvent(cancel_button, E_RELEASED, URHO3D_HANDLER(ModalWindow, HandleMessageAcknowledged));
-	}
+	Text *cancelButtonText = dynamic_cast<Text *>(GetChild("CancelButtonText", true));
+	assert(cancel_button && cancelButtonText);
+
+	cancelButtonText->SetText(m_l10n->Get(cancelButtonText->GetText()));
 
 	Button *close_button = dynamic_cast<Button *>(GetChild("CloseButton", true));
-	if (close_button) {
-		SubscribeToEvent(close_button, E_RELEASED, URHO3D_HANDLER(ModalWindow, HandleMessageAcknowledged));
-	}
+	assert(close_button);
+
+	SetModal(true);
+	SubscribeToEvent(this, E_MODALCHANGED, URHO3D_HANDLER(ModalWindow, HandleMessageAcknowledged));
+
+	SubscribeToEvent(m_ok_button, E_RELEASED, URHO3D_HANDLER(ModalWindow, HandleMessageAcknowledged));
+	SubscribeToEvent(cancel_button, E_RELEASED, URHO3D_HANDLER(ModalWindow, HandleMessageAcknowledged));
+	SubscribeToEvent(close_button, E_RELEASED, URHO3D_HANDLER(ModalWindow, HandleMessageAcknowledged));
 
 }
 void ModalWindow::RegisterObject(Context *context)
 {
 	context->RegisterFactory<ModalWindow>("UI");
+	URHO3D_COPY_BASE_ATTRIBUTES(Window);
 }
 
 void ModalWindow::SetTitle(const String &text)
