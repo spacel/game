@@ -19,37 +19,34 @@
 
 #pragma once
 
-#include <Urho3D/Resource/Localization.h>
 #include <Urho3D/UI/Button.h>
 #include <Urho3D/UI/Text.h>
 #include <Urho3D/UI/Window.h>
-
-using namespace Urho3D;
+#include <Urho3D/Resource/Localization.h>
 
 namespace spacel {
 namespace engine {
 namespace ui {
 
-class ModalWindow : public Window
+class URHO3D_API ModalWindow: public Urho3D::Window
 {
 URHO3D_OBJECT(ModalWindow, Window);
 
 public:
-	ModalWindow(Context *context);
-	virtual ~ModalWindow() {};
-	static void RegisterObject(Context *context);
-	void InitComponents(const String &title = String::EMPTY, const String &message = String::EMPTY);
-	void SetTitle(const String &text);
-	void SetMessage(const String &text);
+	ModalWindow(Urho3D::Context *context);
+	virtual ~ModalWindow();
+	static void RegisterObject(Urho3D::Context *context);
+	void InitComponents(const Urho3D::String &title, const Urho3D::String &message = Urho3D::String::EMPTY);
+	void SetTitle(const Urho3D::String &text);
+	void SetMessage(const Urho3D::String &text);
 
 private:
-	void HandleMessageAcknowledged(StringHash eventType, VariantMap &eventData);
+	void HandleMessageAcknowledged(Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
 
-	Localization *m_l10n;
-	Button *m_ok_button;
-	Text *m_title_text;
-	Text *m_message_text;
-
+	Urho3D::Localization *m_l10n;
+	Urho3D::SharedPtr<Urho3D::Button> m_ok_button;
+	Urho3D::SharedPtr<Urho3D::Text> m_title_text;
+	Urho3D::SharedPtr<Urho3D::Text> m_message_text;
 };
 
 }

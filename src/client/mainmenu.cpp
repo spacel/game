@@ -605,11 +605,11 @@ void MainMenu::HandleDeleteUniversePressed(StringHash eventType, VariantMap &eve
 		}
 		lv->UpdateLayout();
 	}
-	UnsubscribeFromEvent(E_MESSAGEACK);
-	UnsubscribeFromEvent(E_MODALCHANGED);
-	if (engine::ui::ModalWindow *modal_window = dynamic_cast<engine::ui::ModalWindow *>(m_ui_elem->GetChild("ModalWindow", true))) {
-		modal_window->Remove();
-		modal_window = nullptr;
+
+	if (m_modal_window != nullptr) {
+		m_modal_window->UnsubscribeFromEvent(E_MESSAGEACK);
+		m_modal_window->UnsubscribeFromEvent(E_MODALCHANGED);
+		m_modal_window = nullptr;
 	}
 }
 
@@ -622,20 +622,18 @@ void MainMenu::DeleteUniverse()
 	}
 	String universe_name = lv->GetSelectedItem()->GetName();
 
-	if (!m_modal_window) {
+	if (m_modal_window == nullptr) {
 		m_modal_window = GetSubsystem<UI>()->LoadLayout(
 			m_cache->GetResource<XMLFile>("UI/ModalWindow.xml"));
-		m_modal_window->SetStyle("ModalWindow", m_cache->GetResource<XMLFile>("UI/ModalWindow.xml"));
 		m_ui_elem->AddChild(m_modal_window);
 		engine::ui::ModalWindow *modal_window = dynamic_cast<engine::ui::ModalWindow *>(m_modal_window.Get());
 		assert(modal_window);
-		modal_window->InitComponents("Delete universe");
-		//m_modal_window = new engine::ui::ModalWindow(context_,
-		//	"Delete universe",
-		//	ToString(m_l10n->Get("Do you want really delete universe: %s ?").CString(), universe_name.CString()));
+		modal_window->InitComponents("Delete universe",
+			ToString(m_l10n->Get("Do you want really delete universe: %s ?").CString(),
+					 universe_name.CString()));
 
 		SubscribeToEvent(m_modal_window, E_MESSAGEACK,
-						 URHO3D_HANDLER(MainMenu, HandleDeleteUniversePressed));
+			URHO3D_HANDLER(MainMenu, HandleDeleteUniversePressed));
 	}
 }
 
