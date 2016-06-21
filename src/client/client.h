@@ -21,6 +21,7 @@
 
 #include <atomic>
 #include <Urho3D/Core/Thread.h>
+#include "../../lib/Urho3D/Source/ThirdParty/kNet/include/kNet/DataDeserializer.h"
 
 namespace spacel {
 
@@ -62,8 +63,13 @@ public:
 		}
 	}
 
-	// @TODO thread this
+	void handlePacket_Null(kNet::DataDeserializer *data) {}
+	void handlePacket_Hello(kNet::DataDeserializer *data);
+	void handlePacket_Chat(kNet::DataDeserializer *data);
+	void handlePacket_GalaxySystems(kNet::DataDeserializer *data);
 private:
+	void Step(const float dtime);
+
 	static Client *s_client;
 	std::atomic<ClientLoadingStep> m_loading_step;
 };

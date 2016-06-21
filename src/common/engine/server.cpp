@@ -100,8 +100,6 @@ const bool Server::InitServer()
 
 const bool Server::LoadGameDatas()
 {
-
-
 	try {
 		std::ifstream cfg_file(m_gamedatapath + "items.json", std::ifstream::binary);
 		if (!cfg_file.good()) {
@@ -234,6 +232,21 @@ void Server::ThreadFunction()
 }
 
 void Server::Step(const float dtime)
+{
+
+}
+
+void Server::handlePacket_Hello(kNet::DataDeserializer *data)
+{
+
+}
+
+void Server::handlePacket_Auth(kNet::DataDeserializer *data)
+{
+
+}
+
+void Server::handlePacket_Chat(kNet::DataDeserializer *data)
 {
 
 }

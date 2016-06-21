@@ -8,6 +8,7 @@ include(Urho3D-CMake-common)
 find_package(Urho3D REQUIRED)
 include_directories(
 	${URHO3D_INCLUDE_DIRS}
+	${KNET_INCLUDE_DIR}
 	..
 	)
 
@@ -32,6 +33,7 @@ else ()
 endif ()
 
 set(client_sources
+	network/clientpackethandler.cpp
 	ui/ModalWindow.cpp
 	ui/ProgressBar.cpp
 	client.cpp

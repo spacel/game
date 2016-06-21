@@ -22,6 +22,7 @@
 #include <Urho3D/Core/Thread.h>
 #include <string>
 #include <atomic>
+#include <kNet/DataDeserializer.h>
 
 namespace spacel {
 namespace engine {
@@ -46,6 +47,11 @@ public:
 		   const std::string &universe_name);
 	void ThreadFunction();
 	inline const ServerLoadingStep getLoadingStep() const { return m_loading_step; }
+
+	void handlePacket_Null(kNet::DataDeserializer* data) {};
+	void handlePacket_Hello(kNet::DataDeserializer* data);
+	void handlePacket_Chat(kNet::DataDeserializer* data);
+	void handlePacket_Auth(kNet::DataDeserializer* data);
 private:
 	const bool InitServer();
 	const bool LoadGameDatas();

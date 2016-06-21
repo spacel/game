@@ -2,13 +2,15 @@ set(common_sources
 	config.cpp
 	porting.cpp
 	engine/inventory.cpp
+	engine/gameobject.cpp
 	engine/generators.cpp
 	engine/objectmanager.cpp
 	engine/player.cpp
 	engine/server.cpp
 	engine/space.cpp
 	engine/databases/database-sqlite3.cpp
-	engine/gameobject.cpp)
+	engine/network/serverpackethandler.cpp
+)
 
 find_package(Urho3D REQUIRED)
 

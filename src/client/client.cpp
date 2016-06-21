@@ -19,8 +19,12 @@
 
 #include "client.h"
 #include <Urho3D/IO/Log.h>
+#include <chrono>
+#include <thread>
 
 namespace spacel {
+
+#define CLIENT_LOOP_TIME 0.025f
 
 Client::Client()
 {
@@ -34,6 +38,34 @@ void Client::ThreadFunction()
 		return;
 	}
 
+	float dtime = 0.0f;
+	while (shouldRun_) {
+		const auto prev_time = std::chrono::system_clock::now();
+		Step(dtime);
+		const auto step_time = std::chrono::system_clock::now().time_since_epoch() -
+							   prev_time.time_since_epoch();
+
+		// runtime is a float sec time
+		float runtime = std::chrono::duration_cast<std::chrono::milliseconds>(step_time).count() / 1000.0f;
+
+		// If step runtime < LOOP TIME, sleep for the diff time
+		if (runtime < CLIENT_LOOP_TIME) {
+			// Convert back to ms from s
+			std::this_thread::sleep_for(std::chrono::milliseconds((uint32_t)((CLIENT_LOOP_TIME - runtime) * 1000.0f)));
+			dtime = CLIENT_LOOP_TIME;
+		}
+		else {
+			URHO3D_LOGWARNINGF("Server thread lagging. Runtime %f > %f",
+				runtime, CLIENT_LOOP_TIME);
+			dtime = runtime;
+		}
+	}
+
+	m_loading_step = CLIENTLOADINGSTEP_ENDED;
+}
+
+bool Client::InitClient()
+{
 	m_loading_step = CLIENTLOADINGSTEP_BEGIN_START;
 
 	m_loading_step = CLIENTLOADINGSTEP_CONNECTED;
@@ -41,11 +73,28 @@ void Client::ThreadFunction()
 	m_loading_step = CLIENTLOADINGSTEP_GAMEDATAS_LOADED;
 
 	m_loading_step = CLIENTLOADINGSTEP_STARTED;
-	//m_loading_step = CLIENTLOADINGSTEP_ENDED;
-}
-
-bool Client::InitClient()
-{
 	return true;
 }
+
+void Client::Step(const float dtime)
+{
+
+}
+
+void Client::handlePacket_Hello(kNet::DataDeserializer *data)
+{
+
+}
+
+void Client::handlePacket_Chat(kNet::DataDeserializer *data)
+{
+
+}
+
+void Client::handlePacket_GalaxySystems(kNet::DataDeserializer *data)
+{
+
+}
+
+
 }
