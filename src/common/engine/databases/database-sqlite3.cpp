@@ -27,7 +27,7 @@
 namespace spacel {
 namespace engine {
 
-static const char* stmt_list[SQLITE3STMT_COUNT] = {
+static const char *stmt_list[SQLITE3STMT_COUNT] = {
 		"BEGIN",
 		"END",
 		"INSERT INTO `galaxies`(`galaxy_id`,`galaxy_name`,`pos_x`,`pos_y`,`pos_z`) VALUES (?, ?, ?, ?, ?)",

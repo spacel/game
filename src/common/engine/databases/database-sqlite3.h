@@ -131,7 +131,7 @@ private:
 	inline const std::string sqlite_to_string(const SQLite3Stmt s, int iCol)
 	{
 		assert(s < SQLITE3STMT_COUNT);
-		const char* text = reinterpret_cast<const char*>(sqlite3_column_text(m_stmt[s], iCol));
+		const char *text = reinterpret_cast<const char *>(sqlite3_column_text(m_stmt[s], iCol));
 		return std::string(text ? text : "");
 	}
 

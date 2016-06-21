@@ -47,9 +47,9 @@ enum SessionState
 
 struct SMsgHandler
 {
-	const char* name;
+	const char *name;
 	SessionState state;
-	void (Server::*handler)(kNet::DataDeserializer* data);
+	void (Server::*handler)(kNet::DataDeserializer *data);
 };
 
 extern const SMsgHandler smsgHandlerTable[MSG_MAX];

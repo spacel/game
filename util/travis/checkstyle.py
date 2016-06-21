@@ -54,6 +54,9 @@ for extension in s_allowed_extensions:
     for name in glob.glob("src/*/*/*." + extension):
         error_count += check_file(name)
 
+    for name in glob.glob("src/*/*/*/*." + extension):
+        error_count += check_file(name)
+
 if error_count > 0:
     print("%d errors found, aborting" % error_count)
     sys.exit(1)

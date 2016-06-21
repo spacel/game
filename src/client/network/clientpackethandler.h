@@ -28,9 +28,9 @@ namespace engine {
 namespace network {
 struct CMsgHandler
 {
-	const char* name;
+	const char *name;
 	SessionState state;
-	void (Client::*handler)(kNet::DataDeserializer* data);
+	void (Client::*handler)(kNet::DataDeserializer *data);
 };
 
 extern const CMsgHandler cmsgHandlerTable[MSG_MAX];
