@@ -36,6 +36,11 @@ void Client::ThreadFunction()
 
 	m_loading_step = CLIENTLOADINGSTEP_BEGIN_START;
 
+	m_loading_step = CLIENTLOADINGSTEP_CONNECTED;
+
+	m_loading_step = CLIENTLOADINGSTEP_GAMEDATAS_LOADED;
+
+	m_loading_step = CLIENTLOADINGSTEP_STARTED;
 	//m_loading_step = CLIENTLOADINGSTEP_ENDED;
 }
 
