@@ -46,7 +46,8 @@ public:
 	Server(const std::string &gamedatapath, const std::string &datapath,
 		   const std::string &universe_name);
 	void ThreadFunction();
-	inline const ServerLoadingStep getLoadingStep() const { return m_loading_step; }
+	const ServerLoadingStep getLoadingStep() const { return m_loading_step; }
+	void SetSinglePlayerMode(const bool s) { m_singleplayer_mode = s; }
 
 	void handlePacket_Null(kNet::DataDeserializer *data) {};
 	void handlePacket_Hello(kNet::DataDeserializer *data);
@@ -58,6 +59,7 @@ private:
 	void StopServer();
 	void Step(const float dtime);
 
+	bool m_singleplayer_mode = false;
 	std::string m_gamedatapath = "";
 	std::string m_datapath = "";
 	std::string m_universe_name = "";

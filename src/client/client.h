@@ -21,6 +21,8 @@
 
 #include <atomic>
 #include <Urho3D/Core/Thread.h>
+#include <queue>
+#include <common/threadsafe_utils.h>
 #include "../../lib/Urho3D/Source/ThirdParty/kNet/include/kNet/DataDeserializer.h"
 
 namespace spacel {
@@ -63,6 +65,8 @@ public:
 		}
 	}
 
+	void SetSinglePlayerMode(const bool s) { m_singleplayer_mode = s; }
+
 	void handlePacket_Null(kNet::DataDeserializer *data) {}
 	void handlePacket_Hello(kNet::DataDeserializer *data);
 	void handlePacket_Chat(kNet::DataDeserializer *data);
@@ -72,5 +76,9 @@ private:
 
 	static Client *s_client;
 	std::atomic<ClientLoadingStep> m_loading_step;
+	bool m_singleplayer_mode = false;
+
+	SafeQueue<std::string> m_packet_sending_queue;
+	SafeQueue<std::string> m_packet_receive_queue;
 };
 }

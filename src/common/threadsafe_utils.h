@@ -19,8 +19,47 @@
 
 #pragma once
 
-#cmakedefine PROJECT_LABEL "@PROJECT_LABEL@"
-#cmakedefine PROJECT_LABEL_SHORT "@TARGET_NAME@"
-#cmakedefine PROJECT_VERSION_MINOR @PROJECT_VERSION_MINOR@
-#cmakedefine PROJECT_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
-#cmakedefine PROJECT_VERSION_PATCH @PROJECT_VERSION_PATCH@
+#include <queue>
+#include <mutex>
+
+namespace spacel {
+
+template <typename T>
+class SafeQueue
+{
+public:
+	SafeQueue() {}
+	~SafeQueue() {}
+
+	const bool empty()
+	{
+		std::lock_guard<std::mutex> lock(m_mutex);
+		return m_queue.empty();
+	}
+
+	void push_back(T t)
+	{
+		std::lock_guard<std::mutex> lock(m_mutex);
+		m_queue.push_back(t);
+	}
+
+	T pop_front()
+	{
+		std::lock_guard<std::mutex> lock(m_mutex);
+		if (m_queue.empty()) {
+			return T();
+		}
+		return m_queue.pop_front();
+	}
+
+	size_t size()
+	{
+		std::lock_guard<std::mutex> lock(m_mutex);
+		return m_queue.size();
+	}
+
+private:
+	std::mutex m_mutex;
+	std::deque<T> m_queue;
+};
+}

@@ -19,8 +19,9 @@
 
 #include "client.h"
 #include <Urho3D/IO/Log.h>
-#include <chrono>
 #include <thread>
+#include "project_defines.h"
+#include <kNet/DataSerializer.h>
 
 namespace spacel {
 
@@ -68,6 +69,10 @@ bool Client::InitClient()
 {
 	m_loading_step = CLIENTLOADINGSTEP_BEGIN_START;
 
+	kNet::DataSerializer s;
+	s.Add<uint8_t>(0);
+	s.Add<uint8_t>(0);
+	s.Add<uint8_t>(PROJECT_VERSION_PATCH);
 	m_loading_step = CLIENTLOADINGSTEP_CONNECTED;
 
 	m_loading_step = CLIENTLOADINGSTEP_GAMEDATAS_LOADED;
