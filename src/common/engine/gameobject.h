@@ -36,8 +36,7 @@ enum GameObjectType
 class GameObject : public Object {
 public:
 	GameObject(GameObjectType type);
-	~GameObject();
-	virtual const ObjectType GetType() const { return OBJECT_TYPE_GAMEOBJECT; }
+	virtual ~GameObject() {};
 private:
 	GameObjectType m_go_type;
 };

@@ -33,13 +33,30 @@ enum ObjectType
 	OBJECT_TYPE_GAMEOBJECT,
 };
 
+enum ObjectTypeMask
+{
+	OBJECT_TYPEMASK_OBJECT 		= 0x0001,
+	OBJECT_TYPEMASK_UNIT 		= 0x0002,
+	OBJECT_TYPEMASK_PLAYER 		= 0x0004,
+	OBJECT_TYPEMASK_GAMEOBJECT 	= 0x0008,
+};
+
+
 class Object {
 public:
-	Object() {};
-	~Object() {};
-	virtual const ObjectType GetType() const { return OBJECT_TYPE_OBJECT; }
+	Object()
+	{
+		m_object_typemask = OBJECT_TYPEMASK_OBJECT;
+		m_type = OBJECT_TYPE_OBJECT;
+	};
+
+	virtual ~Object() {};
+	const ObjectType GetType() const { return m_type; }
+	bool IsType(ObjectTypeMask mask) const { return (mask & m_object_typemask); }
 protected:
 	uint64_t m_guid = 0;
+	ObjectType m_type;
+	uint16_t m_object_typemask;
 	Urho3D::Vector3 m_position;
 };
 

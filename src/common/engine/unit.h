@@ -27,9 +27,12 @@ namespace engine {
 
 class Unit : public Object {
 public:
-	Unit() {};
-	~Unit() {};
-	virtual const ObjectType GetType() const { return OBJECT_TYPE_UNIT; }
+	Unit(): Object()
+	{
+		m_object_typemask |= OBJECT_TYPEMASK_UNIT;
+		m_type = OBJECT_TYPE_UNIT;
+	};
+	virtual ~Unit() {};
 protected:
 	float m_velocity = 100;
 

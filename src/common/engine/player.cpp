@@ -26,6 +26,8 @@ namespace engine {
 
 Player::Player(const std::string &username) : m_username(username)
 {
+	m_object_typemask |= OBJECT_TYPEMASK_PLAYER;
+	m_type = OBJECT_TYPE_PLAYER;
 }
 
 }

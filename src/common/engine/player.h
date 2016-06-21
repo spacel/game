@@ -31,7 +31,6 @@ class Player : public Unit {
 public:
 	Player(const std::string &username);
 	~Player() {};
-	virtual const ObjectType GetType() const { return OBJECT_TYPE_PLAYER; }
 
 private:
 	std::string m_username = "";
