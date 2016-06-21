@@ -27,18 +27,17 @@ namespace engine {
 
 enum ObjectType
 {
-	OBJECT_TYPE_NONE,
+	OBJECT_TYPE_OBJECT,
 	OBJECT_TYPE_UNIT,
 	OBJECT_TYPE_PLAYER,
 	OBJECT_TYPE_GAMEOBJECT,
-	OBJECT_TYPE_OBJECT,
 };
 
 class Object {
 public:
 	Object() {};
 	~Object() {};
-	static const ObjectType GetType() { return OBJECT_TYPE_OBJECT; }
+	virtual const ObjectType GetType() const { return OBJECT_TYPE_OBJECT; }
 protected:
 	uint64_t m_guid = 0;
 	Urho3D::Vector3 m_position;
