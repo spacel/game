@@ -25,10 +25,12 @@
 #include <Urho3D/Physics/CollisionShape.h>
 #include <Urho3D/Scene/Scene.h>
 #include <Urho3D/UI/Sprite.h>
+#include <Urho3D/UI/Window.h>
 
 #include <common/engine/server.h>
 #include "genericmenu.h"
 #include "settings.h"
+#include "spacelgame.h"
 
 using namespace Urho3D;
 
@@ -38,7 +40,8 @@ class Game: public GenericMenu {
 URHO3D_OBJECT(Game, GenericMenu);
 
 public:
-	Game(Context *context, ClientSettings *config, engine::Server *server);
+	Game(Context *context, ClientSettings *config, engine::Server *server, SpacelGame *main);
+	~Game();
 	void Start();
 
 private:
@@ -52,13 +55,26 @@ private:
 	void HandleKeyDown(StringHash eventType, VariantMap &eventData);
 	void HandlePostUpdate(StringHash eventType, VariantMap &eventData);
 	void HandleMouseClicked(StringHash eventType, VariantMap &eventData);
+	void HandleMenu(StringHash eventType, VariantMap &eventData);
+	void HandleResume(StringHash eventType, VariantMap &eventData);
+	void HandleBackMainMenu(StringHash eventType, VariantMap &eventData);
+	void HandleExitGame(StringHash eventType, VariantMap &eventData);
+	void CreateMenu();
 	void MoveCamera(float timeStep);
 
+	//Helper
+	Button *CreateMenuButton(const String &label,
+			const String &button_style = "Button",
+			const String &label_style = "TextButton");
+
+	SpacelGame *m_main;
 	SharedPtr<Scene> m_scene;
 	SharedPtr<Node> m_camera_node;
 	SharedPtr<Node> m_terrain_node;
 	SharedPtr<Terrain> m_terrain;
 	SharedPtr<Node> m_stone_node;
+	SharedPtr<UIElement> m_ui_elem;
+	SharedPtr<Window> m_window_menu;
 
 	SharedPtr<Node> m_reflection_camera_node;
 	/// Water body scene node.
@@ -70,5 +86,7 @@ private:
 
 	float m_yaw;
 	float m_pitch;
+	bool m_move_camera = true;
+	bool m_gamemenu_created = false;
 };
 }

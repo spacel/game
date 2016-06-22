@@ -45,18 +45,34 @@
 #include <Urho3D/Scene/SceneEvents.h>
 #include <Urho3D/UI/UI.h>
 #include <Urho3D/UI/UIEvents.h>
+#include <Urho3D/UI/Text.h>
+#include "client.h"
+#include "mainmenu.h"
 
+#include "genericmenu.h"
 #include "game.h"
 
 using namespace Urho3D;
 
 namespace spacel {
 
-Game::Game(Context *context, ClientSettings *config, engine::Server *server):
-	GenericMenu(context, config)
+#define MENU_BUTTON_SPACE 20
+
+Game::Game(Context *context, ClientSettings *config, engine::Server *server, SpacelGame *main):
+	GenericMenu(context, config), m_main(main)
 {
 	m_scene = new Scene(context_);
 	m_terrain_node = new Node(context_);
+	m_ui_elem = GetSubsystem<UI>()->GetRoot();
+	m_ui_elem->SetDefaultStyle(m_cache->GetResource<XMLFile>("UI/MenuGameStyle.xml"));
+}
+
+Game::~Game()
+{
+	m_window_menu->RemoveAllChildren();
+	m_window_menu->Remove();
+	Client::instance()->Stop();
+	Client::deinstance();
 }
 
 void Game::Start()
@@ -243,9 +259,16 @@ void Game::HandleKeyDown(StringHash eventType, VariantMap &eventData)
 			if (console->IsVisible()) {
 				console->SetVisible(false);
 			}
-			else {
+			else if (!m_gamemenu_created || !m_window_menu->IsVisible()) {
 				// @TODO show global main menu if no other GUI menu opened
-				m_engine->Exit();
+				//m_engine->Exit();
+				VariantMap v;
+				HandleMenu(StringHash(), v);
+			}
+			else {
+				//Quit menu
+				VariantMap v;
+				HandleResume(StringHash(), v);
 			}
 			break;
 		}
@@ -294,7 +317,7 @@ void Game::HandlePostUpdate(StringHash eventType, VariantMap &eventData)
 void Game::MoveCamera(float timeStep)
 {
 	// Do not move if the UI has a focused element (the console)
-	if (GetSubsystem<UI>()->GetFocusElement())
+	if (!m_move_camera || GetSubsystem<UI>()->GetFocusElement())
 		return;
 
 	Input *input = GetSubsystem<Input>();
@@ -331,5 +354,76 @@ void Game::MoveCamera(float timeStep)
 	Graphics *graphics = GetSubsystem<Graphics>();
 	Camera *reflectionCamera = m_reflection_camera_node->GetComponent<Camera>();
 	reflectionCamera->SetAspectRatio((float)graphics->GetWidth() / (float)graphics->GetHeight());
+}
+
+void Game::CreateMenu()
+{
+	if (m_gamemenu_created) {
+		return;
+	}
+	m_gamemenu_created = true;
+	m_window_menu = new Window(context_);
+	m_ui_elem->AddChild(m_window_menu);
+	m_window_menu->SetSize(500, 400);
+	m_window_menu->SetLayout(LM_FREE, 0, IntRect(10, 10, 10, 10));
+	m_window_menu->SetAlignment(HA_CENTER, VA_CENTER);
+	m_window_menu->SetName("Menu");
+	m_window_menu->SetColor(Color(.0, .15, .3, .5));
+
+	//Create button
+	Text *text_menu = new Text(context_);
+	text_menu->SetText("Menu");
+	text_menu->SetStyle("Title");
+	m_window_menu->AddChild(text_menu);
+
+	Button *resume = CreateMenuButton("Resume");
+	resume->SetPosition(0, text_menu->GetSize().y_ + text_menu->GetPosition().y_ + MENU_BUTTON_SPACE);
+
+	Button *exit_main_menu = CreateMenuButton("Exit to main menu");
+	exit_main_menu->SetPosition(0, resume->GetSize().y_ + resume->GetPosition().y_ + MENU_BUTTON_SPACE);
+
+	Button *exit_game = CreateMenuButton("Exit the game");
+	exit_game->SetPosition(0, exit_main_menu->GetSize().y_ + exit_main_menu->GetPosition().y_ + MENU_BUTTON_SPACE);
+
+	SubscribeToEvent(resume, E_RELEASED, URHO3D_HANDLER(Game, HandleResume));
+	SubscribeToEvent(exit_main_menu, E_RELEASED, URHO3D_HANDLER(Game, HandleBackMainMenu));
+	SubscribeToEvent(exit_game, E_RELEASED, URHO3D_HANDLER(Game, HandleExitGame));
+}
+
+void Game::HandleMenu(StringHash eventType, VariantMap &eventData)
+{
+	CreateMenu();
+	m_move_camera = false;
+	GetSubsystem<Input>()->SetMouseVisible(true);
+	m_window_menu->SetVisible(true);
+}
+
+void Game::HandleResume(StringHash eventType, VariantMap &eventData)
+{
+	GetSubsystem<Input>()->SetMouseVisible(false);
+	m_window_menu->SetVisible(false);
+	m_move_camera = true;
+}
+
+void Game::HandleBackMainMenu(StringHash eventType, VariantMap &eventData)
+{
+	m_main->ChangeGameGlobalUI(GLOBALUI_MAINMENU);
+	//main_menu->Start();
+}
+
+void Game::HandleExitGame(StringHash eventType, VariantMap &eventData)
+{
+	m_engine->Exit();
+}
+
+Button *Game::CreateMenuButton(const String &label, const String &button_style, const String &label_style)
+{
+	Button *b = new Button(context_);
+	b->SetStyle(button_style);
+	b->SetHorizontalAlignment(HA_CENTER);
+	m_window_menu->AddChild(b);
+	CreateButtonLabel(b, label, label_style);
+
+	return b;
 }
 }
