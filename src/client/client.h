@@ -23,7 +23,7 @@
 #include <Urho3D/Core/Thread.h>
 #include <queue>
 #include <common/threadsafe_utils.h>
-#include "../../lib/Urho3D/Source/ThirdParty/kNet/include/kNet/DataDeserializer.h"
+#include <common/engine/network/networkprotocol.h>
 
 namespace spacel {
 
@@ -67,18 +67,21 @@ public:
 
 	void SetSinglePlayerMode(const bool s) { m_singleplayer_mode = s; }
 
-	void handlePacket_Null(kNet::DataDeserializer *data) {}
-	void handlePacket_Hello(kNet::DataDeserializer *data);
-	void handlePacket_Chat(kNet::DataDeserializer *data);
-	void handlePacket_GalaxySystems(kNet::DataDeserializer *data);
+
+	void handlePacket_Null(engine::network::NetworkPacket *data) {}
+	void handlePacket_Hello(engine::network::NetworkPacket *data);
+	void handlePacket_Chat(engine::network::NetworkPacket *data);
+	void handlePacket_GalaxySystems(engine::network::NetworkPacket *data);
 private:
 	void Step(const float dtime);
+	void ProcessPacket(engine::network::NetworkPacket *packet);
+	void RoutePacket(engine::network::NetworkPacket *packet);
 
 	static Client *s_client;
 	std::atomic<ClientLoadingStep> m_loading_step;
 	bool m_singleplayer_mode = false;
 
-	SafeQueue<std::string> m_packet_sending_queue;
-	SafeQueue<std::string> m_packet_receive_queue;
+	SafeQueue<engine::network::NetworkPacket *> m_packet_sending_queue;
+	SafeQueue<engine::network::NetworkPacket *> m_packet_receive_queue;
 };
 }

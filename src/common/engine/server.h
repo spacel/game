@@ -22,7 +22,8 @@
 #include <Urho3D/Core/Thread.h>
 #include <string>
 #include <atomic>
-#include <kNet/DataDeserializer.h>
+#include "network/networkprotocol.h"
+#include "../threadsafe_utils.h"
 
 namespace spacel {
 namespace engine {
@@ -49,15 +50,17 @@ public:
 	const ServerLoadingStep getLoadingStep() const { return m_loading_step; }
 	void SetSinglePlayerMode(const bool s) { m_singleplayer_mode = s; }
 
-	void handlePacket_Null(kNet::DataDeserializer *data) {};
-	void handlePacket_Hello(kNet::DataDeserializer *data);
-	void handlePacket_Chat(kNet::DataDeserializer *data);
-	void handlePacket_Auth(kNet::DataDeserializer *data);
+	void handlePacket_Null(network::NetworkPacket *packet) {};
+	void handlePacket_Hello(network::NetworkPacket *packet);
+	void handlePacket_Chat(network::NetworkPacket *packet);
+	void handlePacket_Auth(network::NetworkPacket *packet);
 private:
 	const bool InitServer();
 	const bool LoadGameDatas();
 	void StopServer();
 	void Step(const float dtime);
+	void ProcessPacket(network::NetworkPacket *packet);
+	void RoutePacket(network::NetworkPacket *packet);
 
 	bool m_singleplayer_mode = false;
 	std::string m_gamedatapath = "";
@@ -65,6 +68,9 @@ private:
 	std::string m_universe_name = "";
 	Database *m_db = nullptr;
 	std::atomic<ServerLoadingStep> m_loading_step;
+
+	SafeQueue<network::NetworkPacket *> m_packet_sending_queue;
+	SafeQueue<network::NetworkPacket *> m_packet_receive_queue;
 };
 
 }

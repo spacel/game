@@ -19,12 +19,23 @@
 
 #pragma once
 
-#include "../server.h"
-#include <kNet/DataDeserializer.h>
+#include <stddef.h>
+#include <stdint.h>
 
 namespace spacel {
 namespace engine {
+
+class Server;
+
 namespace network {
+
+struct NetworkPacket
+{
+	uint32_t session_id = 0;
+	uint16_t opcode = 0;
+	char *data;
+	size_t data_size;
+};
 
 enum PacketOpcode
 {
@@ -49,7 +60,7 @@ struct SMsgHandler
 {
 	const char *name;
 	SessionState state;
-	void (Server::*handler)(kNet::DataDeserializer *data);
+	void (Server::*handler)(NetworkPacket *packet);
 };
 
 extern const SMsgHandler smsgHandlerTable[MSG_MAX];

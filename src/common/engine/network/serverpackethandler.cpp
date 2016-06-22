@@ -18,6 +18,7 @@
  */
 
 #include "networkprotocol.h"
+#include "../server.h"
 
 namespace spacel {
 namespace engine {

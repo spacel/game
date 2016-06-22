@@ -49,7 +49,10 @@ public:
 		if (m_queue.empty()) {
 			return T();
 		}
-		return m_queue.pop_front();
+
+		T r = m_queue.front();
+		m_queue.pop_front();
+		return r;
 	}
 
 	size_t size()

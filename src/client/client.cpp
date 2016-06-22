@@ -21,9 +21,11 @@
 #include <Urho3D/IO/Log.h>
 #include <thread>
 #include "project_defines.h"
-#include <kNet/DataSerializer.h>
+#include "network/clientpackethandler.h"
 
 namespace spacel {
+
+using namespace engine::network;
 
 #define CLIENT_LOOP_TIME 0.025f
 
@@ -69,10 +71,10 @@ bool Client::InitClient()
 {
 	m_loading_step = CLIENTLOADINGSTEP_BEGIN_START;
 
-	kNet::DataSerializer s;
+	/*kNet::DataSerializer s;
 	s.Add<uint8_t>(0);
 	s.Add<uint8_t>(0);
-	s.Add<uint8_t>(PROJECT_VERSION_PATCH);
+	s.Add<uint8_t>(PROJECT_VERSION_PATCH);*/
 	m_loading_step = CLIENTLOADINGSTEP_CONNECTED;
 
 	m_loading_step = CLIENTLOADINGSTEP_GAMEDATAS_LOADED;
@@ -83,20 +85,41 @@ bool Client::InitClient()
 
 void Client::Step(const float dtime)
 {
-
+	while (!m_packet_receive_queue.empty()) {
+		std::unique_ptr<NetworkPacket> pkt(m_packet_receive_queue.pop_front());
+		ProcessPacket(pkt.get());
+	}
 }
 
-void Client::handlePacket_Hello(kNet::DataDeserializer *data)
+void Client::ProcessPacket(NetworkPacket *packet)
+{
+	// Ignore invalid opcode
+	if (packet->opcode >= MSG_MAX) {
+		return;
+	}
+
+	// @TODO verify current client state
+
+	RoutePacket(packet);
+}
+
+void Client::RoutePacket(NetworkPacket *packet)
+{
+	const CMsgHandler &opHandle = cmsgHandlerTable[packet->opcode];
+	(this->*opHandle.handler)(packet);
+}
+
+void Client::handlePacket_Hello(NetworkPacket *packet)
 {
 
 }
 
-void Client::handlePacket_Chat(kNet::DataDeserializer *data)
+void Client::handlePacket_Chat(NetworkPacket *packet)
 {
 
 }
 
-void Client::handlePacket_GalaxySystems(kNet::DataDeserializer *data)
+void Client::handlePacket_GalaxySystems(NetworkPacket *packet)
 {
 
 }

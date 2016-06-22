@@ -497,7 +497,7 @@ void MainMenu::HandleApplyGraphicsPressed(StringHash eventType, VariantMap &even
 	DropDownList *resolution = static_cast<DropDownList *>(m_window_menu->GetChild("resolution", true));
 
 	PODVector<IntVector2> list_coord = GetSubsystem<Graphics>()->GetResolutions();
-	int32_t selection_id = resolution->GetSelection();
+	uint32_t selection_id = resolution->GetSelection();
 	if (selection_id >= 0 && selection_id < list_coord.Size()) {
 		Urho3D::IntVector2 coord = list_coord.At(selection_id);
 		GetSubsystem<Graphics>()->SetMode(coord.x_, coord.y_);

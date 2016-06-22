@@ -30,7 +30,7 @@ struct CMsgHandler
 {
 	const char *name;
 	SessionState state;
-	void (Client::*handler)(kNet::DataDeserializer *data);
+	void (Client::*handler)(NetworkPacket *packet);
 };
 
 extern const CMsgHandler cmsgHandlerTable[MSG_MAX];

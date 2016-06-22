@@ -34,6 +34,8 @@
 namespace spacel {
 namespace engine {
 
+using namespace network;
+
 #define SERVER_LOOP_TIME 0.025f
 
 Server::Server(const std::string &gamedatapath, const std::string &datapath,
@@ -233,20 +235,49 @@ void Server::ThreadFunction()
 
 void Server::Step(const float dtime)
 {
-
+	// @TODO limit packet processing time
+	while (!m_packet_receive_queue.empty()) {
+		std::unique_ptr<NetworkPacket> pkt(m_packet_receive_queue.pop_front());
+		ProcessPacket(pkt.get());
+	}
 }
 
-void Server::handlePacket_Hello(kNet::DataDeserializer *data)
+void Server::ProcessPacket(network::NetworkPacket *packet)
+{
+	// Ignore invalid opcode
+	if (packet->opcode >= network::MSG_MAX) {
+		return;
+	}
+
+#if 0
+	// @TODO verify if session already exists
+	Session *sess = SessionMgr::instance()->GetSession(packet->session_id);
+	if (!sess) {
+		// LOG
+		return;
+	}
+#endif
+	// @TODO verify different packet states depending on session state
+	RoutePacket(packet);
+}
+
+void Server::RoutePacket(network::NetworkPacket *packet)
+{
+	const SMsgHandler &opHandle = smsgHandlerTable[packet->opcode];
+	(this->*opHandle.handler)(packet);
+}
+
+void Server::handlePacket_Hello(NetworkPacket *packet)
 {
 
 }
 
-void Server::handlePacket_Auth(kNet::DataDeserializer *data)
+void Server::handlePacket_Auth(NetworkPacket *packet)
 {
 
 }
 
-void Server::handlePacket_Chat(kNet::DataDeserializer *data)
+void Server::handlePacket_Chat(NetworkPacket *packet)
 {
 
 }
