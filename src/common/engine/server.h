@@ -47,6 +47,7 @@ public:
 	Server(const std::string &gamedatapath, const std::string &datapath,
 		   const std::string &universe_name);
 	void ThreadFunction();
+
 	const ServerLoadingStep getLoadingStep() const { return m_loading_step; }
 	void SetSinglePlayerMode(const bool s) { m_singleplayer_mode = s; }
 

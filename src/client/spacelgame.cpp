@@ -111,6 +111,8 @@ void SpacelGame::ChangeGameGlobalUI(const GlobalUIId ui_id, void *param)
 			assert(param != nullptr);
 			String gamedatapath = GetSubsystem<FileSystem>()->GetProgramDir() + "Data/game/";
 
+			Client::instance()->SetSinglePlayerMode(true);
+			Client::instance()->SetGameDataPath(std::string(gamedatapath.CString()));
 			Client::instance()->Run();
 			LoadingScreen *loading_screen = new LoadingScreen(context_, m_config, this);
 			GetSubsystem<UI>()->GetRoot()->AddChild(loading_screen);

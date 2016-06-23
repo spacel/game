@@ -22,6 +22,7 @@
 #include <thread>
 #include "project_defines.h"
 #include "network/clientpackethandler.h"
+#include <common/engine/server.h>
 
 namespace spacel {
 
@@ -32,6 +33,14 @@ using namespace engine::network;
 Client::Client()
 {
 	m_loading_step = CLIENTLOADINGSTEP_NOT_STARTED;
+}
+
+Client::~Client()
+{
+	if (m_server) {
+		m_server->Stop();
+		delete m_server;
+	}
 }
 
 void Client::ThreadFunction()
@@ -71,6 +80,13 @@ bool Client::InitClient()
 {
 	m_loading_step = CLIENTLOADINGSTEP_BEGIN_START;
 
+	if (m_singleplayer_mode) {
+		// @TODO change this hardcoded path
+		m_server = new engine::Server(m_gamedata_path, ".", m_universe_name);
+		m_server->Run();
+		// @TODO check server loading step to know what client need to do
+	}
+
 	/*kNet::DataSerializer s;
 	s.Add<uint8_t>(0);
 	s.Add<uint8_t>(0);
@@ -107,6 +123,11 @@ void Client::RoutePacket(NetworkPacket *packet)
 {
 	const CMsgHandler &opHandle = cmsgHandlerTable[packet->opcode];
 	(this->*opHandle.handler)(packet);
+}
+
+void Client::SendPacket(NetworkPacket *packet)
+{
+
 }
 
 void Client::handlePacket_Hello(NetworkPacket *packet)

@@ -42,7 +42,7 @@ class Client: public Urho3D::Thread
 {
 public:
 	Client();
-	~Client() {}
+	~Client();
 
 	void ThreadFunction();
 	inline const ClientLoadingStep getLoadingStep() const { return m_loading_step; }
@@ -66,7 +66,8 @@ public:
 	}
 
 	void SetSinglePlayerMode(const bool s) { m_singleplayer_mode = s; }
-
+	void SetUniverseName(const std::string &universe_name) { m_universe_name = universe_name; }
+	void SetGameDataPath(const std::string &data_path) { m_gamedata_path = data_path; }
 
 	void handlePacket_Null(engine::network::NetworkPacket *packet) {}
 	void handlePacket_Hello(engine::network::NetworkPacket *packet);
@@ -80,11 +81,15 @@ private:
 	void Step(const float dtime);
 	void ProcessPacket(engine::network::NetworkPacket *packet);
 	void RoutePacket(engine::network::NetworkPacket *packet);
+	void SendPacket(engine::network::NetworkPacket *packet);
 
 	static Client *s_client;
 	std::atomic<ClientLoadingStep> m_loading_step;
 	bool m_singleplayer_mode = false;
+	std::string m_universe_name = "";
+	std::string m_gamedata_path = "";
 
+	engine::Server *m_server = nullptr;
 	SafeQueue<engine::network::NetworkPacket *> m_packet_sending_queue;
 	SafeQueue<engine::network::NetworkPacket *> m_packet_receive_queue;
 };
