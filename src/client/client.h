@@ -68,10 +68,14 @@ public:
 	void SetSinglePlayerMode(const bool s) { m_singleplayer_mode = s; }
 
 
-	void handlePacket_Null(engine::network::NetworkPacket *data) {}
-	void handlePacket_Hello(engine::network::NetworkPacket *data);
-	void handlePacket_Chat(engine::network::NetworkPacket *data);
-	void handlePacket_GalaxySystems(engine::network::NetworkPacket *data);
+	void handlePacket_Null(engine::network::NetworkPacket *packet) {}
+	void handlePacket_Hello(engine::network::NetworkPacket *packet);
+	void handlePacket_Chat(engine::network::NetworkPacket *packet);
+	void handlePacket_GalaxySystems(engine::network::NetworkPacket *packet);
+	void handlePacket_CharacterList(engine::network::NetworkPacket *packet);
+	void handlePacket_CharacterCreate(engine::network::NetworkPacket *packet);
+	void handlePacket_CharacterRemove(engine::network::NetworkPacket *packet);
+	void handlePacket_Kick(engine::network::NetworkPacket *packet);
 private:
 	void Step(const float dtime);
 	void ProcessPacket(engine::network::NetworkPacket *packet);

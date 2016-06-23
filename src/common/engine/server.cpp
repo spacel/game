@@ -281,5 +281,20 @@ void Server::handlePacket_Chat(NetworkPacket *packet)
 {
 
 }
+
+void Server::handlePacket_CharacterCreate(NetworkPacket *packet)
+{
+
+}
+
+void Server::handlePacket_CharacterRemove(NetworkPacket *packet)
+{
+
+}
+
+void Server::handlePacket_CharacterConnect(NetworkPacket *packet)
+{
+
+}
 }
 }

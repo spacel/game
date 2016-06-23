@@ -54,6 +54,9 @@ public:
 	void handlePacket_Hello(network::NetworkPacket *packet);
 	void handlePacket_Chat(network::NetworkPacket *packet);
 	void handlePacket_Auth(network::NetworkPacket *packet);
+	void handlePacket_CharacterCreate(network::NetworkPacket *packet);
+	void handlePacket_CharacterRemove(network::NetworkPacket *packet);
+	void handlePacket_CharacterConnect(network::NetworkPacket *packet);
 private:
 	const bool InitServer();
 	const bool LoadGameDatas();

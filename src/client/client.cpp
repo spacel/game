@@ -124,5 +124,24 @@ void Client::handlePacket_GalaxySystems(NetworkPacket *packet)
 
 }
 
+void Client::handlePacket_CharacterList(NetworkPacket *packet)
+{
+
+}
+
+void Client::handlePacket_CharacterCreate(NetworkPacket *packet)
+{
+
+}
+
+void Client::handlePacket_CharacterRemove(NetworkPacket *packet)
+{
+
+}
+
+void Client::handlePacket_Kick(NetworkPacket *packet)
+{
+
+}
 
 }
