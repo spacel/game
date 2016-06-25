@@ -110,8 +110,9 @@ void SpacelGame::ChangeGameGlobalUI(const GlobalUIId ui_id, void *param)
 		case GLOBALUI_LOADINGSCREEN: {
 			assert(param != nullptr);
 			const String gamedatapath = GetSubsystem<FileSystem>()->GetProgramDir() + "Data/game/";
-			const String path_universe = GetSubsystem<FileSystem>()->GetAppPreferencesDir(
-				"spacel", "universe") + (const char*)param;
+			const String path_universe =
+				GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "universe") +
+				(const char *)param;
 
 			Client::instance()->SetSinglePlayerMode(true);
 			Client::instance()->SetGameDataPath(std::string(gamedatapath.CString()));

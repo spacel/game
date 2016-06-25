@@ -58,6 +58,22 @@ make
 
 ## Included libraries
 
-* Urho3D 1.5
-* SQLite 3.13.0
+* Urho3D 1.6-HEAD
 * jsoncpp 1.7.2
+
+## Contribute
+
+For contributing please add the following hook to .git/hooks/pre-commit file (it should be executable)
+
+```
+#! /bin/sh
+git-clang-format -f
+
+python2.7 ./util/travis/checkstyle.py
+if [ "$?" != "0" ]; then
+	echo "Code formatting was wrong !"
+	exit 1;
+fi
+```
+
+This hook will permit you to prevent some coding style errors before commit.
