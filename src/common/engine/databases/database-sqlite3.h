@@ -86,11 +86,7 @@ private:
 		}
 	}
 
-	inline int stmt_step(const SQLite3Stmt s)
-	{
-		assert(s < SQLITE3STMT_COUNT);
-		return sqlite3_step(m_stmt[s]);
-	}
+	int stmt_step(const SQLite3Stmt s);
 
 	inline int reset_stmt(const SQLite3Stmt s)
 	{

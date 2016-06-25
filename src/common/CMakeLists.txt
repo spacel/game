@@ -14,6 +14,8 @@ set(common_sources
 
 find_package(Urho3D REQUIRED)
 
+add_definitions(-DURHO3D_LOGGING)
+
 include_directories(
 	${URHO3D_INCLUDE_DIRS}
 	${JSONCPP_INCLUDE_DIR}

@@ -124,7 +124,7 @@ const bool Server::LoadGameDatas()
 
 			if (!item_v.isObject() || !item_v.isMember("id") || !item_v["id"].isUInt()) {
 				std::cout << "error !" << std::endl;
-				URHO3D_LOGERRORF("Invalid item found! '%s' is not valid", item.c_str());
+				URHO3D_LOGERRORF("Invalid item found! '%s' is not valid", item_name.c_str());
 				continue;
 			}
 

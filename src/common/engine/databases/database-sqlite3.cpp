@@ -63,7 +63,7 @@ void DatabaseSQLite3::Open()
 	UpdateSchema();
 
 	for (uint16_t i = 0; i < SQLITE3STMT_COUNT; i++) {
-		URHO3D_LOGINFOF("Loading statement %d %s", i, stmt_list[i]);
+		URHO3D_LOGDEBUGF("Loading statement %d %s", i, stmt_list[i]);
 		sqlite3_verify(sqlite3_prepare_v2(m_database, stmt_list[i], -1, &m_stmt[i], NULL));
 	}
 }
@@ -194,6 +194,13 @@ int DatabaseSQLite3::busyHandler(void *data, int count)
 
 	// Make sqlite transaction fail if delay exceeds BUSY_FATAL_THRESHOLD
 	return cur_time - first_time < BUSY_FATAL_THRESHOLD;
+}
+
+inline int DatabaseSQLite3::stmt_step(const SQLite3Stmt s)
+{
+	assert(s < SQLITE3STMT_COUNT);
+	URHO3D_LOGDEBUGF("Statement %d executed", s);
+	return sqlite3_step(m_stmt[s]);
 }
 
 void DatabaseSQLite3::BeginTransaction()
