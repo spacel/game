@@ -112,10 +112,10 @@ private:
 		sqlite3_verify(sqlite3_bind_text(m_stmt[s], iCol, str.c_str(), str.size(), NULL));
 	}
 
-	inline void uint64_to_sqlite(const SQLite3Stmt s, const int iCol, const uint64_t val) const
+	inline void uint64_to_sqlite(const SQLite3Stmt s, const int iCol, const uint64_t &val) const
 	{
 		assert(s < SQLITE3STMT_COUNT);
-		sqlite3_verify(sqlite3_bind_int64(m_stmt[s], iCol, (sqlite3_uint64)val));
+		sqlite3_verify(sqlite3_bind_int64(m_stmt[s], iCol, (sqlite3_int64)val));
 	}
 
 	inline void uint16_to_sqlite(const SQLite3Stmt s, const int iCol, const uint16_t val) const

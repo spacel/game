@@ -30,7 +30,7 @@ namespace engine {
 static const char *stmt_list[SQLITE3STMT_COUNT] = {
 		"BEGIN",
 		"END",
-		"INSERT INTO `galaxies`(`galaxy_id`,`galaxy_name`,`pos_x`,`pos_y`,`pos_z`) VALUES (?, ?, ?, ?, ?)",
+		"INSERT INTO galaxies(galaxy_id, galaxy_name, pos_x, pos_y, pos_z) VALUES (?, ?, ?, ?, ?)",
 		"SELECT `galaxy_name`,`pos_x`,`pos_y`,`pos_z` FROM `galaxies` WHERE galaxy_id = ?",
 		"INSERT INTO `solar_systems`(`solarsystem_id`,`galaxy_id`,`solarsystem_name`,`type`,`pos_x`,`pos_y`,`pos_z`,`radius`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 		"SELECT `galaxy_id`,`solarsystem_name`,`type`,`pos_x`,`pos_y`,`pos_z`,`radius` FROM `solar_systems` WHERE `solarsystem_id` = ?",
@@ -55,6 +55,8 @@ DatabaseSQLite3::DatabaseSQLite3(const std::string &db_path):
 
 void DatabaseSQLite3::Open()
 {
+	URHO3D_LOGDEBUGF("Opening DB at %s", m_db_path.c_str());
+
 	sqlite3_verify(sqlite3_open_v2(m_db_path.c_str(), &m_database,
 	   SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL));
 	sqlite3_verify(sqlite3_busy_handler(m_database, DatabaseSQLite3::busyHandler,
@@ -90,7 +92,7 @@ void DatabaseSQLite3::UpdateSchema()
 
 	static const char *gameconfig_table_sql = "CREATE TABLE IF NOT EXISTS `gameconfig` ("
 		"	universe_name VARCHAR(32) NOT NULL UNIQUE,"
-		"	seed BIGINT NOT NULL,"
+		"	seed INTEGER NOT NULL,"
 		"	universe_generated SMALLINT NOT NULL DEFAULT(0),"
 		"	universe_birth BIGINT NOT NULL"
 		");";
@@ -98,7 +100,7 @@ void DatabaseSQLite3::UpdateSchema()
 	sqlite3_verify(sqlite3_exec(m_database, gameconfig_table_sql, NULL, NULL, NULL));
 
 	static const char *galaxy_table_sql = "CREATE TABLE IF NOT EXISTS `galaxies` ("
-		"	galaxy_id BIGINT NOT NULL PRIMARY KEY,"
+		"	galaxy_id INTEGER NOT NULL PRIMARY KEY,"
 		"	galaxy_name VARCHAR(32) NOT NULL,"
 		"	pos_x REAL NOT NULL,"
 		"	pos_y REAL NOT NULL,"
@@ -108,7 +110,7 @@ void DatabaseSQLite3::UpdateSchema()
 	sqlite3_verify(sqlite3_exec(m_database, galaxy_table_sql, NULL, NULL, NULL));
 
 	static const char *solarsystem_table_sql = "CREATE TABLE IF NOT EXISTS `solar_systems` ("
-		"	solarsystem_id BIGINT NOT NULL PRIMARY KEY,"
+		"	solarsystem_id INTEGER NOT NULL PRIMARY KEY,"
 		"	galaxy_id INTEGER NOT NULL,"
 		"	solarsystem_name VARCHAR(48) NOT NULL,"
 		"	type SMALLINT NOT NULL,"
@@ -122,7 +124,7 @@ void DatabaseSQLite3::UpdateSchema()
 	sqlite3_verify(sqlite3_exec(m_database, solarsystem_table_sql, NULL, NULL, NULL));
 
 	static const char *planet_table_sql = "CREATE TABLE IF NOT EXISTS `planets` ("
-		"	planet_id BIGINT NOT NULL PRIMARY KEY,"
+		"	planet_id INTEGER NOT NULL PRIMARY KEY,"
 		"	solarsystem_id INTEGER NOT NULL,"
 		"	type SMALLINT NOT NULL,"
 		"	pos_x REAL NOT NULL,"
@@ -136,9 +138,9 @@ void DatabaseSQLite3::UpdateSchema()
 	sqlite3_verify(sqlite3_exec(m_database, planet_table_sql, NULL, NULL, NULL));
 
 	static const char *moon_table_sql = "CREATE TABLE IF NOT EXISTS `moons` ("
-		"	moon_id BIGINT NOT NULL PRIMARY KEY,"
+		"	moon_id INTEGER NOT NULL PRIMARY KEY,"
 		"	planet_id INTEGER NOT NULL,"
-		"	type SMALLINT NOT NULL,"
+		"	type INTEGER NOT NULL,"
 		"	pos_x REAL NOT NULL,"
 		"	pos_y REAL NOT NULL,"
 		"	pos_z REAL NOT NULL,"
