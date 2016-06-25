@@ -120,7 +120,7 @@ void SpacelGame::ChangeGameGlobalUI(const GlobalUIId ui_id, void *param)
 			break;
 		}
 		case GLOBALUI_GAME: {
-			Game *game = new Game(context_, m_config, m_server, this);
+			Game *game = new Game(context_, m_config, this);
 			GetSubsystem<UI>()->GetRoot()->AddChild(game);
 			game->Start();
 			break;

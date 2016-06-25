@@ -58,7 +58,7 @@ namespace spacel {
 
 #define MENU_BUTTON_SPACE 20
 
-Game::Game(Context *context, ClientSettings *config, engine::Server *server, SpacelGame *main):
+Game::Game(Context *context, ClientSettings *config, SpacelGame *main):
 	GenericMenu(context, config), m_main(main)
 {
 	m_scene = new Scene(context_);

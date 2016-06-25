@@ -56,7 +56,6 @@ private:
 	void InitLocales();
 
 	ClientSettings *m_config = nullptr;
-	engine::Server *m_server = nullptr;
 };
 
 }

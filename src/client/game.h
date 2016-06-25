@@ -27,7 +27,6 @@
 #include <Urho3D/UI/Sprite.h>
 #include <Urho3D/UI/Window.h>
 
-#include <common/engine/server.h>
 #include "genericmenu.h"
 #include "settings.h"
 #include "spacelgame.h"
@@ -40,7 +39,7 @@ class Game: public GenericMenu {
 URHO3D_OBJECT(Game, GenericMenu);
 
 public:
-	Game(Context *context, ClientSettings *config, engine::Server *server, SpacelGame *main);
+	Game(Context *context, ClientSettings *config, SpacelGame *main);
 	~Game();
 	void Start();
 
