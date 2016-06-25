@@ -201,7 +201,6 @@ int DatabaseSQLite3::busyHandler(void *data, int count)
 inline int DatabaseSQLite3::stmt_step(const SQLite3Stmt s)
 {
 	assert(s < SQLITE3STMT_COUNT);
-	URHO3D_LOGDEBUGF("Statement %d executed", s);
 	return sqlite3_step(m_stmt[s]);
 }
 
