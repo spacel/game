@@ -50,6 +50,17 @@ public:
 
 	const ServerLoadingStep getLoadingStep() const { return m_loading_step; }
 	void SetSinglePlayerMode(const bool s) { m_singleplayer_mode = s; }
+	void ReceivePacket(network::NetworkPacket *packet)
+	{
+		m_packet_receive_queue.push_back(packet);
+	}
+
+	void SendPacket(network::NetworkPacket *packet)
+	{
+		m_packet_sending_queue.push_back(packet);
+	}
+
+	const bool IsSendingQueueEmpty() { return m_packet_sending_queue.empty(); }
 
 	void handlePacket_Null(network::NetworkPacket *packet) {};
 	void handlePacket_Hello(network::NetworkPacket *packet);

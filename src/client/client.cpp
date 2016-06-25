@@ -101,9 +101,20 @@ bool Client::InitClient()
 
 void Client::Step(const float dtime)
 {
-	while (!m_packet_receive_queue.empty()) {
-		std::unique_ptr<NetworkPacket> pkt(m_packet_receive_queue.pop_front());
-		ProcessPacket(pkt.get());
+	// Singleplayer mode read server queue instead of client receive queue
+	if (m_singleplayer_mode) {
+		assert(m_server);
+
+		while (!m_server->IsSendingQueueEmpty()) {
+			std::unique_ptr<NetworkPacket> pkt(m_packet_receive_queue.pop_front());
+			ProcessPacket(pkt.get());
+		}
+	}
+	else {
+		while (!m_packet_receive_queue.empty()) {
+			std::unique_ptr<NetworkPacket> pkt(m_packet_receive_queue.pop_front());
+			ProcessPacket(pkt.get());
+		}
 	}
 }
 
@@ -127,7 +138,11 @@ void Client::RoutePacket(NetworkPacket *packet)
 
 void Client::SendPacket(NetworkPacket *packet)
 {
+	if (m_singleplayer_mode) {
+		m_server->ReceivePacket(packet);
+	}
 
+	// @TODO network else
 }
 
 void Client::handlePacket_Hello(NetworkPacket *packet)

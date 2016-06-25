@@ -27,6 +27,8 @@
 
 namespace spacel {
 
+using namespace engine::network;
+
 enum ClientLoadingStep {
 	CLIENTLOADINGSTEP_NOT_STARTED = 0,
 	CLIENTLOADINGSTEP_BEGIN_START,
@@ -69,6 +71,11 @@ public:
 	void SetUniverseName(const std::string &universe_name) { m_universe_name = universe_name; }
 	void SetGameDataPath(const std::string &data_path) { m_gamedata_path = data_path; }
 
+	void ReceivePacket(NetworkPacket *packet)
+	{
+		m_packet_receive_queue.push_back(packet);
+	}
+
 	void handlePacket_Null(engine::network::NetworkPacket *packet) {}
 	void handlePacket_Hello(engine::network::NetworkPacket *packet);
 	void handlePacket_Chat(engine::network::NetworkPacket *packet);
@@ -85,11 +92,14 @@ private:
 
 	static Client *s_client;
 	std::atomic<ClientLoadingStep> m_loading_step;
+	SessionState m_state = SESSION_STATE_NONE;
+
 	bool m_singleplayer_mode = false;
 	std::string m_universe_name = "";
 	std::string m_gamedata_path = "";
 
 	engine::Server *m_server = nullptr;
+
 	SafeQueue<engine::network::NetworkPacket *> m_packet_sending_queue;
 	SafeQueue<engine::network::NetworkPacket *> m_packet_receive_queue;
 };
