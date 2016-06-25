@@ -53,41 +53,42 @@ const bool Server::InitServer()
 	m_loading_step = SERVERLOADINGSTEP_BEGIN_START;
 	try {
 		m_db = new DatabaseSQLite3(m_datapath + m_universe_name);
+
+		m_loading_step = SERVERLOADINGSTEP_DB_INITED;
+
+		// @TODO get the seed from database
+		UniverseGenerator::instance()->SetSeed(180);
+		// @TODO get the galaxy generated flag from database
+		bool galaxy_generated = m_db->IsUniverseGenerated(m_universe_name);
+
+		auto start = std::chrono::system_clock::now();
+		if (!galaxy_generated) {
+			// Generate 1 galaxy with 1M solar systems
+			Galaxy *galaxy = Universe::instance()->CreateGalaxy(1000 * 1000);
+			// Save the galaxy and solar systems
+			m_db->BeginTransaction();
+			m_db->CreateGalaxy(galaxy);
+			for (const auto &ss: galaxy->solar_systems) {
+				m_db->CreateSolarSystem(ss.second);
+			}
+			m_db->SetUniverseGenerated(m_universe_name, true);
+			m_db->CommitTransaction();
+		}
+		else {
+			Galaxy *galaxy = m_db->LoadGalaxy(1);
+			m_db->LoadSolarSystemsForGalaxy(galaxy);
+			Universe::instance()->SetGalaxy(galaxy);
+		}
+
+		auto end = std::chrono::system_clock::now();
+		std::chrono::duration<double> elapsed_seconds = end - start;
+		std::cout << "Loading time: " << elapsed_seconds.count() << "s" << std::endl;
 	}
 	catch (SQLiteException &e) {
 		URHO3D_LOGERROR(e.what());
 		m_loading_step = SERVERLOADINGSTEP_FAILED;
 		return false;
 	}
-
-	m_loading_step = SERVERLOADINGSTEP_DB_INITED;
-
-	// @TODO get the seed from database
-	UniverseGenerator::instance()->SetSeed(180);
-	// @TODO get the galaxy generated flag from database
-	bool galaxy_generated = m_db->IsUniverseGenerated(m_universe_name);
-
-	auto start = std::chrono::system_clock::now();
-	if (!galaxy_generated) {
-		// Generate 1 galaxy with 1M solar systems
-		Galaxy *galaxy = Universe::instance()->CreateGalaxy(1000 * 1000);
-		// Save the galaxy and solar systems
-		m_db->BeginTransaction();
-		m_db->CreateGalaxy(galaxy);
-		for (const auto &ss: galaxy->solar_systems) {
-			m_db->CreateSolarSystem(ss.second);
-		}
-		m_db->SetUniverseGenerated(m_universe_name, true);
-		m_db->CommitTransaction();
-	}
-	else {
-		Galaxy *galaxy = m_db->LoadGalaxy(1);
-		m_db->LoadSolarSystemsForGalaxy(galaxy);
-		Universe::instance()->SetGalaxy(galaxy);
-	}
-	auto end = std::chrono::system_clock::now();
-	std::chrono::duration<double> elapsed_seconds = end - start;
-	std::cout << "Loading time: " << elapsed_seconds.count() << "s" << std::endl;
 
 	if (!LoadGameDatas()) {
 		m_loading_step = SERVERLOADINGSTEP_FAILED;

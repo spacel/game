@@ -47,7 +47,7 @@ public:
 	~Client();
 
 	void ThreadFunction();
-	inline const ClientLoadingStep getLoadingStep() const { return m_loading_step; }
+	inline const ClientLoadingStep GetLoadingStep() const { return m_loading_step; }
 	bool InitClient();
 
 	inline static Client *instance()

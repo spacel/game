@@ -112,7 +112,7 @@ void LoadingScreen::HandleUpdate(StringHash, VariantMap &eventData)
 
 	m_progress_bar->SetSize(m_ui_elem->GetSize().x_ -50 , 20);
 
-	const auto loading_step = Client::instance()->getLoadingStep();
+	const auto loading_step = Client::instance()->GetLoadingStep();
 	if (m_last_loading_step != loading_step) {
 		switch (loading_step) {
 			case CLIENTLOADINGSTEP_NOT_STARTED:
@@ -144,7 +144,7 @@ void LoadingScreen::HandleUpdate(StringHash, VariantMap &eventData)
 				LaunchGame();
 				break;
 			case CLIENTLOADINGSTEP_FAILED:
-				m_progress_bar->SetValue(0);
+				m_progress_bar->SetValue(100);
 				m_loading_text->SetText(
 						m_l10n->Get(loading_texts[loading_step]));
 				break;

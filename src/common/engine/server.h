@@ -30,6 +30,10 @@ namespace engine {
 
 class Database;
 
+/*
+ * Started and failed states should be at the end of the end
+ * Client awaits for STARTED or FAILED state to continue
+ */
 enum ServerLoadingStep
 {
 	SERVERLOADINGSTEP_NOT_STARTED = 0,
@@ -48,7 +52,7 @@ public:
 		   const std::string &universe_name);
 	void ThreadFunction();
 
-	const ServerLoadingStep getLoadingStep() const { return m_loading_step; }
+	const ServerLoadingStep GetLoadingStep() const { return m_loading_step; }
 	void SetSinglePlayerMode(const bool s) { m_singleplayer_mode = s; }
 	void ReceivePacket(network::NetworkPacket *packet)
 	{

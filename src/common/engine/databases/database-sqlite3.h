@@ -82,7 +82,7 @@ private:
 	inline void sqlite3_verify(const int s, const int r = SQLITE_OK) const
 	{
 		if (s != r) {
-			throw SQLiteException(std::string("Query failed: ") + sqlite3_errmsg(m_database));
+			throw SQLiteException(sqlite3_errmsg(m_database));
 		}
 	}
 

@@ -47,6 +47,7 @@ void Client::ThreadFunction()
 {
 	if (!InitClient()) {
 		URHO3D_LOGERROR("Failed to init client, aborting!");
+		m_loading_step = CLIENTLOADINGSTEP_FAILED;
 		return;
 	}
 
@@ -84,7 +85,15 @@ bool Client::InitClient()
 		// @TODO change this hardcoded path
 		m_server = new engine::Server(m_gamedata_path, ".", m_universe_name);
 		m_server->Run();
-		// @TODO check server loading step to know what client need to do
+
+		// Wait for server to be up
+		while (m_server->GetLoadingStep() < engine::SERVERLOADINGSTEP_STARTED) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		}
+
+		if (m_server->GetLoadingStep() == engine::SERVERLOADINGSTEP_FAILED) {
+			return false;
+		}
 	}
 
 	/*kNet::DataSerializer s;
