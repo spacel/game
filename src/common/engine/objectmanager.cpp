@@ -31,11 +31,11 @@ bool ObjectMgr::RegisterItem(ItemDefPtr def)
 {
 	if (m_itemdefs.find(def->id) != m_itemdefs.end()) {
 		URHO3D_LOGWARNINGF("Unable to register item %d (%s), it was already registered",
-			def->id, def->name);
+			def->id, def->name.c_str());
 		return false;
 	};
 
-	URHO3D_LOGDEBUGF("Registered item %d (%s)", def->id, def->name);
+	URHO3D_LOGDEBUGF("Registered item %d (%s)", def->id, def->name.c_str());
 	m_itemdefs[def->id] = def;
 	return true;
 }

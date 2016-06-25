@@ -41,7 +41,6 @@ LoadingScreen::LoadingScreen(Context *context, ClientSettings *config, SpacelGam
 	m_ui_elem->SetDefaultStyle(m_cache->GetResource<XMLFile>("UI/LoadingScreenStyle.xml"));
 	m_progress_bar = new engine::ui::ProgressBar(context_);
 	m_loading_text = new Text(context_);
-	m_tips_text = new Text(context_);
 }
 
 void LoadingScreen::Start()
@@ -68,18 +67,16 @@ void LoadingScreen::ShowBackground()
 
 void LoadingScreen::ShowProgressBar()
 {
-	m_ui_elem->AddChild(m_progress_bar);
 	m_progress_bar->SetStyle("Slider");
-	m_progress_bar->SetSize(m_ui_elem->GetSize().x_ -50 , 20);
-	m_progress_bar->SetRange(100);
+	m_progress_bar->SetSize(m_ui_elem->GetSize().x_ - 50 , 20);
 	m_progress_bar->SetAlignment(HA_CENTER, VA_BOTTOM);
 	m_progress_bar->SetPosition(0, -30);
+	m_progress_bar->SetRange(100);
+	m_ui_elem->AddChild(m_progress_bar);
 
+	m_loading_text->SetStyle("LoadingText");
+	m_loading_text->SetText(m_l10n->Get(m_loading_text->GetText()));
 	m_ui_elem->AddChild(m_loading_text);
-	m_loading_text->SetStyle("Text");
-	m_loading_text->SetAlignment(HA_CENTER, VA_BOTTOM);
-	m_loading_text->SetPosition(0, -10);
-	m_loading_text->SetText(m_l10n->Get("Loading..."));
 }
 
 static const char *tip_list[] = {
@@ -89,10 +86,9 @@ static const char *tip_list[] = {
 
 void LoadingScreen::ShowTips()
 {
+	Text *m_tips_text = new Text(context_);
 	m_ui_elem->AddChild(m_tips_text);
-	m_tips_text->SetStyle("Text");
-	m_tips_text->SetPosition(0, -70);
-	m_tips_text->SetAlignment(HA_CENTER, VA_BOTTOM);
+	m_tips_text->SetStyle("TextTips");
 	m_tips_text->SetText(tip_list[rand() % (ARRLEN(tip_list) - 1)]);
 }
 

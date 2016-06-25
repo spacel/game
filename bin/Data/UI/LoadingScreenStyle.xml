@@ -1,20 +1,34 @@
 <elements>
     <element type="BorderImage" >
-	<attribute name="Texture" value="Texture2D;Textures/UI.png" />
-    </element>
-    <element type="Text">
-	<attribute name="Font" value="Font;Fonts/ethnocentric rg.ttf" />
-    </element>
-    <element type="Slider" style="BorderImage">
+	    <attribute name="Texture" value="Texture2D;Textures/UI.png" />
+	</element>
+	<element type="Text">
+	    <attribute name="Font" value="Font;Fonts/ethnocentric rg.ttf" />
+	</element>
+	<element type="Slider" style="BorderImage">
 	    <attribute name="Size" value="160 16" />
-	    <attribute name="Image Rect" value="48 0 64 16" />
-	    <attribute name="Border" value="4 4 4 4" />
-	    <attribute name="Horiz Alignment" value="Center" />
-	    <attribute name="Vert Alignment" value="Center" />
-	    <element type="BorderImage" internal="true">
-		<attribute name="Image Rect" value="16 0 32 16" />
+		<attribute name="Image Rect" value="48 0 64 16" />
 		<attribute name="Border" value="4 4 4 4" />
-		<attribute name="Hover Image Offset" value="0 16" />
-	    </element>
+		<attribute name="Horiz Alignment" value="Center" />
+		<attribute name="Vert Alignment" value="Bottom" />
+		<element type="BorderImage" internal="true">
+		    <attribute name="Image Rect" value="16 0 32 16" />
+			<attribute name="Border" value="4 4 4 4" />
+			<attribute name="Hover Image Offset" value="0 16" />
+		</element>
+	</element>
+	<element type="TextTips" style="Text">
+	    <attribute name="Font Size" value="12" />
+		<attribute name="Horiz Alignment" value="Center" />
+		<attribute name="Vert Alignment" value="Bottom" />
+		<attribute name="Position" value="0 -70" />
+		<attribute name="Text" value="No tips" />
+	</element>
+	<element type="LoadingText" style="Text">
+	    <attribute name="Font Size" value="12" />
+		<attribute name="Horiz Alignment" value="Center" />
+		<attribute name="Vert Alignment" value="Bottom" />
+		<attribute name="Position" value="0 -10" />
+		<attribute name="Text" value="Loading..." />
 	</element>
 </elements>

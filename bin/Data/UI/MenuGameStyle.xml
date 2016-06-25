@@ -1,10 +1,7 @@
 <?xml version="1.0"?>
 <elements>
 	<element type="BorderImage" >
-        	<attribute name="Texture" value="Texture2D;Textures/UI.png" />
-    	</element>
-	<element type="AudioImage" >
-		<attribute name="Texture" value="Texture2D;Textures/audio_icons.png" />
+		<attribute name="Texture" value="Texture2D;Textures/UI.png" />
 	</element>
 	<element type="Button" style="BorderImage">
 		<attribute name="Size" value="400 50" />
@@ -15,23 +12,13 @@
 		<attribute name="Pressed Child Offset" value="-1 1" />
 		<attribute name="Color" value="1 1 0" />
 		<attribute name="Horiz Alignment" value="Center" />
-		<attribute name="Opacity" value="0.75" />
+		<attribute name="Opacity" value="1" />
 	</element>
 	<element type="CloseButton" style="Button" auto="false">    <!-- non-auto style is shown explicitly in the Editor's style drop down list for user selection -->
 		<attribute name="Min Size" value="16 16" />
 		<attribute name="Max Size" value="16 16" />
 		<attribute name="Image Rect" value="144 0 160 16" />
 		<attribute name="Focus Mode" value="NotFocusable" />
-	</element>
-	<element type="ButtonInLine" style="BorderImage">
-		<attribute name="Size" value="150 25" />
-		<attribute name="Image Rect" value="16 0 32 16" />
-		<attribute name="Border" value="4 4 4 4" />
-		<attribute name="Pressed Image Offset" value="16 0" />
-		<attribute name="Hover Image Offset" value="0 16" />
-		<attribute name="Pressed Child Offset" value="-1 1" />
-		<attribute name="Color" value="1 1 0" />
-		<attribute name="Horiz Alignment" value="Center" />
 	</element>
 	<element type="Window" style="BorderImage">
 		<attribute name="Size" value="800 600" />
@@ -46,14 +33,50 @@
 		<attribute name="Font" value="Font;Fonts/ethnocentric rg.ttf" />
 	</element>
 	<element type="TextButton" style="Text">
-		<attribute name="Font Size" value="20" />
+		<attribute name="Font Size" value="12" />
 		<attribute name="Color" value="1 1 0.85" />
 		<attribute name="Horiz Alignment" value="Center" />
 		<attribute name="Vert Alignment" value="Center" />
 	</element>
-	<element type="Title" style="Text">
-		<attribute name="Font Size" value="40" />
+	<element type="GameMenu" style="BorderImage">
+		<attribute name="Size" value="450 400" />
+		<attribute name="Image Rect" value="48 0 64 16" />
+		<attribute name="Border" value="4 4 4 4" />
+		<attribute name="Resize Border" value="8 8 8 8" />
 		<attribute name="Horiz Alignment" value="Center" />
-		<attribute name="Vert Alignment" value="Top" />
+		<attribute name="Vert Alignment" value="Center" />
+		<attribute name="Color" value="0.0 0.15 0.3" />
+		<attribute name="Opacity" value="0.75" />
+		<attribute name="Modal Shade Color" value="0.1 0.1 0.1 0.5" />
+		<attribute name="Modal Frame Color" value="0.3 0.4 0.7" />
+		<attribute name="Modal Frame Size" value="2 2" />
+		<element type="Text" style="Text">
+			<attribute name="Name" value="title" />
+			<attribute name="Position" value="0 20" />
+			<attribute name="Font Size" value="30" />
+			<attribute name="Horiz Alignment" value="Center" />
+			<attribute name="Text" value="Menu" />
+		</element>
+		<element type="Button" style="Button">
+			<attribute name="Name" value="resume_button" />
+			<element type="Text" style="TextButton">
+				<attribute name="Name" value="resume_button_text" />
+				<attribute name="Text" value="Resume" />
+			</element>
+		</element>
+		<element type="Button" style="Button">
+			<attribute name="Name" value="back_menu_button" />
+			<element type="Text" style="TextButton">
+				<attribute name="Name" value="back_menu_button_text" />
+				<attribute name="Text" value="Back to main menu" />
+			</element>
+		</element>
+		<element type="Button" style="Button">
+			<attribute name="Name" value="exit_game_button" />
+			<element type="Text" style="TextButton">
+				<attribute name="Name" value="exit_game_button_text" />
+				<attribute name="Text" value="Exit the game" />
+			</element>
+		</element>
 	</element>
 </elements>

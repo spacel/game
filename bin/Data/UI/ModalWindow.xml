@@ -10,7 +10,7 @@
 	<attribute name="Layout Border" value="6 6 6 6" />
 	<attribute name="Resize Border" value="6 6 6 6" />
 	<attribute name="Is Movable" value="false" />
-    <attribute name="Is Modal" value="true" />
+    	<attribute name="Is Modal" value="true" />
 	<attribute name="Modal Shade Color" value="0.3 0.4 0.7 0.4" />
 	<attribute name="Modal Frame Color" value="0.3 0.4 0.7" />
 	<attribute name="Modal Frame Size" value="2 2" />

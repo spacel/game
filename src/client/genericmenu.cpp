@@ -62,7 +62,7 @@ void GenericMenu::CreateLineEditLabel(LineEdit *le, const String &text,
 	le->GetParent()->AddChild(t);
 	t->SetName(text);
 	t->SetStyle(style);
-	t->SetPosition(le->GetPosition().x_ - 20, le->GetPosition().y_ + 5);
+	t->SetPosition(25, le->GetPosition().y_ + 5);
 	t->SetText(m_l10n->Get(text));
 }
 

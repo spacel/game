@@ -50,7 +50,6 @@ private:
 	SpacelGame *m_main;
 	SharedPtr<UIElement> m_ui_elem;
 	SharedPtr<Sprite> m_loading_background;
-	SharedPtr<Text> m_tips_text;
 	SharedPtr<engine::ui::ProgressBar> m_progress_bar;
 	SharedPtr<Text> m_loading_text;
 

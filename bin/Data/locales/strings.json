@@ -29,6 +29,9 @@
   "Sound": {
     "fr": "Son"
   },
+  "Keyboard": {
+    "fr": "Clavier"
+  },
   "Back": {
     "fr": "Retour"
   },
@@ -128,10 +131,13 @@
   "Resume":{
     "fr": "Reprendre"
   },
-  "Exit to main menu":{
-    "fr": "Menu principal"
+  "Back to main menu":{
+    "fr": "Retour au menu principal"
   },
   "Exit the game":{
     "fr": "Quitter le jeu"
+  },
+  "Apply":{
+    "fr": "Appliquer"
   }
 }

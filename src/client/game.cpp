@@ -363,28 +363,26 @@ void Game::CreateMenu()
 	}
 	m_gamemenu_created = true;
 	m_window_menu = new Window(context_);
+	m_window_menu->SetStyle("GameMenu");
+	m_window_menu->SetModal(true);
 	m_ui_elem->AddChild(m_window_menu);
-	m_window_menu->SetSize(500, 400);
-	m_window_menu->SetLayout(LM_FREE, 0, IntRect(10, 10, 10, 10));
-	m_window_menu->SetAlignment(HA_CENTER, VA_CENTER);
-	m_window_menu->SetName("Menu");
-	m_window_menu->SetColor(Color(.0, .15, .3, .5));
 
-	//Create button
-	Text *text_menu = new Text(context_);
-	text_menu->SetText("Menu");
-	text_menu->SetStyle("Title");
-	m_window_menu->AddChild(text_menu);
+	Text *text_menu = static_cast<Text *>(m_window_menu->GetChild("title", false));
+	Button *resume = static_cast<Button *>(m_window_menu->GetChild("resume_button", true));
+	Text *resume_text = static_cast<Text *>(resume->GetChild("resume_button_text", false));
+	Button *exit_main_menu = static_cast<Button *>(m_window_menu->GetChild("back_menu_button", true));
+	Text *exit_main_menu_text = static_cast<Text *>(exit_main_menu->GetChild("back_menu_button_text", false));
+	Button *exit_game = static_cast<Button *>(m_window_menu->GetChild("exit_game_button", true));
+	Text *exit_game_text = static_cast<Text *>(exit_game->GetChild("exit_game_button_text", false));
 
-	Button *resume = CreateMenuButton("Resume");
 	resume->SetPosition(0, text_menu->GetSize().y_ + text_menu->GetPosition().y_ + MENU_BUTTON_SPACE);
-
-	Button *exit_main_menu = CreateMenuButton("Exit to main menu");
-	exit_main_menu->SetPosition(0, resume->GetSize().y_ + resume->GetPosition().y_ + MENU_BUTTON_SPACE);
-
-	Button *exit_game = CreateMenuButton("Exit the game");
+	resume_text->SetText(m_l10n->Get(resume_text->GetText()));
+	exit_main_menu->SetPosition(0, resume->GetSize().y_ + resume->GetPosition().y_ + (MENU_BUTTON_SPACE * 3));
+	exit_main_menu_text->SetText(m_l10n->Get(exit_main_menu_text->GetText()));
 	exit_game->SetPosition(0, exit_main_menu->GetSize().y_ + exit_main_menu->GetPosition().y_ + MENU_BUTTON_SPACE);
+	exit_game_text->SetText(m_l10n->Get(exit_game_text->GetText()));
 
+	m_window_menu->SetSize(exit_game->GetSize().x_ + 50, exit_game->GetPosition().y_ + exit_game->GetSize().y_ + MENU_BUTTON_SPACE);
 	SubscribeToEvent(resume, E_RELEASED, URHO3D_HANDLER(Game, HandleResume));
 	SubscribeToEvent(exit_main_menu, E_RELEASED, URHO3D_HANDLER(Game, HandleBackMainMenu));
 	SubscribeToEvent(exit_game, E_RELEASED, URHO3D_HANDLER(Game, HandleExitGame));
@@ -396,6 +394,7 @@ void Game::HandleMenu(StringHash eventType, VariantMap &eventData)
 	m_move_camera = false;
 	GetSubsystem<Input>()->SetMouseVisible(true);
 	m_window_menu->SetVisible(true);
+	m_window_menu->SetModal(true);
 }
 
 void Game::HandleResume(StringHash eventType, VariantMap &eventData)
@@ -420,7 +419,6 @@ Button *Game::CreateMenuButton(const String &label, const String &button_style, 
 {
 	Button *b = new Button(context_);
 	b->SetStyle(button_style);
-	b->SetHorizontalAlignment(HA_CENTER);
 	m_window_menu->AddChild(b);
 	CreateButtonLabel(b, label, label_style);
 
