@@ -82,8 +82,7 @@ bool Client::InitClient()
 	m_loading_step = CLIENTLOADINGSTEP_BEGIN_START;
 
 	if (m_singleplayer_mode) {
-		// @TODO change this hardcoded path
-		m_server = new engine::Server(m_gamedata_path, ".", m_universe_name);
+		m_server = new engine::Server(m_gamedata_path, m_data_path, m_universe_name);
 		m_server->Run();
 
 		// Wait for server to be up

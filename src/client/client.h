@@ -70,6 +70,7 @@ public:
 	void SetSinglePlayerMode(const bool s) { m_singleplayer_mode = s; }
 	void SetUniverseName(const std::string &universe_name) { m_universe_name = universe_name; }
 	void SetGameDataPath(const std::string &data_path) { m_gamedata_path = data_path; }
+	void SetDataPath(const std::string &data_path) { m_data_path = data_path; }
 
 	void ReceivePacket(NetworkPacket *packet)
 	{
@@ -97,6 +98,7 @@ private:
 	bool m_singleplayer_mode = false;
 	std::string m_universe_name = "";
 	std::string m_gamedata_path = "";
+	std::string m_data_path = "";
 
 	engine::Server *m_server = nullptr;
 

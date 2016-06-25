@@ -280,7 +280,6 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 			engine::UniverseGenerator::SetSeed(engine::Universe::instance()->GetUniverseSeed());
 			URHO3D_LOGDEBUGF("User wants to load universe %s", universe_name.CString());
 		}
-		// @TODO find a way to retrieve the universe_name selected for loading
 	}
 
 	universe_name = universe_name.Replaced(':', '_').Replaced('.', '_')
