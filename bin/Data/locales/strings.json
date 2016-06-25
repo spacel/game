@@ -124,5 +124,14 @@
   },
   "Universe %s deleted":{
     "fr": "Univers %s effacé"
+  },
+  "Resume":{
+    "fr": "Reprendre"
+  },
+  "Exit to main menu":{
+    "fr": "Menu principal"
+  },
+  "Exit the game":{
+    "fr": "Quitter le jeu"
   }
 }
