@@ -69,6 +69,9 @@ private:
 	void HandleInfosUniverseClicked(StringHash, VariantMap &eventData);
 	void HandleDeleteUniversePressed(StringHash eventType, VariantMap &eventData);
 	void HandleGenerateSeedPressed(StringHash eventType, VariantMap &eventData);
+	void HandleChoiceCharacter(StringHash eventType, VariantMap &eventData);
+	void HandleNewCharacter(StringHash eventType, VariantMap &eventData);
+	void HandleCreateCharacter(StringHash eventType, VariantMap &eventData);
 	void DeleteUniverse();
 	void Background();
 	void Title();

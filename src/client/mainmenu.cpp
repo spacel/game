@@ -389,7 +389,7 @@ void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
 
 	SubscribeToEvent(universes_listview, E_ITEMCLICKED, URHO3D_HANDLER(MainMenu, HandleInfosUniverseClicked));
 	SubscribeToEvent(universes_listview, E_ITEMDOUBLECLICKED, URHO3D_HANDLER(MainMenu, HandleLaunchGamePressed));
-	SubscribeToEvent(launch, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleLaunchGamePressed));
+	SubscribeToEvent(launch, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleChoiceCharacter));
 	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSingleplayerPressed));
 }
 
@@ -656,6 +656,128 @@ void MainMenu::HandleDeleteUniversePressed(StringHash eventType, VariantMap &eve
 	}
 
 	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(MainMenu, HandleKeyDown));
+}
+
+void MainMenu::HandleChoiceCharacter(StringHash eventType, VariantMap &eventData)
+{
+	//m_menu_id = MAINMENUID_SINGLEPLAYER_LOADGAME;
+	m_window_menu->RemoveAllChildren();
+	m_window_menu->SetVisible(false);
+	//GetSubsystem<UI>()->GetRoot()->RemoveAllChildren();
+
+	UnsubscribeFromAllEventsExcept(except_unsubscribe, true);
+
+	SetTitle("");
+
+	Vector<String> list_character;
+	const String path_character = GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "character");
+	GetSubsystem<FileSystem>()->ScanDir(list_character, path_character, "*", SCAN_DIRS, false);
+
+	ListView *character_listview = new ListView(context_);
+	GetSubsystem<UI>()->GetRoot()->AddChild(character_listview);
+	character_listview->SetStyle("ListView");
+	character_listview->SetName("Loading_character_listview");
+	character_listview->SetSize(GetSubsystem<UI>()->GetRoot()->GetSize().x_ /2, GetSubsystem<UI>()->GetRoot()->GetSize().y_ - 125);
+
+	if (!list_character.Empty()) {
+		for (Vector<String>::Iterator it = list_character.Begin(); it != list_character.End(); ++it) {
+			if (it->Compare(".") != 0 && it->Compare("..") != 0) {
+				Text *text = new Text(context_);
+				character_listview->AddItem(text);
+				text->SetStyle("ListViewText");
+				text->SetName(*it);
+				text->SetText(*it);
+			}
+		}
+	}
+
+	//Preview character
+	Texture2D *PreviewTexture = m_cache->GetResource<Texture2D>("Textures/character.png");
+	if (!PreviewTexture) {
+		PreviewTexture = m_cache->GetResource<Texture2D>("Textures/no_preview.png");
+		if (!PreviewTexture) {
+			URHO3D_LOGERROR("No_Preview texture not loaded");
+			return;
+		}
+	}
+
+	m_preview = GetSubsystem<UI>()->GetRoot()->CreateChild<Sprite>();
+	m_preview->SetTexture(PreviewTexture);
+	m_preview->SetSize(150, 150);
+	m_preview->SetPosition(character_listview->GetSize().x_ + (character_listview->GetSize().x_ / 2),
+						   GetSubsystem<UI>()->GetRoot()->GetPosition().y_ + MAINMENU_BUTTON_SPACE);
+	m_preview->SetPriority(-90);
+
+	//Information
+	Text *character_info = new Text(context_);
+	GetSubsystem<UI>()->GetRoot()->AddChild(character_info);
+	character_info->SetStyle("Text");
+	character_info->SetPosition(character_listview->GetSize().x_ + 50, m_preview->GetPosition().y_ + m_preview->GetSize().y_ + 50);
+	character_info->SetText("Pseudo : ");
+
+	//Button
+	Button *launch = new Button(context_);
+	launch->SetStyle("ButtonInLine");
+	launch->SetHorizontalAlignment(HA_CENTER);
+	GetSubsystem<UI>()->GetRoot()->AddChild(launch);
+	Text *text_launch = new Text(context_);
+	launch->AddChild(text_launch);
+	text_launch->SetStyle("TextButtonInLine");
+	text_launch->SetText(m_l10n->Get("Launch"));
+	launch->SetPosition(0 - 50, GetSubsystem<UI>()->GetRoot()->GetSize().y_ - launch->GetSize().y_ - MAINMENU_BUTTON_SPACE);
+	launch->SetHorizontalAlignment(HA_RIGHT);
+
+	Button *create = new Button(context_);
+	create->SetStyle("ButtonInLine");
+	create->SetHorizontalAlignment(HA_CENTER);
+	GetSubsystem<UI>()->GetRoot()->AddChild(create);
+	Text *text_create = new Text(context_);
+	create->AddChild(text_create);
+	text_create->SetStyle("TextButtonInLine");
+	text_create->SetText(m_l10n->Get("Create character"));
+	create->SetPosition(0, GetSubsystem<UI>()->GetRoot()->GetSize().y_ - create->GetSize().y_ - MAINMENU_BUTTON_SPACE);
+	create->SetHorizontalAlignment(HA_CENTER);
+
+	Button *back = new Button(context_);
+	back->SetStyle("ButtonInLine");
+	back->SetHorizontalAlignment(HA_CENTER);
+	GetSubsystem<UI>()->GetRoot()->AddChild(back);
+	Text *text_back = new Text(context_);
+	back->AddChild(text_back);
+	text_back->SetStyle("TextButtonInLine");
+	text_back->SetText(m_l10n->Get("Back"));
+	back->SetPosition(0 + 50, GetSubsystem<UI>()->GetRoot()->GetSize().y_ - back->GetSize().y_ - MAINMENU_BUTTON_SPACE);
+	back->SetHorizontalAlignment(HA_LEFT);
+
+	//SubscribeToEvent(universes_listview, E_ITEMCLICKED, URHO3D_HANDLER(MainMenu, HandleInfosUniverseClicked));
+	//SubscribeToEvent(universes_listview, E_ITEMDOUBLECLICKED, URHO3D_HANDLER(MainMenu, HandleLaunchGamePressed));
+	SubscribeToEvent(launch, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleLaunchGamePressed));
+	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSingleplayerPressed));
+}
+
+void MainMenu::HandleNewCharacter(StringHash eventType, VariantMap &eventData)
+{
+	m_window_menu->RemoveAllChildren();
+	UnsubscribeFromAllEventsExcept(except_unsubscribe, true);
+
+	SetTitle("Create Character");
+
+	LineEdit *character_name = CreateMainMenuLineEdit("character_name", "Character Name: ", 0, 65);
+	character_name->SetMaxLength(32);
+
+	Button *create = CreateMainMenuButton("Create", "ButtonInLine", "TextButtonInLine");
+	create->SetPosition(0 + 50, m_window_menu->GetSize().y_ - create->GetSize().y_ - MAINMENU_BUTTON_SPACE);
+	create->SetHorizontalAlignment(HA_LEFT);
+
+	Button *back = CreateMainMenuButton("Cancel", "ButtonInLine", "TextButtonInLine");
+	back->SetPosition(0 - 50, m_window_menu->GetSize().y_ - back->GetSize().y_ - MAINMENU_BUTTON_SPACE);
+
+	SubscribeToEvent(create, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleCreateCharacter));
+	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleMasterMenu));
+}
+
+void MainMenu::HandleCreateCharacter(StringHash eventType, VariantMap &eventData)
+{
 }
 
 void MainMenu::DeleteUniverse()
