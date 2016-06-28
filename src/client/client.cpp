@@ -18,11 +18,12 @@
  */
 
 #include "client.h"
-#include <Urho3D/IO/Log.h>
-#include <thread>
-#include "project_defines.h"
 #include "network/clientpackethandler.h"
+#include "project_defines.h"
+#include <Urho3D/IO/Log.h>
+#include <Urho3D/IO/MemoryBuffer.h>
 #include <common/engine/server.h>
+#include <thread>
 
 namespace spacel {
 
@@ -56,20 +57,23 @@ void Client::ThreadFunction()
 		const auto prev_time = std::chrono::system_clock::now();
 		Step(dtime);
 		const auto step_time = std::chrono::system_clock::now().time_since_epoch() -
-							   prev_time.time_since_epoch();
+				prev_time.time_since_epoch();
 
 		// runtime is a float sec time
-		float runtime = std::chrono::duration_cast<std::chrono::milliseconds>(step_time).count() / 1000.0f;
+		float runtime =
+			std::chrono::duration_cast<std::chrono::milliseconds>(step_time).count() /
+			1000.0f;
 
 		// If step runtime < LOOP TIME, sleep for the diff time
 		if (runtime < CLIENT_LOOP_TIME) {
 			// Convert back to ms from s
-			std::this_thread::sleep_for(std::chrono::milliseconds((uint32_t)((CLIENT_LOOP_TIME - runtime) * 1000.0f)));
+			std::this_thread::sleep_for(std::chrono::milliseconds(
+				(uint32_t) ((CLIENT_LOOP_TIME - runtime) * 1000.0f)));
 			dtime = CLIENT_LOOP_TIME;
 		}
 		else {
 			URHO3D_LOGWARNINGF("Server thread lagging. Runtime %f > %f",
-				runtime, CLIENT_LOOP_TIME);
+							   runtime, CLIENT_LOOP_TIME);
 			dtime = runtime;
 		}
 	}
@@ -95,11 +99,7 @@ bool Client::InitClient()
 		}
 	}
 
-	/*kNet::DataSerializer s;
-	s.Add<uint8_t>(0);
-	s.Add<uint8_t>(0);
-	s.Add<uint8_t>(PROJECT_VERSION_PATCH);*/
-	m_loading_step = CLIENTLOADINGSTEP_CONNECTED;
+	SendInitPacket();
 
 	m_loading_step = CLIENTLOADINGSTEP_GAMEDATAS_LOADED;
 
@@ -114,7 +114,8 @@ void Client::Step(const float dtime)
 		assert(m_server);
 
 		while (!m_server->IsSendingQueueEmpty()) {
-			std::unique_ptr<NetworkPacket> pkt(m_packet_receive_queue.pop_front());
+			std::unique_ptr<NetworkPacket> pkt(m_server->PopSendingQueue());
+			pkt->Seek(2);
 			ProcessPacket(pkt.get());
 		}
 	}
@@ -129,7 +130,7 @@ void Client::Step(const float dtime)
 void Client::ProcessPacket(NetworkPacket *packet)
 {
 	// Ignore invalid opcode
-	if (packet->opcode >= MSG_MAX) {
+	if (packet->GetOpcode() >= MSG_MAX) {
 		return;
 	}
 
@@ -140,7 +141,7 @@ void Client::ProcessPacket(NetworkPacket *packet)
 
 void Client::RoutePacket(NetworkPacket *packet)
 {
-	const CMsgHandler &opHandle = cmsgHandlerTable[packet->opcode];
+	const CMsgHandler &opHandle = cmsgHandlerTable[packet->GetOpcode()];
 	(this->*opHandle.handler)(packet);
 }
 
@@ -154,6 +155,22 @@ void Client::SendPacket(NetworkPacket *packet)
 }
 
 void Client::handlePacket_Hello(NetworkPacket *packet)
+{
+	uint8_t major_version = packet->ReadUByte(),
+		minor_version = packet->ReadUByte(), patch_version = packet->ReadUByte();
+	uint16_t protocol_version = packet->ReadUShort();
+	URHO3D_LOGINFOF("Server version %d.%d.%d (proto %d) respond us hello",
+		major_version, minor_version, patch_version, protocol_version);
+
+	m_loading_step = CLIENTLOADINGSTEP_CONNECTED;
+
+	NetworkPacket *resp_packet = new NetworkPacket(CMSG_AUTH);
+	resp_packet->WriteString("singleplayer");
+	resp_packet->WriteString("singleplayer_default");
+	SendPacket(resp_packet);
+}
+
+void Client::handlePacket_Auth(NetworkPacket *packet)
 {
 
 }
@@ -170,7 +187,7 @@ void Client::handlePacket_GalaxySystems(NetworkPacket *packet)
 
 void Client::handlePacket_CharacterList(NetworkPacket *packet)
 {
-
+	m_loading_step = CLIENTLOADINGSTEP_AUTHED;
 }
 
 void Client::handlePacket_CharacterCreate(NetworkPacket *packet)
@@ -188,4 +205,13 @@ void Client::handlePacket_Kick(NetworkPacket *packet)
 
 }
 
+void Client::SendInitPacket()
+{
+	NetworkPacket *pkt = new NetworkPacket(CMSG_HELLO);
+	pkt->WriteUByte(0);
+	pkt->WriteUByte(0);
+	pkt->WriteUByte(PROJECT_VERSION_PATCH);
+	pkt->WriteUShort(PROTOCOL_VERSION);
+	SendPacket(pkt);
+}
 }

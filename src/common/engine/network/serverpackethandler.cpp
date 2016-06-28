@@ -33,6 +33,7 @@ const SMsgHandler smsgHandlerTable[MSG_MAX] = {
 	null_command_handler,
 	{"CMSG_AUTH", SESSION_STATE_CONNECTED, &Server::handlePacket_Auth},
 	null_command_handler,
+	null_command_handler,
 	{"CMSG_CHARACTER_CREATE", SESSION_STATE_CONNECTED, &Server::handlePacket_CharacterCreate},
 	null_command_handler,
 	{"CMSG_CHARACTER_REMOVE", SESSION_STATE_CONNECTED, &Server::handlePacket_CharacterRemove},

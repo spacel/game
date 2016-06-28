@@ -9,6 +9,7 @@ set(common_sources
 	engine/server.cpp
 	engine/space.cpp
 	engine/databases/database-sqlite3.cpp
+	engine/network/networkprotocol.cpp
 	engine/network/serverpackethandler.cpp
 )
 

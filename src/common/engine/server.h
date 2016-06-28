@@ -65,6 +65,7 @@ public:
 	}
 
 	const bool IsSendingQueueEmpty() { return m_packet_sending_queue.empty(); }
+	network::NetworkPacket *PopSendingQueue() { return m_packet_sending_queue.pop_front(); }
 
 	void handlePacket_Null(network::NetworkPacket *packet) {};
 	void handlePacket_Hello(network::NetworkPacket *packet);

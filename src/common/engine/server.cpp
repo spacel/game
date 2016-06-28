@@ -30,6 +30,7 @@
 #include "generators.h"
 #include "objectmanager.h"
 #include "space.h"
+#include "../../project_defines.h"
 
 namespace spacel {
 namespace engine {
@@ -60,7 +61,7 @@ const bool Server::InitServer()
 		UniverseGenerator::instance()->SetSeed(180);
 		bool galaxy_generated = m_db->IsUniverseGenerated(m_universe_name);
 
-		auto start = std::chrono::system_clock::now();
+		const auto start = std::chrono::system_clock::now();
 		if (!galaxy_generated) {
 			// Generate 1 galaxy with 1M solar systems
 			Galaxy *galaxy = Universe::instance()->CreateGalaxy(1000 * 1000);
@@ -238,6 +239,7 @@ void Server::Step(const float dtime)
 	// @TODO limit packet processing time
 	while (!m_packet_receive_queue.empty()) {
 		std::unique_ptr<NetworkPacket> pkt(m_packet_receive_queue.pop_front());
+		pkt->Seek(2);
 		ProcessPacket(pkt.get());
 	}
 }
@@ -245,7 +247,7 @@ void Server::Step(const float dtime)
 void Server::ProcessPacket(network::NetworkPacket *packet)
 {
 	// Ignore invalid opcode
-	if (packet->opcode >= network::MSG_MAX) {
+	if (packet->GetOpcode() >= network::MSG_MAX) {
 		return;
 	}
 
@@ -263,18 +265,53 @@ void Server::ProcessPacket(network::NetworkPacket *packet)
 
 void Server::RoutePacket(network::NetworkPacket *packet)
 {
-	const SMsgHandler &opHandle = smsgHandlerTable[packet->opcode];
+	const SMsgHandler &opHandle = smsgHandlerTable[packet->GetOpcode()];
 	(this->*opHandle.handler)(packet);
 }
 
 void Server::handlePacket_Hello(NetworkPacket *packet)
 {
+	uint8_t major_version = packet->ReadUByte(),
+		minor_version = packet->ReadUByte(), patch_version = packet->ReadUByte();
+	uint16_t protocol_version = packet->ReadUShort();
+	URHO3D_LOGINFOF("Client version %d.%d.%d (proto %d) tell us hello",
+		major_version, minor_version, patch_version, protocol_version);
 
+	NetworkPacket *resp_packet = new NetworkPacket(SMSG_HELLO);
+	resp_packet->WriteUByte(0);
+	resp_packet->WriteUByte(0);
+	resp_packet->WriteUByte(PROJECT_VERSION_PATCH);
+	resp_packet->WriteUShort(PROTOCOL_VERSION);
+	SendPacket(resp_packet);
 }
 
 void Server::handlePacket_Auth(NetworkPacket *packet)
 {
+	Urho3D::String login = packet->ReadString();
+	Urho3D::String password = packet->ReadString();
+	URHO3D_LOGDEBUGF("Login %s, password %s", login.CString(), password.CString());
 
+// Prepare auth handling
+#if 0
+
+	if (!auth_success) {
+		NetworkPacket *resp_packet = new NetworkPacket(SMSG_AUTH);
+		uint8_t resp_code = 0;
+		resp_packet->WriteUByte(resp_code);
+		if (resp_code == 2) {
+			resp_packet->WriteString("custom string");
+		}
+		SendPacket(resp_packet);
+		return;
+	}
+#endif
+
+	NetworkPacket *resp_packet = new NetworkPacket(SMSG_CHARACTER_LIST);
+	resp_packet->WriteUInt(0); // GUID
+	resp_packet->WriteUByte(1); // Race
+	resp_packet->WriteUByte(1); // Gender
+	resp_packet->WriteString("TestCharacter");
+	SendPacket(resp_packet);
 }
 
 void Server::handlePacket_Chat(NetworkPacket *packet)

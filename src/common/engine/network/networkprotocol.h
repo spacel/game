@@ -21,6 +21,8 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <Urho3D/IO/MemoryBuffer.h>
+#include <vector>
 
 namespace spacel {
 namespace engine {
@@ -29,12 +31,25 @@ class Server;
 
 namespace network {
 
-struct NetworkPacket
+class NetworkPacket: public Urho3D::Deserializer, public Urho3D::Serializer
 {
-	uint32_t session_id = 0;
-	uint16_t opcode = 0;
-	char *data;
-	size_t data_size;
+public:
+	NetworkPacket(const uint16_t o);
+
+	const uint16_t GetOpcode();
+
+	/// Read bytes from the memory area. Return number of bytes actually read.
+	virtual unsigned Read(void *dest, unsigned size);
+	/// Set position from the beginning of the memory area.
+	virtual unsigned Seek(unsigned position);
+	/// Write bytes to the memory area.
+	virtual unsigned Write(const void *data, unsigned size);
+
+private:
+	uint32_t m_session_id = 0;
+
+	/// Pointer to the memory area.
+	std::vector<unsigned char> buffer_;
 };
 
 enum PacketOpcode
@@ -44,6 +59,7 @@ enum PacketOpcode
 	CMSG_CHAT,
 	SMSG_CHAT,
 	CMSG_AUTH,
+	SMSG_AUTH,
 	SMSG_CHARACTER_LIST,
 	CMSG_CHARACTER_CREATE,
 	SMSG_CHARACTER_CREATE,

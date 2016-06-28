@@ -33,6 +33,7 @@ enum ClientLoadingStep {
 	CLIENTLOADINGSTEP_NOT_STARTED = 0,
 	CLIENTLOADINGSTEP_BEGIN_START,
 	CLIENTLOADINGSTEP_CONNECTED,
+	CLIENTLOADINGSTEP_AUTHED,
 	CLIENTLOADINGSTEP_GAMEDATAS_LOADED,
 	CLIENTLOADINGSTEP_STARTED,
 	CLIENTLOADINGSTEP_FAILED,
@@ -81,6 +82,7 @@ public:
 	void handlePacket_Hello(engine::network::NetworkPacket *packet);
 	void handlePacket_Chat(engine::network::NetworkPacket *packet);
 	void handlePacket_GalaxySystems(engine::network::NetworkPacket *packet);
+	void handlePacket_Auth(engine::network::NetworkPacket *packet);
 	void handlePacket_CharacterList(engine::network::NetworkPacket *packet);
 	void handlePacket_CharacterCreate(engine::network::NetworkPacket *packet);
 	void handlePacket_CharacterRemove(engine::network::NetworkPacket *packet);
@@ -90,6 +92,8 @@ private:
 	void ProcessPacket(engine::network::NetworkPacket *packet);
 	void RoutePacket(engine::network::NetworkPacket *packet);
 	void SendPacket(engine::network::NetworkPacket *packet);
+
+	void SendInitPacket();
 
 	static Client *s_client;
 	std::atomic<ClientLoadingStep> m_loading_step;

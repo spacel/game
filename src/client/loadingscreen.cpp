@@ -92,10 +92,11 @@ void LoadingScreen::ShowTips()
 	m_tips_text->SetText(tip_list[rand() % (ARRLEN(tip_list) - 1)]);
 }
 
-static const char *loading_texts[engine::SERVERLOADINGSTEP_COUNT] = {
+static const char *loading_texts[CLIENTLOADINGSTEP_COUNT] = {
 	"Not started.",
 	"Loading...",
-	"Connecting...",
+	"Connected.",
+	"Authenticated.",
 	"Game datas loaded.",
 	"Started!",
 	"Failed!"
@@ -115,18 +116,21 @@ void LoadingScreen::HandleUpdate(StringHash, VariantMap &eventData)
 				m_progress_bar->SetValue(0);
 				m_loading_text->SetText(
 						m_l10n->Get(loading_texts[loading_step]));
-
 				break;
-			case CLIENTLOADINGSTEP_BEGIN_START: {
+			case CLIENTLOADINGSTEP_BEGIN_START:
 				m_progress_bar->SetValue(5);
 				m_loading_text->SetText(
 						m_l10n->Get(loading_texts[loading_step]));
 				break;
-			}
 			case CLIENTLOADINGSTEP_CONNECTED:
 				m_progress_bar->SetValue(10);
 				m_loading_text->SetText(
 						m_l10n->Get(loading_texts[loading_step]));
+				break;
+			case CLIENTLOADINGSTEP_AUTHED:
+				m_progress_bar->SetValue(20);
+				m_loading_text->SetText(
+					m_l10n->Get(loading_texts[loading_step]));
 				break;
 			case CLIENTLOADINGSTEP_GAMEDATAS_LOADED:
 				m_progress_bar->SetValue(30);

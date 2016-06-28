@@ -31,6 +31,7 @@ const CMsgHandler cmsgHandlerTable[MSG_MAX] = {
 	null_command_handler,
 	{"SMSG_CHAT", SESSION_STATE_AUTHED, &Client::handlePacket_Chat},
 	null_command_handler,
+	{"SMSG_AUTH", SESSION_STATE_CONNECTED, &Client::handlePacket_Auth},
 	{"SMSG_CHARACTER_LIST", SESSION_STATE_AUTHED, &Client::handlePacket_CharacterList},
 	null_command_handler,
 	{"SMSG_CHARACTER_CREATE", SESSION_STATE_AUTHED, &Client::handlePacket_CharacterCreate},
