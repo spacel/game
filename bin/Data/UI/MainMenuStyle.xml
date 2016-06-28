@@ -61,6 +61,10 @@
 		<attribute name="Vert Alignment" value="Center" />
 		<attribute name="Opacity" value="0.75" />
 	</element>
+		<element type="window_character">
+		<attribute name="Horiz Alignment" value="Center" />
+		<attribute name="Vert Alignment" value="Center" />
+	</element>
 	<element type="Text">
 		<attribute name="Font" value="Font;Fonts/ethnocentric rg.ttf" />
 	</element>
