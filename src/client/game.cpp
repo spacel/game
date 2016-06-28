@@ -59,7 +59,8 @@ namespace spacel {
 #define MENU_BUTTON_SPACE 20
 
 Game::Game(Context *context, ClientSettings *config, SpacelGame *main):
-	GenericMenu(context, config), m_main(main)
+	GenericMenu(context, config),
+	m_main(main)
 {
 	m_scene = new Scene(context_);
 	m_terrain_node = new Node(context_);
@@ -406,6 +407,7 @@ void Game::HandleResume(StringHash eventType, VariantMap &eventData)
 
 void Game::HandleBackMainMenu(StringHash eventType, VariantMap &eventData)
 {
+
 	m_main->ChangeGameGlobalUI(GLOBALUI_MAINMENU);
 	//main_menu->Start();
 }
