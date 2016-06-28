@@ -33,7 +33,11 @@
 		<attribute name="Hover Image Offset" value="0 16" />
 		<attribute name="Pressed Child Offset" value="-1 1" />
 		<attribute name="Color" value="1 1 0" />
-		<attribute name="Horiz Alignment" value="Center" />
+		<attribute name="Is Enabled" value="true" />
+	</element>
+	<element type="ButtonInLineInactive" style="ButtonInLine">
+	    <attribute name="Image Rect" value="48 0 64 16" />
+		<attribute name="Is Enabled" value="false" />
 	</element>
 	<element type="SoundButton" style="AudioImage" auto="false">
 	    <attribute name="Min Size" value="32 32" />

@@ -341,8 +341,8 @@ const bool DatabaseSQLite3::IsUniverseGenerated(const std::string &name)
 void DatabaseSQLite3::SetUniverseGenerated(const std::string &name, bool generated)
 {
 	CheckDatabase();
-	string_to_sqlite(SQLITE3STMT_SET_UNIVERSE_GENERATED_FLAG, 2, name);
 	bool_to_sqlite(SQLITE3STMT_SET_UNIVERSE_GENERATED_FLAG, 1, generated);
+	string_to_sqlite(SQLITE3STMT_SET_UNIVERSE_GENERATED_FLAG, 2, name);
 	sqlite3_verify(stmt_step(SQLITE3STMT_SET_UNIVERSE_GENERATED_FLAG), SQLITE_DONE);
 	reset_stmt(SQLITE3STMT_SET_UNIVERSE_GENERATED_FLAG);
 }
