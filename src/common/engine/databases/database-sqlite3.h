@@ -97,7 +97,7 @@ private:
 	inline void bool_to_sqlite(const SQLite3Stmt s, const int iCol, const bool val) const
 	{
 		assert(s < SQLITE3STMT_COUNT);
-		sqlite3_verify(sqlite3_bind_int(m_stmt[s], iCol, val ? 1 : 0));
+		sqlite3_verify(sqlite3_bind_int(m_stmt[s], iCol, (val ? 1 : 0)));
 	}
 
 	inline const bool sqlite_to_bool(const SQLite3Stmt s, int iCol)
@@ -106,7 +106,7 @@ private:
 		return (sqlite3_column_int(m_stmt[s], iCol) > 0);
 	}
 
-	inline void str_to_sqlite(const SQLite3Stmt s, const int iCol, const std::string &str) const
+	inline void string_to_sqlite(const SQLite3Stmt s, const int iCol, const std::string &str) const
 	{
 		assert(s < SQLITE3STMT_COUNT);
 		sqlite3_verify(sqlite3_bind_text(m_stmt[s], iCol, str.c_str(), str.size(), NULL));

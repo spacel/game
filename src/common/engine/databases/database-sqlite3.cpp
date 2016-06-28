@@ -221,7 +221,7 @@ void DatabaseSQLite3::CommitTransaction()
 void DatabaseSQLite3::CreateGalaxy(Galaxy *galaxy)
 {
 	uint64_to_sqlite(SQLITE3STMT_CREATE_GALAXY, 1, galaxy->id);
-	str_to_sqlite(SQLITE3STMT_CREATE_GALAXY, 2, galaxy->name.c_str());
+	string_to_sqlite(SQLITE3STMT_CREATE_GALAXY, 2, galaxy->name.c_str());
 	double_to_sqlite(SQLITE3STMT_CREATE_GALAXY, 3, galaxy->pos_x);
 	double_to_sqlite(SQLITE3STMT_CREATE_GALAXY, 4, galaxy->pos_y);
 	double_to_sqlite(SQLITE3STMT_CREATE_GALAXY, 5, galaxy->pos_z);
@@ -254,7 +254,7 @@ void DatabaseSQLite3::CreateSolarSystem(engine::SolarSystem *ss)
 
 	uint64_to_sqlite(SQLITE3STMT_CREATE_SOLARSYSTEM, 1, ss->id);
 	uint64_to_sqlite(SQLITE3STMT_CREATE_SOLARSYSTEM, 2, ss->galaxy->id);
-	str_to_sqlite(SQLITE3STMT_CREATE_SOLARSYSTEM, 3, ss->name.c_str());
+	string_to_sqlite(SQLITE3STMT_CREATE_SOLARSYSTEM, 3, ss->name.c_str());
 	uint16_to_sqlite(SQLITE3STMT_CREATE_SOLARSYSTEM, 4, ss->type);
 	double_to_sqlite(SQLITE3STMT_CREATE_SOLARSYSTEM, 5, ss->pos_x);
 	double_to_sqlite(SQLITE3STMT_CREATE_SOLARSYSTEM, 6, ss->pos_y);
@@ -307,7 +307,7 @@ void DatabaseSQLite3::LoadSolarSystemsForGalaxy(Galaxy *galaxy)
 void DatabaseSQLite3::CreateUniverse(const std::string &name, const uint64_t &seed)
 {
 	CheckDatabase();
-	str_to_sqlite(SQLITE3STMT_CREATE_UNIVERSE, 1, name);
+	string_to_sqlite(SQLITE3STMT_CREATE_UNIVERSE, 1, name);
 	uint64_to_sqlite(SQLITE3STMT_CREATE_UNIVERSE, 2, seed);
 	uint64_to_sqlite(SQLITE3STMT_CREATE_UNIVERSE, 3, get_current_time());
 	sqlite3_verify(stmt_step(SQLITE3STMT_CREATE_UNIVERSE), SQLITE_DONE);
@@ -317,7 +317,7 @@ void DatabaseSQLite3::CreateUniverse(const std::string &name, const uint64_t &se
 void DatabaseSQLite3::LoadUniverse(const std::string &name)
 {
 	CheckDatabase();
-	str_to_sqlite(SQLITE3STMT_LOAD_UNIVERSE, 1, name);
+	string_to_sqlite(SQLITE3STMT_LOAD_UNIVERSE, 1, name);
 	if (stmt_step(SQLITE3STMT_LOAD_UNIVERSE) == SQLITE_ROW) {
 		engine::Universe::instance()->SetUniverseName(name);
 		engine::Universe::instance()->SetUniverseSeed(sqlite_to_uint64(SQLITE3STMT_LOAD_UNIVERSE, 0));
@@ -331,7 +331,7 @@ void DatabaseSQLite3::LoadUniverse(const std::string &name)
 const bool DatabaseSQLite3::IsUniverseGenerated(const std::string &name)
 {
 	CheckDatabase();
-	str_to_sqlite(SQLITE3STMT_LOAD_UNIVERSE_GENERATED_FLAG, 1, name);
+	string_to_sqlite(SQLITE3STMT_LOAD_UNIVERSE_GENERATED_FLAG, 1, name);
 	if (stmt_step(SQLITE3STMT_LOAD_UNIVERSE_GENERATED_FLAG) == SQLITE_ROW) {
 		return sqlite_to_bool(SQLITE3STMT_LOAD_UNIVERSE_GENERATED_FLAG, 0);
 	}
@@ -341,8 +341,8 @@ const bool DatabaseSQLite3::IsUniverseGenerated(const std::string &name)
 void DatabaseSQLite3::SetUniverseGenerated(const std::string &name, bool generated)
 {
 	CheckDatabase();
+	string_to_sqlite(SQLITE3STMT_SET_UNIVERSE_GENERATED_FLAG, 2, name);
 	bool_to_sqlite(SQLITE3STMT_SET_UNIVERSE_GENERATED_FLAG, 1, generated);
-	str_to_sqlite(SQLITE3STMT_SET_UNIVERSE_GENERATED_FLAG, 2, name);
 	sqlite3_verify(stmt_step(SQLITE3STMT_SET_UNIVERSE_GENERATED_FLAG), SQLITE_DONE);
 	reset_stmt(SQLITE3STMT_SET_UNIVERSE_GENERATED_FLAG);
 }
