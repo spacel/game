@@ -89,7 +89,7 @@ void Game::Start()
 
 void Game::CreateConsoleAndDebugHud()
 {
-	XMLFile *xmlFile = m_cache->GetResource<XMLFile>("UI/DefaultStyle.xml");
+	XMLFile *xmlFile = m_cache->GetResource<XMLFile>("UI/ConsoleStyle.xml");
 	Console *console = m_engine->CreateConsole();
 	console->SetDefaultStyle(xmlFile);
 	console->GetBackground()->SetOpacity(0.8f);
@@ -272,10 +272,10 @@ void Game::HandleKeyDown(StringHash eventType, VariantMap &eventData)
 			}
 			break;
 		}
-		case KEY_F1:
+		case KEY_F9:
 			GetSubsystem<Console>()->Toggle();
 			break;
-		case KEY_F2: {
+		case KEY_F10: {
 			DebugHud *debugHud = GetSubsystem<DebugHud>();
 			if (debugHud->GetMode() == 0 ||
 				debugHud->GetMode() == DEBUGHUD_SHOW_ALL_MEMORY) {
@@ -286,7 +286,7 @@ void Game::HandleKeyDown(StringHash eventType, VariantMap &eventData)
 			}
 			break;
 		}
-		case KEY_F3: {
+		case KEY_F11: {
 				DebugHud *debugHud = GetSubsystem<DebugHud>();
 				if (debugHud->GetMode() == 0 || debugHud->GetMode() == DEBUGHUD_SHOW_ALL) {
 					debugHud->SetMode(DEBUGHUD_SHOW_ALL_MEMORY);
