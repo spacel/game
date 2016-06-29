@@ -407,7 +407,6 @@ void Game::HandleResume(StringHash eventType, VariantMap &eventData)
 
 void Game::HandleBackMainMenu(StringHash eventType, VariantMap &eventData)
 {
-
 	m_main->ChangeGameGlobalUI(GLOBALUI_MAINMENU);
 	//main_menu->Start();
 }

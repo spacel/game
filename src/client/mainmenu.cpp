@@ -55,6 +55,7 @@ enum MainMenuIds
 	MAINMENUID_SETTINGS,
 	MAINMENUID_SETTINGS_GRAPHICS,
 	MAINMENUID_SETTINGS_SOUND,
+	MAINMENUID_SETTINGS_KEYBOARD,
 };
 
 #define MAINMENU_BUTTON_SPACE 20
@@ -182,6 +183,7 @@ void MainMenu::HandleKeyDown(StringHash, VariantMap &eventData)
 					break;
 				case MAINMENUID_SETTINGS_GRAPHICS:
 				case MAINMENUID_SETTINGS_SOUND:
+				case MAINMENUID_SETTINGS_KEYBOARD:
 					HandleSettingsPressed(StringHash(), eventData);
 					break;
 				default:
@@ -190,7 +192,7 @@ void MainMenu::HandleKeyDown(StringHash, VariantMap &eventData)
 			break;
 		case KEY_DELETE:
 			if (m_menu_id == MAINMENUID_SINGLEPLAYER_LOADGAME) {
-				DeleteUniverse();
+				HandleDeleteUniverse(StringHash(), eventData);
 				UnsubscribeFromEvent(E_KEYDOWN);
 			}
 			break;
@@ -377,21 +379,24 @@ void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
 	m_preview = m_window_menu->CreateChild<Sprite>();
 	m_preview->SetTexture(PreviewTexture);
 	m_preview->SetSize(150, 150);
-	m_preview->SetPosition(universes_listview->GetSize().x_ + 150,
+	m_preview->SetPosition(universes_listview->GetSize().x_ + 125,
 		30 + (MAINMENU_BUTTON_SPACE * 2));
 	m_preview->SetPriority(-90);
 
-	m_window_menu->AddChild(m_universe_infos);
-	m_universe_infos->SetStyle("TextUnivInfo");
-	m_universe_infos->SetPosition(universes_listview->GetSize().x_ + 50, m_preview->GetPosition().y_ + m_preview->GetSize().y_ + 50);
-	m_universe_infos->SetText(m_l10n->Get("Universe age: ") + "\n" + m_l10n->Get("Seed: "));
+	UpdateUniverseInfos();
 
 	Button *launch = CreateMainMenuButton("Launch", "ButtonInLine", "TextButtonInLine");
 	launch->SetPosition(0 + 100, -MAINMENU_BUTTON_SPACE * 2);
 	launch->SetHorizontalAlignment(HA_LEFT);
 	launch->SetVerticalAlignment(VA_BOTTOM);
 
-	Button *back = CreateMainMenuButton("Cancel", "ButtonInLine", "TextButtonInLine");
+	Button *delete_univers = CreateMainMenuButton("Delete universe", "ButtonInLineInactive", "TextButtonInLine");
+	delete_univers->SetName("delete_universe");
+	delete_univers->SetPosition(0 - 100, -100);
+	delete_univers->SetHorizontalAlignment(HA_RIGHT);
+	delete_univers->SetVerticalAlignment(VA_BOTTOM);
+
+	Button *back = CreateMainMenuButton("Back", "ButtonInLine", "TextButtonInLine");
 	back->SetPosition(0 - 100, -MAINMENU_BUTTON_SPACE * 2);
 	back->SetHorizontalAlignment(HA_RIGHT);
 	back->SetVerticalAlignment(VA_BOTTOM);
@@ -399,6 +404,7 @@ void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
 	SubscribeToEvent(universes_listview, E_ITEMCLICKED, URHO3D_HANDLER(MainMenu, HandleInfosUniverseClicked));
 	SubscribeToEvent(universes_listview, E_ITEMDOUBLECLICKED, URHO3D_HANDLER(MainMenu, HandleLaunchGamePressed));
 	SubscribeToEvent(launch, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleLaunchGamePressed));
+	SubscribeToEvent(delete_univers, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleDeleteUniverse));
 	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSingleplayerPressed));
 }
 
@@ -433,18 +439,18 @@ void MainMenu::HandleSettingsPressed(StringHash, VariantMap &eventData)
 	Button *sound = CreateMainMenuButton("Sound");
 	sound->SetPosition(0, graphics->GetPosition().y_ + graphics->GetSize().y_ + MAINMENU_BUTTON_SPACE);
 
-	Button *keyboard = CreateMainMenuButton("Keyboard");
-	keyboard->SetPosition(0, sound->GetPosition().y_ + sound->GetSize().y_ + MAINMENU_BUTTON_SPACE);
+	Button *control = CreateMainMenuButton("Control");
+	control->SetPosition(0, sound->GetPosition().y_ + sound->GetSize().y_ + MAINMENU_BUTTON_SPACE);
 
 	Button *back = CreateMainMenuButton("Back");
-	back->SetPosition(0, keyboard->GetPosition().y_ + keyboard->GetSize().y_ + MAINMENU_BUTTON_SPACE);
+	back->SetPosition(0, control->GetPosition().y_ + control->GetSize().y_ + MAINMENU_BUTTON_SPACE);
 
 	m_window_menu->SetSize(back->GetSize().x_ + MAINMENU_BUTTON_SPACE * 2,
 		back->GetPosition().y_ + back->GetSize().y_ + MAINMENU_BUTTON_SPACE * 2);
 
 	SubscribeToEvent(graphics, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleGraphicsPressed));
 	SubscribeToEvent(sound, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSoundsPressed));
-	//SubscribeToEvent(keyboard, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleKeyboardPressed));
+	SubscribeToEvent(control, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleControlPressed));
 	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleMasterMenu));
 }
 
@@ -576,6 +582,29 @@ void MainMenu::HandleSoundsPressed(StringHash, VariantMap &eventData)
 	SubscribeToEvent(slider_sound_voice, E_DRAGMOVE, URHO3D_HANDLER(MainMenu, HandleSoundsVolume));
 }
 
+void MainMenu::HandleControlPressed(StringHash, VariantMap &eventData)
+{
+	m_menu_id = MAINMENUID_SETTINGS_KEYBOARD;
+	m_window_menu->RemoveAllChildren();
+	UnsubscribeFromAllEventsExcept(except_unsubscribe, true);
+	m_window_menu->SetSize(800, 600);
+
+	SetTitle("Control");
+
+	Button *apply = CreateMainMenuButton("Apply", "ButtonInLine", "TextButtonInLine");
+	apply->SetPosition(0 + 100, -MAINMENU_BUTTON_SPACE * 2);
+	apply->SetHorizontalAlignment(HA_LEFT);
+	apply->SetVerticalAlignment(VA_BOTTOM);
+
+	Button *back = CreateMainMenuButton("Back", "ButtonInLine", "TextButtonInLine");
+	back->SetPosition(0 - 100, -MAINMENU_BUTTON_SPACE * 2);
+	back->SetHorizontalAlignment(HA_RIGHT);
+	back->SetVerticalAlignment(VA_BOTTOM);
+
+	SubscribeToEvent(apply, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleApplyGraphicsPressed));
+	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSettingsPressed));
+}
+
 void MainMenu::HandleSoundsVolume(StringHash eventType, VariantMap &eventData)
 {
 	Slider *slider_sound_music = static_cast<Slider *>(eventData[SliderChanged::P_ELEMENT].GetPtr());
@@ -637,6 +666,9 @@ void MainMenu::HandleInfosUniverseClicked(StringHash, VariantMap &eventData)
 	ListView *lv = static_cast<ListView *>(eventData[ItemSelected::P_ELEMENT].GetPtr());
 	assert(lv);
 
+	Button *b = static_cast<Button *>(m_window_menu->GetChild("delete_universe", false));
+	b->SetStyle("ButtonInLine");
+
 	String universe_name = lv->GetSelectedItem()->GetName();
 	const String path_universe = GetSubsystem<FileSystem>()->GetAppPreferencesDir(
 			"spacel", "universe") + universe_name;
@@ -644,10 +676,8 @@ void MainMenu::HandleInfosUniverseClicked(StringHash, VariantMap &eventData)
 	engine::DatabaseSQLite3 game_database(std::string(path_universe.CString()));
 	game_database.LoadUniverse(std::string(universe_name.CString()));
 
-	m_universe_infos->SetText(m_l10n->Get("Universe age: ") +
-		ToString("%s", timestamp_to_string(engine::Universe::instance()->GetUniverseBirth()).c_str()) + "\n" +
-		m_l10n->Get("Seed: ") +
-		ToString("%s", std::to_string(engine::Universe::instance()->GetUniverseSeed()).c_str()));
+	UpdateUniverseInfos(engine::Universe::instance()->GetUniverseBirth(),
+		engine::Universe::instance()->GetUniverseSeed());
 }
 
 void MainMenu::HandleDeleteUniversePressed(StringHash eventType, VariantMap &eventData)
@@ -678,6 +708,11 @@ void MainMenu::HandleDeleteUniversePressed(StringHash eventType, VariantMap &eve
 		lv->RemoveItem(lv->GetSelectedItem());
 	}
 
+	UpdateUniverseInfos();
+
+	Button *b = static_cast<Button *>(m_window_menu->GetChild("delete_universe", false));
+	b->SetStyle("ButtonInLineInactive");
+
 	if (m_modal_window != nullptr) {
 		m_modal_window->UnsubscribeFromEvent(E_MESSAGEACK);
 		m_modal_window->UnsubscribeFromEvent(E_MODALCHANGED);
@@ -687,7 +722,7 @@ void MainMenu::HandleDeleteUniversePressed(StringHash eventType, VariantMap &eve
 	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(MainMenu, HandleKeyDown));
 }
 
-void MainMenu::DeleteUniverse()
+void MainMenu::HandleDeleteUniverse(StringHash eventType, VariantMap &eventData)
 {
 	ListView *lv = dynamic_cast<ListView *>(m_window_menu->GetChild("loading_universe_listview", true));
 	assert(lv);
@@ -789,8 +824,27 @@ Slider *MainMenu::CreateSliderWithLabels(const String &name, const String &label
 
 	Slider *slider_sound = CreateSlider(name, m_config->getFloat(setting));
 	m_window_menu->AddChild(slider_sound);
-	slider_sound->SetPosition(-10, text_sound->GetPosition().y_);
+	slider_sound->SetPosition(-MAINMENU_BUTTON_SPACE * 2, text_sound->GetPosition().y_);
+	slider_sound->SetHorizontalAlignment(HA_RIGHT);
 
 	return slider_sound;
+}
+
+void MainMenu::UpdateUniverseInfos(const uint32_t &birth, const uint64_t &seed)
+{
+	ListView *lv = dynamic_cast<ListView *>(m_window_menu->GetChild("loading_universe_listview", true));
+	assert(lv);
+
+	String birth_str = (birth ? ToString("%s",
+		timestamp_to_string(birth).c_str()) : String::EMPTY);
+	String seed_str = (seed ? ToString("%s",
+		std::to_string(seed).c_str()) : String::EMPTY);
+
+	m_window_menu->AddChild(m_universe_infos);
+	m_universe_infos->SetStyle("TextUnivInfo");
+	m_universe_infos->SetPosition(lv->GetSize().x_ + 50, m_window_menu->GetPosition().y_ + 250);
+	m_universe_infos->SetText(m_l10n->Get("Universe age: ") + birth_str + "\n" +
+		m_l10n->Get("Seed: ") + seed_str);
+
 }
 }

@@ -64,16 +64,18 @@ private:
 	void HandleSoundsPressed(StringHash eventType, VariantMap &eventData);
 	void HandleFullScreenPressed(StringHash eventType, VariantMap &eventData);
 	void HandleSoundsVolume(StringHash eventType, VariantMap &eventData);
+	void HandleControlPressed(StringHash eventType, VariantMap &eventData);
 	void HandleUpdate(StringHash eventType, VariantMap &eventData);
 	void HandleMusicPressed(StringHash eventType, VariantMap &eventData);
 	void HandleInfosUniverseClicked(StringHash, VariantMap &eventData);
 	void HandleDeleteUniversePressed(StringHash eventType, VariantMap &eventData);
 	void HandleGenerateSeedPressed(StringHash eventType, VariantMap &eventData);
-	void DeleteUniverse();
+	void HandleDeleteUniverse(StringHash eventType, VariantMap &eventData);
 	void Background();
 	void Title();
 	void HandleMasterMenu(StringHash, VariantMap &);
 	void ShowErrorBubble(const String &message);
+	void UpdateUniverseInfos(const uint32_t &birth = 0, const uint64_t &seed = 0);
 
 	// Helpers
 	Button *CreateMainMenuButton(const String &label,
