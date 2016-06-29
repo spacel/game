@@ -46,9 +46,9 @@
 #include <Urho3D/UI/UI.h>
 #include <Urho3D/UI/UIEvents.h>
 #include <Urho3D/UI/Text.h>
+
 #include "client.h"
 #include "mainmenu.h"
-
 #include "genericmenu.h"
 #include "game.h"
 
@@ -57,11 +57,14 @@ using namespace Urho3D;
 namespace spacel {
 
 #define MENU_BUTTON_SPACE 20
+#define CAMERA_INITIAL_DIST 5.0f;
 
 Game::Game(Context *context, ClientSettings *config, SpacelGame *main):
 	GenericMenu(context, config),
-	m_main(main)
+	m_main(main),
+	m_first_person(false)
 {
+	Character::RegisterObject(context);
 	m_scene = new Scene(context_);
 	m_terrain_node = new Node(context_);
 	m_ui_elem = GetSubsystem<UI>()->GetRoot();
@@ -84,6 +87,7 @@ void Game::Start()
 	CreateConsoleAndDebugHud();
 
 	GenerateTerrain();
+	CreateCharacter();
 	SetupViewport();
 	SubscribeToEvents();
 }
@@ -121,28 +125,27 @@ void Game::CreateCamera()
 	// the scene, because we want it to be unaffected by scene load / save
 	m_camera_node = new Node(context_);
 	Camera *camera = m_camera_node->CreateComponent<Camera>();
-	camera->SetFarClip(750.0f);
-
-	// Set an initial position for the camera scene node above the ground
-	m_camera_node->SetPosition(Vector3(0.0f, 7.0f, -20.0f));
+	camera->SetFarClip(300.0f);
+	GetSubsystem<Renderer>()->SetViewport(0, new Viewport(context_, m_scene, camera));
 }
 
 void Game::GenerateTerrain()
 {
 	m_scene->CreateComponent<Octree>();
+	m_scene->CreateComponent<PhysicsWorld>();
 
 	// Create a Zone component for ambient lighting & fog control
 	Node *zoneNode = m_scene->CreateChild("Zone");
 	Zone *zone = zoneNode->CreateComponent<Zone>();
 	zone->SetBoundingBox(BoundingBox(-1000.0f, 1000.0f));
 	zone->SetAmbientColor(Color(0.15f, 0.15f, 0.15f));
-	zone->SetFogColor(Color(1.0f, 1.0f, 1.0f));
-	zone->SetFogStart(500.0f);
-	zone->SetFogEnd(750.0f);
+	zone->SetFogColor(Color(0.5f, 0.5f, 0.7f));
+	zone->SetFogStart(100.0f);
+	zone->SetFogEnd(300.0f);
 
 	// Create a directional light to the world. Enable cascaded shadows on it
 	Node *lightNode = m_scene->CreateChild("DirectionalLight");
-	lightNode->SetDirection(Vector3(0.6f, -1.0f, 0.8f));
+	lightNode->SetDirection(Vector3(0.3f, -0.5f, 0.425f));
 	Light *light = lightNode->CreateComponent<Light>();
 	light->SetLightType(LIGHT_DIRECTIONAL);
 	light->SetCastShadows(true);
@@ -150,7 +153,7 @@ void Game::GenerateTerrain()
 	light->SetShadowCascade(CascadeParameters(10.0f, 50.0f, 200.0f, 0.0f, 0.8f));
 	light->SetSpecularIntensity(0.5f);
 	// Apply slightly overbright lighting to match the skybox
-	light->SetColor(Color(1.2f, 1.2f, 1.2f));
+	//light->SetColor(Color(1.2f, 1.2f, 1.2f));
 
 	CreateSkybox();
 
@@ -166,11 +169,21 @@ void Game::GenerateTerrain()
 	// The terrain consists of large triangles, which fits well for occlusion rendering, as a hill can occlude all
 	// terrain patches and other objects behind it
 	m_terrain->SetOccluder(true);
+	//StaticModel *object = m_terrain_node->CreateComponent<Terrain>();
+
+	RigidBody *body = m_terrain_node->CreateComponent<RigidBody>();
+	// Use collision layer bit 2 to mark world scenery. This is what we will raycast against to prevent camera from going
+	// inside geometry
+	body->SetCollisionLayer(1);
+	CollisionShape *shape = m_terrain_node->CreateComponent<CollisionShape>();
+	shape->SetTerrain();
 
 	// Create 1000 boxes in the terrain. Always face outward along the terrain normal
 	unsigned NUM_OBJECTS = 1000;
 	for (unsigned i = 0; i < NUM_OBJECTS; ++i)
 	{
+		float scale = Random(2.0f) + 0.5f;
+
 		Node *objectNode = m_scene->CreateChild("Box");
 		Vector3 position(Random(2000.0f) - 1000.0f, 0.0f, Random(2000.0f) - 1000.0f);
 		position.y_ = m_terrain->GetHeight(position) + 2.25f;
@@ -182,6 +195,13 @@ void Game::GenerateTerrain()
 		object->SetModel(m_cache->GetResource<Model>("Models/Box.mdl"));
 		object->SetMaterial(m_cache->GetResource<Material>("Materials/Stone.xml"));
 		object->SetCastShadows(true);
+
+		RigidBody *body = objectNode->CreateComponent<RigidBody>();
+		body->SetCollisionLayer(2);
+		// Bigger boxes will be heavier and harder to move
+		body->SetMass(scale * 2.0f);
+		CollisionShape *shape = objectNode->CreateComponent<CollisionShape>();
+		shape->SetBox(Vector3::ONE);
 	}
 
 	// Create a water plane object that is as large as the terrain
@@ -244,15 +264,78 @@ void Game::SetupViewport()
 
 void Game::SubscribeToEvents()
 {
+	SubscribeToEvent(E_POSTUPDATE, URHO3D_HANDLER(Game, HandlePostUpdate));
 	SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(Game, HandleUpdate));
 	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(Game, HandleKeyDown));
+	UnsubscribeFromEvent(E_SCENEUPDATE);
 }
 
 void Game::HandleUpdate(StringHash eventType, VariantMap &eventData)
 {
 	using namespace Update;
-	float timeStep = eventData[P_TIMESTEP].GetFloat();
-	MoveCamera(timeStep);
+	Input *input = GetSubsystem<Input>();
+
+	if (m_character) {
+		// Clear previous controls
+		m_character->controls_.Set(CTRL_FORWARD | CTRL_BACK | CTRL_LEFT | CTRL_RIGHT | CTRL_JUMP, false);
+
+		// Update controls using keys
+		UI *ui = GetSubsystem<UI>();
+		if (!ui->GetFocusElement()) {
+			m_character->controls_.Set(CTRL_FORWARD, input->GetKeyDown(KEY_Z));
+			m_character->controls_.Set(CTRL_BACK, input->GetKeyDown(KEY_S));
+			m_character->controls_.Set(CTRL_LEFT, input->GetKeyDown(KEY_Q));
+			m_character->controls_.Set(CTRL_RIGHT, input->GetKeyDown(KEY_D));
+		}
+		m_character->controls_.Set(CTRL_JUMP, input->GetKeyDown(KEY_SPACE));
+
+		// Add character yaw & pitch from the mouse motion or touch input
+		m_character->controls_.yaw_ += (float)input->GetMouseMoveX() * YAW_SENSITIVITY;
+		m_character->controls_.pitch_ += (float)input->GetMouseMoveY() * YAW_SENSITIVITY;
+
+		// Limit pitch
+		m_character->controls_.pitch_ = Clamp(m_character->controls_.pitch_, -80.0f, 80.0f);
+		// Set rotation already here so that it's updated every rendering frame instead of every physics frame
+		m_character->GetNode()->SetRotation(Quaternion(m_character->controls_.yaw_, Vector3::UP));
+
+		// Switch between 1st and 3rd person
+		if (input->GetKeyPress(KEY_F))
+			m_first_person = !m_first_person;
+	}
+}
+
+void Game::HandlePostUpdate(StringHash eventType, VariantMap &eventData)
+{
+	if (!m_character || !m_move_camera)
+		return;
+
+	Node *characterNode = m_character->GetNode();
+
+	// Get camera lookat dir from character yaw + pitch
+	Quaternion rot = characterNode->GetRotation();
+	Quaternion dir = rot * Quaternion(m_character->controls_.pitch_, Vector3::RIGHT);
+
+	// Turn head to camera pitch, but limit to avoid unnatural animation
+	Node *headNode = characterNode->GetChild("Bip01_Head", true);
+	float limitPitch = Clamp(m_character->controls_.pitch_, -45.0f, 45.0f);
+	Quaternion headDir = rot * Quaternion(limitPitch, Vector3(1.0f, 0.0f, 0.0f));
+	// This could be expanded to look at an arbitrary target, now just look at a point in front
+	Vector3 headWorldTarget = headNode->GetWorldPosition() + headDir * Vector3(0.0f, 0.0f, 1.0f);
+	headNode->LookAt(headWorldTarget, Vector3(0.0f, 1.0f, 0.0f));
+	// Correct head orientation because LookAt assumes Z = forward, but the bone has been authored differently (Y = forward)
+	headNode->Rotate(Quaternion(0.0f, 90.0f, 90.0f));
+
+	if (m_first_person) {
+		m_camera_node->SetPosition(headNode->GetWorldPosition() + rot * Vector3(0.0f, 0.15f, 0.2f));
+		m_camera_node->SetRotation(dir);
+	} else {
+		// Third person camera: position behind the character
+		Vector3 aimPoint = characterNode->GetPosition() + rot * Vector3(0.0f, 1.7f, 0.0f);
+		Vector3 rayDir = dir * Vector3::BACK;
+		float rayDistance = CAMERA_INITIAL_DIST;
+		m_camera_node->SetPosition(aimPoint + rayDir * rayDistance);
+		m_camera_node->SetRotation(dir);
+	}
 }
 
 void Game::HandleKeyDown(StringHash eventType, VariantMap &eventData)
@@ -311,48 +394,6 @@ void Game::HandleKeyDown(StringHash eventType, VariantMap &eventData)
 	}
 }
 
-void Game::MoveCamera(float timeStep)
-{
-	// Do not move if the UI has a focused element (the console)
-	if (!m_move_camera || GetSubsystem<UI>()->GetFocusElement())
-		return;
-
-	Input *input = GetSubsystem<Input>();
-
-	// Movement speed as world units per second
-	static const float MOVE_SPEED = 200.0f;
-	// Mouse sensitivity as degrees per pixel
-	static const float MOUSE_SENSITIVITY = 0.1f;
-
-	// Use this frame's mouse motion to adjust camera node yaw and pitch. Clamp the pitch between -90 and 90 degrees
-	IntVector2 mouseMove = input->GetMouseMove();
-	m_yaw += MOUSE_SENSITIVITY * mouseMove.x_;
-	m_pitch += MOUSE_SENSITIVITY * mouseMove.y_;
-	m_pitch = Clamp(m_pitch, -90.0f, 90.0f);
-
-	// Construct new orientation for the camera scene node from yaw and pitch. Roll is fixed to zero
-	m_camera_node->SetRotation(Quaternion(m_pitch, m_yaw, 0.0f));
-
-	// Read WASD keys and move the camera scene node to the corresponding direction if they are pressed
-	if (input->GetKeyDown(KEY_Z))
-		m_camera_node->Translate(Vector3::FORWARD * MOVE_SPEED * timeStep);
-	if (input->GetKeyDown(KEY_S))
-		m_camera_node->Translate(Vector3::BACK * MOVE_SPEED * timeStep);
-	if (input->GetKeyDown(KEY_Q))
-		m_camera_node->Translate(Vector3::LEFT * MOVE_SPEED * timeStep);
-	if (input->GetKeyDown(KEY_D))
-		m_camera_node->Translate(Vector3::RIGHT * MOVE_SPEED * timeStep);
-	if (input->GetKeyDown(KEY_SPACE))
-		m_camera_node->Translate(Vector3::UP * MOVE_SPEED * timeStep);
-	if (input->GetKeyDown(KEY_SHIFT))
-		m_camera_node->Translate(Vector3::DOWN * MOVE_SPEED * timeStep);
-
-	// In case resolution has changed, adjust the reflection camera aspect ratio
-	Graphics *graphics = GetSubsystem<Graphics>();
-	Camera *reflectionCamera = m_reflection_camera_node->GetComponent<Camera>();
-	reflectionCamera->SetAspectRatio((float)graphics->GetWidth() / (float)graphics->GetHeight());
-}
-
 void Game::CreateMenu()
 {
 	if (m_gamemenu_created) {
@@ -404,7 +445,6 @@ void Game::HandleResume(StringHash eventType, VariantMap &eventData)
 void Game::HandleBackMainMenu(StringHash eventType, VariantMap &eventData)
 {
 	m_main->ChangeGameGlobalUI(GLOBALUI_MAINMENU);
-	//main_menu->Start();
 }
 
 void Game::HandleExitGame(StringHash eventType, VariantMap &eventData)
@@ -420,5 +460,42 @@ Button *Game::CreateMenuButton(const String &label, const String &button_style, 
 	CreateButtonLabel(b, label, label_style);
 
 	return b;
+}
+
+void Game::CreateCharacter()
+{
+	Node *objectNode = m_scene->CreateChild("Jack");
+	objectNode->SetPosition(Vector3(0.0f, 1.0f, 0.0f));
+
+	// Create the rendering component + animation controller
+	AnimatedModel *object = objectNode->CreateComponent<AnimatedModel>();
+	object->SetModel(m_cache->GetResource<Model>("Models/Jack.mdl"));
+	object->SetMaterial(m_cache->GetResource<Material>("Materials/Jack.xml"));
+	object->SetCastShadows(true);
+	objectNode->CreateComponent<AnimationController>();
+
+	// Set the head bone for manual control
+	object->GetSkeleton().GetBone("Bip01_Head")->animated_ = false;
+
+	// Create rigidbody, and set non-zero mass so that the body becomes dynamic
+	RigidBody *body = objectNode->CreateComponent<RigidBody>();
+	body->SetCollisionLayer(1);
+	body->SetMass(1.0f);
+
+	// Set zero angular factor so that physics doesn't turn the character on its own.
+	// Instead we will control the character yaw manually
+	body->SetAngularFactor(Vector3::ZERO);
+
+	// Set the rigidbody to signal collision also when in rest, so that we get ground collisions properly
+	body->SetCollisionEventMode(COLLISION_ALWAYS);
+
+	// Set a capsule shape for collision
+	CollisionShape *shape = objectNode->CreateComponent<CollisionShape>();
+	shape->SetCapsule(0.7f, 1.8f, Vector3(0.0f, 0.9f, 0.0f));
+
+	// Create the character logic component, which takes care of steering the rigidbody
+	// Remember it so that we can set the controls. Use a WeakPtr because the scene hierarchy already owns it
+	// and keeps it alive as long as it's not removed from the hierarchy
+	m_character = objectNode->CreateComponent<Character>();
 }
 }
