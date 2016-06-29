@@ -90,10 +90,15 @@ void Game::Start()
 
 void Game::CreateConsoleAndDebugHud()
 {
+	// Get default style
 	XMLFile *xmlFile = m_cache->GetResource<XMLFile>("UI/ConsoleStyle.xml");
+
+	// Create console
 	Console *console = m_engine->CreateConsole();
 	console->SetDefaultStyle(xmlFile);
 	console->GetBackground()->SetOpacity(0.8f);
+
+	// Create debug HUD.
 	DebugHud *debugHud = m_engine->CreateDebugHud();
 	debugHud->SetDefaultStyle(xmlFile);
 }
@@ -112,18 +117,21 @@ void Game::CreateSkybox()
 
 void Game::CreateCamera()
 {
+	 // Create the camera. Set far clip to match the fog. Note: now we actually create the camera node outside
+	// the scene, because we want it to be unaffected by scene load / save
 	m_camera_node = new Node(context_);
 	Camera *camera = m_camera_node->CreateComponent<Camera>();
-	camera->SetFarClip(1050.0f);
+	camera->SetFarClip(750.0f);
+
+	// Set an initial position for the camera scene node above the ground
 	m_camera_node->SetPosition(Vector3(0.0f, 7.0f, -20.0f));
 }
 
 void Game::GenerateTerrain()
 {
-	// Create octree, use default volume (-1000, -1000, -1000) to (1000, 1000, 1000)
 	m_scene->CreateComponent<Octree>();
-	//m_scene->CreateComponent<PhysicsWorld>();
 
+	// Create a Zone component for ambient lighting & fog control
 	Node *zoneNode = m_scene->CreateChild("Zone");
 	Zone *zone = zoneNode->CreateComponent<Zone>();
 	zone->SetBoundingBox(BoundingBox(-1000.0f, 1000.0f));
@@ -132,6 +140,7 @@ void Game::GenerateTerrain()
 	zone->SetFogStart(500.0f);
 	zone->SetFogEnd(750.0f);
 
+	// Create a directional light to the world. Enable cascaded shadows on it
 	Node *lightNode = m_scene->CreateChild("DirectionalLight");
 	lightNode->SetDirection(Vector3(0.6f, -1.0f, 0.8f));
 	Light *light = lightNode->CreateComponent<Light>();
@@ -145,19 +154,20 @@ void Game::GenerateTerrain()
 
 	CreateSkybox();
 
-	// Create heightmap terrain
+	 // Create heightmap terrain
 	m_terrain_node = m_scene->CreateChild("Terrain");
 	m_terrain_node->SetPosition(Vector3(0.0f, 0.0f, 0.0f));
 	m_terrain = m_terrain_node->CreateComponent<Terrain>();
 	m_terrain->SetPatchSize(64);
-	m_terrain->SetSpacing(Vector3(2.0f, 0.5f, 2.0f));
+	m_terrain->SetSpacing(Vector3(2.0f, 0.5f, 2.0f)); // Spacing between vertices and vertical resolution of the height map
+	m_terrain->SetSmoothing(true);
 	m_terrain->SetHeightMap(m_cache->GetResource<Image>("Textures/HeightMap.png"));
 	m_terrain->SetMaterial(m_cache->GetResource<Material>("Materials/Terrain.xml"));
-	m_terrain->SetSmoothing(true);
-	//m_terrain->SetCastShadows(true);
+	// The terrain consists of large triangles, which fits well for occlusion rendering, as a hill can occlude all
+	// terrain patches and other objects behind it
 	m_terrain->SetOccluder(true);
 
-	// Create 100 boxes in the terrain. Always face outward along the terrain normal
+	// Create 1000 boxes in the terrain. Always face outward along the terrain normal
 	unsigned NUM_OBJECTS = 1000;
 	for (unsigned i = 0; i < NUM_OBJECTS; ++i)
 	{
@@ -234,12 +244,8 @@ void Game::SetupViewport()
 
 void Game::SubscribeToEvents()
 {
-	// Subscribe HandleUpdate() function for processing update events
-	//SubscribeToEvent(E_MOUSEBUTTONDOWN, URHO3D_HANDLER(Game, HandleMouseClicked));
 	SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(Game, HandleUpdate));
 	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(Game, HandleKeyDown));
-	//SubscribeToEvent(E_POSTUPDATE, URHO3D_HANDLER(Game, HandlePostUpdate));
-	//UnsubscribeFromEvent(E_SCENEUPDATE);
 }
 
 void Game::HandleUpdate(StringHash eventType, VariantMap &eventData)
@@ -296,23 +302,13 @@ void Game::HandleKeyDown(StringHash eventType, VariantMap &eventData)
 					debugHud->SetMode(DEBUGHUD_SHOW_NONE);
 				}
 				break;
-			}
+		}
 		case KEY_F12:
 			TakeScreenshot();
 			break;
 		default:
 			break;
 	}
-}
-
-void Game::HandleMouseClicked(StringHash eventType, VariantMap &eventData)
-{
-
-}
-
-void Game::HandlePostUpdate(StringHash eventType, VariantMap &eventData)
-{
-
 }
 
 void Game::MoveCamera(float timeStep)
