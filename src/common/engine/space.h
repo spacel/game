@@ -132,6 +132,7 @@ public:
 	bool RemoveGalaxy(const uint64_t &id);
 
 	void CreateSolarSystem(Galaxy *galaxy);
+	void CreateSolarSystemPhase2(SolarSystem *ss);
 	bool RemoveSolarSystem(const uint64_t &id);
 
 	void SetUniverseName(const std::string &name) {	m_name = name; }
@@ -157,6 +158,7 @@ private:
 
 	uint64_t m_next_solarsystem_id = 1;
 	uint64_t m_next_galaxy_id = 1;
+	uint64_t m_next_planet_id = 1;
 
 	std::string m_name;
 	uint64_t m_seed;

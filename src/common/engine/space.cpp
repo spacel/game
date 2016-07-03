@@ -50,11 +50,15 @@ Universe::~Universe()
 	for (auto &galaxy: m_galaxies) {
 		delete galaxy.second;
 	}
+
+	// @TODO save current new object ids
 }
 
+/*
+ * This function init solar system without its planets
+ */
 void Universe::CreateSolarSystem(Galaxy *galaxy)
 {
-	// @TODO random
 	while (m_solar_systems.find(m_next_solarsystem_id) != m_solar_systems.end()) {
 		m_next_solarsystem_id++;
 	}
@@ -66,16 +70,43 @@ void Universe::CreateSolarSystem(Galaxy *galaxy)
 			generate_solarsystem_double(m_next_solarsystem_id);
 	ss->type = (SolarType) UniverseGenerator::instance()->
 			generate_solarsystem_type(m_next_solarsystem_id);
+
+	// @TODO generate coordinates properly
 	ss->pos_x = 1;
 	ss->pos_y = 1;
 	ss->pos_z = 1;
 	ss->galaxy = galaxy;
 
-	// @TODO create planets
-
 	galaxy->solar_systems[m_next_solarsystem_id] = ss;
 	m_solar_systems[m_next_solarsystem_id] = ss;
 	m_next_solarsystem_id++;
+}
+
+void Universe::CreateSolarSystemPhase2(SolarSystem *ss)
+{
+	uint8_t planet_number = UniverseGenerator::instance()->
+		generate_solarsystem_planetnumber(ss->id);
+
+	for (uint8_t i = 0; i < planet_number; ++i) {
+		/*
+		 * @TODO do this for planets
+		 * while (m_galaxies.find(m_next_galaxy_id) != m_galaxies.end()) {
+			m_next_galaxy_id++;
+		}*/
+
+		Planet *planet = new Planet();
+		planet->id = m_next_planet_id;
+		planet->name = UniverseGenerator::instance()->generate_world_name();
+		planet->type = (PlanetType) UniverseGenerator::instance()->
+			generate_planet_type(planet->id);
+		planet->radius = 1;
+		planet->distance_to_parent = 1;
+		planet->moons = {};
+
+		ss->planets.push_back(planet);
+
+		m_next_planet_id++;
+	}
 }
 
 bool Universe::RemoveSolarSystem(const uint64_t &id)
@@ -88,8 +119,9 @@ bool Universe::RemoveSolarSystem(const uint64_t &id)
 	// If there is galaxy drop the pointer from the galaxy
 	if (Galaxy *galaxy = (*ss_it).second->galaxy) {
 		SolarSystemMap::iterator ss_galaxy_it = galaxy->solar_systems.find(id);
-		if (ss_galaxy_it != galaxy->solar_systems.end())
+		if (ss_galaxy_it != galaxy->solar_systems.end()) {
 			galaxy->solar_systems.erase(ss_galaxy_it);
+		}
 	}
 
 	// And then destroy object and reference in universe

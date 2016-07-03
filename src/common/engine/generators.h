@@ -46,6 +46,8 @@ public:
 	std::string generate_world_name();
 	uint8_t generate_solarsystem_type(const uint64_t &ss_id);
 	double generate_solarsystem_double(const uint64_t &ss_id);
+	uint8_t generate_solarsystem_planetnumber(const uint64_t &ss_id);
+	uint8_t generate_planet_type(const uint64_t &pl_id);
 	static uint64_t generate_seed();
 private:
 	void InitRandomGeneratorIfNot();
