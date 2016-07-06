@@ -27,6 +27,7 @@
 #include <cppunit/TestCase.h>
 
 #include "../common/engine/generators.h"
+#include "../common/engine/space.h"
 
 namespace spacel {
 namespace unittests {
@@ -57,6 +58,9 @@ public:
 
 		suiteOfTests->addTest(new CppUnit::TestCaller<GeneratorsUnitTest>("Test6 - Generate Solar System Planet Type.",
 				&GeneratorsUnitTest::test_generate_planettype));
+
+		suiteOfTests->addTest(new CppUnit::TestCaller<GeneratorsUnitTest>("Test7 - Generate Solar System Planet Distance.",
+				&GeneratorsUnitTest::test_generate_planetdistance));
 		return suiteOfTests;
 	}
 
@@ -107,6 +111,19 @@ protected:
 		engine::UniverseGenerator::SetSeed(3698598);
 		uint8_t planet_type = engine::UniverseGenerator::instance()->generate_planet_type(8891178656);
 		CPPUNIT_ASSERT(planet_type == 7);
+	}
+
+	void test_generate_planetdistance()
+	{
+		engine::UniverseGenerator::SetSeed(5578824136);
+		double planet_distance = engine::UniverseGenerator::instance()->
+			generate_planet_distance(110599, engine::PLANET_TYPE_EARTH,
+			1000 * 1000.0f * 1000.0f);
+		// We should use stringstream as we don't have the correct on-screen output
+		// for this test, due to precision
+		std::stringstream ss;
+		ss << planet_distance;
+		CPPUNIT_ASSERT(ss.str() == "7.05024e+08");
 	}
 };
 
