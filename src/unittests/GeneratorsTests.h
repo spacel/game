@@ -47,10 +47,16 @@ public:
 				&GeneratorsUnitTest::test_generate_worldname));
 
 		suiteOfTests->addTest(new CppUnit::TestCaller<GeneratorsUnitTest>("Test3 - Generate Solar System Double.",
-				&GeneratorsUnitTest::test_generate_solarsystemdouble));
+				&GeneratorsUnitTest::test_generate_solarsystemradius));
 
 		suiteOfTests->addTest(new CppUnit::TestCaller<GeneratorsUnitTest>("Test4 - Generate Solar System Type.",
 				&GeneratorsUnitTest::test_generate_solarsystemtype));
+
+		suiteOfTests->addTest(new CppUnit::TestCaller<GeneratorsUnitTest>("Test5 - Generate Solar System Planet Number.",
+				&GeneratorsUnitTest::test_generate_solarsystem_planetnumber));
+
+		suiteOfTests->addTest(new CppUnit::TestCaller<GeneratorsUnitTest>("Test6 - Generate Solar System Planet Type.",
+				&GeneratorsUnitTest::test_generate_planettype));
 		return suiteOfTests;
 	}
 
@@ -74,18 +80,33 @@ protected:
 		CPPUNIT_ASSERT(name.length() > 3);
 	}
 
-	void test_generate_solarsystemdouble()
+	void test_generate_solarsystemradius()
 	{
 		engine::UniverseGenerator::SetSeed(44887799);
-		double result = engine::UniverseGenerator::instance()->generate_solarsystem_double(5448855);
-		CPPUNIT_ASSERT(result == 6075898096.2088031769);
+		double result = engine::UniverseGenerator::instance()->generate_solarsystem_radius(
+			5448855);
+		CPPUNIT_ASSERT(result == 7707902007844.146484);
 	}
 
 	void test_generate_solarsystemtype()
 	{
 		engine::UniverseGenerator::SetSeed(487597);
 		uint8_t result = engine::UniverseGenerator::instance()->generate_solarsystem_type(12487904);
-		CPPUNIT_ASSERT(result == 3);
+		CPPUNIT_ASSERT(result == 5);
+	}
+
+	void test_generate_solarsystem_planetnumber()
+	{
+		engine::UniverseGenerator::SetSeed(4487899);
+		uint8_t planet_number = engine::UniverseGenerator::instance()->generate_solarsystem_planetnumber(697, 5);
+		CPPUNIT_ASSERT(planet_number == 4);
+	}
+
+	void test_generate_planettype()
+	{
+		engine::UniverseGenerator::SetSeed(3698598);
+		uint8_t planet_type = engine::UniverseGenerator::instance()->generate_planet_type(8891178656);
+		CPPUNIT_ASSERT(planet_type == 7);
 	}
 };
 

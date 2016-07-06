@@ -67,7 +67,7 @@ void Universe::CreateSolarSystem(Galaxy *galaxy)
 	ss->id = m_next_solarsystem_id;
 	ss->name = UniverseGenerator::instance()->generate_world_name();
 	ss->radius = UniverseGenerator::instance()->
-			generate_solarsystem_double(m_next_solarsystem_id);
+		generate_solarsystem_radius(m_next_solarsystem_id);
 	ss->type = (SolarType) UniverseGenerator::instance()->
 			generate_solarsystem_type(m_next_solarsystem_id);
 
@@ -102,7 +102,7 @@ void Universe::CreateSolarSystemPhase2(SolarSystem *ss)
 		planet->radius = UniverseGenerator::instance()->
 			generate_planet_radius(planet->id, planet->type);
 		planet->distance_to_parent = UniverseGenerator::instance()->
-			generate_planet_distance(planet->id, ss->radius);
+			generate_planet_distance(planet->id, planet->type, ss->radius);
 		planet->moons = {};
 
 		ss->planets.push_back(planet);
