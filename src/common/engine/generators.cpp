@@ -93,23 +93,62 @@ uint8_t UniverseGenerator::generate_solarsystem_type(const uint64_t &ss_id)
 double UniverseGenerator::generate_solarsystem_double(const uint64_t &ss_id)
 {
 	std::mt19937 rndgen(s_seed + ss_id + 256 * 256);
-	// 20 Billion kilometers
-	std::uniform_real_distribution<double> rnd(10 * 1000.0f * 1000.0f,
-		20.0f * 1000.0f * 1000.0f * 1000.0f);
+	// 10 Billion to 20 Trillion kilometers
+	std::uniform_real_distribution<double> rnd(10 * 1000.0f * 1000.0f * 1000.0f,
+		20.0f * 1000.0f * 1000.0f * 1000.0f * 1000.0f);
 	return rnd(rndgen);
 }
 
-uint8_t UniverseGenerator::generate_solarsystem_planetnumber(const uint64_t &ss_id)
+uint8_t UniverseGenerator::generate_solarsystem_planetnumber(const uint64_t &ss_id, const uint8_t ss_type)
 {
 	std::mt19937 rndgen(s_seed + ss_id + 256 * 256 * 256);
 	std::uniform_int_distribution<uint8_t> rnd(0, 10);
 	return rnd(rndgen);
 }
 
+struct PlanetGeneratorDef {
+	float radius_scaling_factor_min;
+	float radius_scaling_factor_max;
+};
+
+static const PlanetGeneratorDef pg_defs[PLANET_TYPE_MAX] = {
+	{ 1.0f, 1.0f }, // PLANET_TYPE_BINARY
+	{ 1.0f, 1.0f }, // PLANET_TYPE_CARBON
+	{ 0.5f, 0.75f }, // PLANET_TYPE_CORELESS
+	{ 1.0f, 2.0f }, // PLANET_TYPE_DESERT
+	{ 1.0f, 1.0f }, // PLANET_TYPE_EARTH
+	{ 50.0f, 2.0f }, // PLANET_TYPE_GAS_GIANT
+	{ 2.0f, 1.0f }, // PLANET_TYPE_HELIUM
+	{ 45.0f, 2.0f }, // PLANET_TYPE_ICE_GIANT
+	{ 0.5f, 0.8f }, // PLANET_TYPE_IRON
+	{ 1.0f, 1.0f }, // PLANET_TYPE_LAVA
+	{ 1.0f, 1.0f }, // PLANET_TYPE_OCEAN
+};
+
 uint8_t UniverseGenerator::generate_planet_type(const uint64_t &pl_id)
 {
-	std::mt19937 rndgen(s_seed + pl_id + 1024);
+	std::mt19937 rndgen(s_seed + pl_id + 256 * pl_id);
 	std::uniform_int_distribution<uint8_t> rnd(0, PLANET_TYPE_MAX - 1);
+	return rnd(rndgen);
+}
+
+double UniverseGenerator::generate_planet_distance(const uint64_t &pl_id,
+		const double &max_distance)
+{
+	std::mt19937 rndgen(s_seed + pl_id + 1024 * pl_id);
+	// 10 Billion to max_distance km
+	std::uniform_real_distribution<double> rnd(10 * 1000.0f * 1000.0f,
+		max_distance);
+	return rnd(rndgen);
+}
+
+double UniverseGenerator::generate_planet_radius(const uint64_t &pl_id,
+		const uint8_t planet_type)
+{
+	std::mt19937 rndgen(s_seed + pl_id + 512 * pl_id);
+	// 200 km to 100k km
+	std::uniform_real_distribution<double> rnd(200.0f * pg_defs[planet_type].radius_scaling_factor_min,
+			100 * 1000.0f * pg_defs[planet_type].radius_scaling_factor_max);
 	return rnd(rndgen);
 }
 
