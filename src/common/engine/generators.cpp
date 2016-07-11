@@ -110,33 +110,50 @@ struct PlanetGeneratorDef {
 	float distance_scaling_factor_min;
 	float radius_scaling_factor_min;
 	float radius_scaling_factor_max;
+	float chance;
 };
 
+// Chance field addition should match 100.0f
 static const PlanetGeneratorDef pg_defs[PLANET_TYPE_MAX] = {
-	{ 2.0f, 1.0f, 1.0f }, // PLANET_TYPE_BINARY
-	{ 1.75f, 1.0f, 1.0f }, // PLANET_TYPE_CARBON
-	{ 1.8f, 0.5f, 0.75f }, // PLANET_TYPE_CORELESS
-	{ 1.6f, 1.0f, 2.0f }, // PLANET_TYPE_DESERT
-	{ 10.0f, 1.0f, 1.0f }, // PLANET_TYPE_EARTH
-	{ 20.0f, 50.0f, 2.0f }, // PLANET_TYPE_GAS_GIANT
-	{ 30.0f, 2.0f, 1.0f }, // PLANET_TYPE_HELIUM
-	{ 40.0f, 45.0f, 2.0f }, // PLANET_TYPE_ICE_GIANT
-	{ 1.2f, 0.5f, 0.8f }, // PLANET_TYPE_IRON
-	{ 1.0f, 1.0f, 1.0f }, // PLANET_TYPE_LAVA
-	{ 2.2f, 1.0f, 1.0f }, // PLANET_TYPE_OCEAN
+	{ 2.0f,		1.0f,	1.0f,	9.0f }, // PLANET_TYPE_BINARY
+	{ 1.75f, 	1.0f,	1.0f,	9.0f }, // PLANET_TYPE_CARBON
+	{ 1.8f,		0.5f,	0.75f,	5.0f }, // PLANET_TYPE_CORELESS
+	{ 1.6f,		1.0f,	2.0f,	11.0f }, // PLANET_TYPE_DESERT
+	{ 10.0f,	1.0f,	1.0f,	10.0f }, // PLANET_TYPE_EARTH
+	{ 20.0f,	50.0f,	2.0f,	11.0f }, // PLANET_TYPE_GAS_GIANT
+	{ 30.0f,	2.0f,	1.0f,	9.0f }, // PLANET_TYPE_HELIUM
+	{ 40.0f,	45.0f,	2.0f,	9.0f }, // PLANET_TYPE_ICE_GIANT
+	{ 1.2f,		0.5f,	0.8f,	9.0f }, // PLANET_TYPE_IRON
+	{ 1.0f,		1.0f,	1.0f,	10.0f }, // PLANET_TYPE_LAVA
+	{ 2.2f,		1.0f,	1.0f,	8.0f }, // PLANET_TYPE_OCEAN
 };
 
 uint8_t UniverseGenerator::generate_planet_type(const uint64_t &pl_id)
 {
 	std::mt19937 rndgen(s_seed + pl_id + 256 * pl_id);
-	std::uniform_int_distribution<uint8_t> rnd(0, PLANET_TYPE_MAX - 1);
-	return rnd(rndgen);
+	std::uniform_real_distribution<double> rnd(0.0f, 100.0f);
+
+	float chance_value = rnd(rndgen);
+	float chance_accumulator = 0.0f;
+
+	// Increment the accumulator with the current planet chance, when the accumulator was
+	// greater than value, we have our planet type
+	for (uint8_t pt = 0; pt < PLANET_TYPE_MAX; pt++) {
+		chance_accumulator += pg_defs[pt].chance;
+		if (chance_value < chance_accumulator) {
+			return pt;
+		}
+	}
+
+	// This should not happen
+	assert(false);
 }
 
 double UniverseGenerator::generate_planet_distance(const uint64_t &pl_id,
 		const uint8_t planet_type, const double &max_distance)
 {
-	assert(pg_defs[planet_type].distance_scaling_factor_min * 10 * 1000.0f * 1000.0f < max_distance); // This should not happen
+	assert(pg_defs[planet_type].distance_scaling_factor_min * 10 * 1000.0f * 1000.0f
+		   < max_distance); // This should not happen
 
 	std::mt19937 rndgen(s_seed + pl_id + 1024 * pl_id);
 	// 10 Billion to max_distance km
