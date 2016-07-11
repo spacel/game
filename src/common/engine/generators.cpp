@@ -113,8 +113,8 @@ struct PlanetGeneratorDef {
 	float chance;
 };
 
-// Chance field addition should match 100.0f
-static const PlanetGeneratorDef pg_defs[PLANET_TYPE_MAX] = {
+// Chance field addition should match 100.0f for convenience
+static constexpr PlanetGeneratorDef pg_defs[PLANET_TYPE_MAX] = {
 	{ 2.0f,		1.0f,	1.0f,	9.0f }, // PLANET_TYPE_BINARY
 	{ 1.75f, 	1.0f,	1.0f,	9.0f }, // PLANET_TYPE_CARBON
 	{ 1.8f,		0.5f,	0.75f,	5.0f }, // PLANET_TYPE_CORELESS
@@ -128,10 +128,19 @@ static const PlanetGeneratorDef pg_defs[PLANET_TYPE_MAX] = {
 	{ 2.2f,		1.0f,	1.0f,	8.0f }, // PLANET_TYPE_OCEAN
 };
 
+constexpr float planet_chance_max()
+{
+	float accumulator = 0.0f;
+	for (uint8_t i = 0; i < PLANET_TYPE_MAX; i++) {
+		accumulator += pg_defs[i].chance;
+	}
+	return accumulator;
+}
+
 uint8_t UniverseGenerator::generate_planet_type(const uint64_t &pl_id)
 {
 	std::mt19937 rndgen(s_seed + pl_id + 256 * pl_id);
-	std::uniform_real_distribution<double> rnd(0.0f, 100.0f);
+	std::uniform_real_distribution<double> rnd(0.0f, planet_chance_max());
 
 	float chance_value = rnd(rndgen);
 	float chance_accumulator = 0.0f;
