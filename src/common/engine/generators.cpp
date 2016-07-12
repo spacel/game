@@ -85,18 +85,19 @@ std::string UniverseGenerator::generate_world_name()
 
 struct SolarSystemGeneratorDef {
 	float chance;
+	uint8_t max_planets;
 };
 
 static constexpr SolarSystemGeneratorDef ss_defs[SOLAR_TYPE_MAX] = {
-	{ 36.0f }, // SOLAR_TYPE_CLASSIC,
-	{ 10.0f }, // SOLAR_TYPE_WHITE_DWARF,
-	{ 1.75f }, // SOLAR_TYPE_BLACK_DWARF,
-	{ 7.0f }, // SOLAR_TYPE_BROWN_DWARF,
-	{ 19.0f }, // SOLAR_TYPE_RED_DWARF,
-	{ 17.0f }, // SOLAR_TYPE_BIG_BLUE,
-	{ 0.05f }, // SOLAR_TYPE_PULSAR,
-	{ 0.1f }, // SOLAR_TYPE_BLACK_HOLE,
-	{ 0.1f }, // SOLAR_TYPE_SUPERNOVAE,
+	{ 36.0f, 9 }, // SOLAR_TYPE_CLASSIC,
+	{ 10.0f, 7 }, // SOLAR_TYPE_WHITE_DWARF,
+	{ 1.75f, 6 }, // SOLAR_TYPE_BLACK_DWARF,
+	{ 7.0f, 6 }, // SOLAR_TYPE_BROWN_DWARF,
+	{ 19.0f, 9 }, // SOLAR_TYPE_RED_DWARF,
+	{ 17.0f, 4 }, // SOLAR_TYPE_BIG_BLUE,
+	{ 0.05f, 4 }, // SOLAR_TYPE_PULSAR,
+	{ 0.1f, 0 }, // SOLAR_TYPE_BLACK_HOLE,
+	{ 0.1f, 0 }, // SOLAR_TYPE_SUPERNOVAE,
 };
 
 constexpr float solarsystem_chance_max()
@@ -138,10 +139,14 @@ double UniverseGenerator::generate_solarsystem_radius(const uint64_t &ss_id)
 	return rnd(rndgen);
 }
 
-uint8_t UniverseGenerator::generate_solarsystem_planetnumber(const uint64_t &ss_id, const uint8_t ss_type)
+uint8_t UniverseGenerator::generate_solarsystem_planetnumber(const SolarSystem *ss)
 {
-	std::mt19937 rndgen(s_seed + ss_id + 256 * 256 * 256);
-	std::uniform_int_distribution<uint8_t> rnd(0, 10);
+	if (ss_defs[ss->type].max_planets == 0) {
+		return 0;
+	}
+
+	std::mt19937 rndgen(s_seed + ss->id + 256 * 256 * 256);
+	std::uniform_int_distribution<uint8_t> rnd(0, ss_defs[ss->type].max_planets);
 	return rnd(rndgen);
 }
 

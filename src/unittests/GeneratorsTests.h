@@ -96,29 +96,34 @@ protected:
 	{
 		engine::UniverseGenerator::SetSeed(487597);
 		uint8_t result = engine::UniverseGenerator::instance()->generate_solarsystem_type(12487904);
-		CPPUNIT_ASSERT(result == 5);
+		CPPUNIT_ASSERT(result == 3);
 	}
 
 	void test_generate_solarsystem_planetnumber()
 	{
 		engine::UniverseGenerator::SetSeed(4487899);
-		uint8_t planet_number = engine::UniverseGenerator::instance()->generate_solarsystem_planetnumber(697, 5);
-		CPPUNIT_ASSERT(planet_number == 4);
+		engine::SolarSystem solar_system;
+		solar_system.id = 697;
+		solar_system.type = engine::SOLAR_TYPE_BIG_BLUE;
+		uint8_t planet_number = engine::UniverseGenerator::instance()->
+			generate_solarsystem_planetnumber(&solar_system);
+		CPPUNIT_ASSERT(planet_number == 2);
 	}
 
 	void test_generate_planettype()
 	{
 		engine::UniverseGenerator::SetSeed(3698598);
 		uint8_t planet_type = engine::UniverseGenerator::instance()->generate_planet_type(8891178656);
-		CPPUNIT_ASSERT(planet_type == 7);
+		CPPUNIT_ASSERT(planet_type == 4);
 	}
 
 	void test_generate_planetdistance()
 	{
 		engine::UniverseGenerator::SetSeed(5578824136);
+		engine::SolarSystem solar_system;
+		solar_system.radius = 1000 * 1000.0f * 1000.0f;
 		double planet_distance = engine::UniverseGenerator::instance()->
-			generate_planet_distance(110599, engine::PLANET_TYPE_EARTH,
-			1000 * 1000.0f * 1000.0f);
+			generate_planet_distance(110599, engine::PLANET_TYPE_EARTH, &solar_system);
 		// We should use stringstream as we don't have the correct on-screen output
 		// for this test, due to precision
 		std::stringstream ss;

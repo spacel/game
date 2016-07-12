@@ -47,7 +47,7 @@ public:
 	std::string generate_world_name();
 	uint8_t generate_solarsystem_type(const uint64_t &ss_id);
 	double generate_solarsystem_radius(const uint64_t &ss_id);
-	uint8_t generate_solarsystem_planetnumber(const uint64_t &ss_id, const uint8_t ss_type);
+	uint8_t generate_solarsystem_planetnumber(const SolarSystem *ss);
 	uint8_t generate_planet_type(const uint64_t &pl_id);
 	double generate_planet_distance(const uint64_t &pl_id, const uint8_t planet_type,
 			const SolarSystem *ss);

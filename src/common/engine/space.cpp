@@ -85,7 +85,7 @@ void Universe::CreateSolarSystem(Galaxy *galaxy)
 void Universe::CreateSolarSystemPhase2(SolarSystem *ss)
 {
 	uint8_t planet_number = UniverseGenerator::instance()->
-		generate_solarsystem_planetnumber(ss->id, ss->type);
+		generate_solarsystem_planetnumber(ss);
 
 	for (uint8_t i = 0; i < planet_number; ++i) {
 		/*
