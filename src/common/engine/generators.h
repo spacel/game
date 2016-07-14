@@ -53,16 +53,23 @@ public:
 			const SolarSystem *ss);
 	double generate_planet_radius(const uint64_t &pl_id, const uint8_t planet_type);
 	static uint64_t generate_seed();
+
+	float generate_galaxypos_radius(const float min_radius, const float max_radius);
+	float generate_galaxypos_gauss_random(const float param);
+	uint32_t generate_galaxypos_urange(const uint32_t param);
 private:
 	void InitRandomGeneratorIfNot();
 
 	bool m_random_generator_inited = false;
 	std::mt19937 m_random_generator;
+	std::mt19937 m_random_generator_galaxy_positions;
 	std::uniform_int_distribution<uint8_t> m_vowel_generator;
 	std::uniform_int_distribution<uint16_t> m_name_generators[4];
 	static UniverseGenerator *s_univgen;
 	static uint64_t s_seed;
 };
+
+#define UnivGen UniverseGenerator::instance()
 }
 }
 

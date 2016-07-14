@@ -56,6 +56,7 @@ void UniverseGenerator::InitRandomGeneratorIfNot()
 {
 	if (!m_random_generator_inited) {
 		m_random_generator = std::mt19937(s_seed);
+		m_random_generator_galaxy_positions = std::mt19937(s_seed);
 
 		m_vowel_generator = std::uniform_int_distribution<uint8_t>(0, ARRLEN(vowels) - 1);
 		m_name_generators[0] = std::uniform_int_distribution<uint16_t>(0, ARRLEN(name_prefixes) - 1);
@@ -230,6 +231,25 @@ uint64_t UniverseGenerator::generate_seed()
 	std::mt19937 rndgen(std::chrono::high_resolution_clock::now().time_since_epoch().count());
 	std::uniform_int_distribution<uint64_t> rnd(0, UINT64_MAX);
 	return rnd(rndgen);
+}
+
+float UniverseGenerator::generate_galaxypos_radius(const float min_radius,
+		const float max_radius)
+{
+	std::uniform_real_distribution<float> rnd(min_radius, max_radius);
+	return rnd(m_random_generator_galaxy_positions);
+}
+
+float UniverseGenerator::generate_galaxypos_gauss_random(const float param)
+{
+	std::normal_distribution<float> rnd(param);
+	return rnd(m_random_generator_galaxy_positions);
+}
+
+uint32_t UniverseGenerator::generate_galaxypos_urange(const uint32_t param)
+{
+	std::uniform_int_distribution<uint32_t> rnd(0, param);
+	return rnd(m_random_generator_galaxy_positions);
 }
 
 }

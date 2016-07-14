@@ -18,8 +18,11 @@
  */
 
 #include <cassert>
+#include <cmath>
 #include "space.h"
 #include "generators.h"
+
+#define _USE_MATH_DEFINES
 
 namespace spacel {
 namespace engine {
@@ -57,7 +60,7 @@ Universe::~Universe()
 /*
  * This function init solar system without its planets
  */
-void Universe::CreateSolarSystem(Galaxy *galaxy)
+SolarSystem *Universe::CreateSolarSystem(Galaxy *galaxy)
 {
 	while (m_solar_systems.find(m_next_solarsystem_id) != m_solar_systems.end()) {
 		m_next_solarsystem_id++;
@@ -80,6 +83,7 @@ void Universe::CreateSolarSystem(Galaxy *galaxy)
 	galaxy->solar_systems[m_next_solarsystem_id] = ss;
 	m_solar_systems[m_next_solarsystem_id] = ss;
 	m_next_solarsystem_id++;
+	return ss;
 }
 
 void Universe::CreateSolarSystemPhase2(SolarSystem *ss)
@@ -151,11 +155,28 @@ Galaxy *Universe::CreateGalaxy(const uint64_t &max_solar_systems)
 
 	Galaxy *galaxy = new Galaxy();
 	galaxy->id = m_next_galaxy_id;
-	galaxy->name = UniverseGenerator::instance()->generate_world_name();
+	galaxy->name = UnivGen->generate_world_name();
+
+	uint8_t spiral_arms = 2;
+	uint16_t spiral_angle_degrees = 360;
+	float min_radius = 0.05, max_radius = 0.9, thickness = 0.1,
+		scatter_theta = M_PI / spiral_arms * 0.2,
+		scatter_radius = min_radius * 0.4,
+		spiral_b = spiral_angle_degrees / M_PI * min_radius / max_radius;
 
 	// Hardcoded but need some seed
 	for (uint32_t i = 0; i < max_solar_systems; ++i) {
-		CreateSolarSystem(galaxy);
+		SolarSystem *ss = CreateSolarSystem(galaxy);
+
+		float r = UnivGen->generate_galaxypos_radius(min_radius, max_radius);
+		float theta = spiral_b * log(r / max_radius) +
+				UnivGen->generate_galaxypos_gauss_random(scatter_theta);
+		r += UnivGen->generate_galaxypos_gauss_random(scatter_radius);
+		// assign to a spiral arm
+		theta += UnivGen->generate_galaxypos_urange(spiral_arms - 1) * M_PI * 2 / spiral_arms;
+		ss->pos_x = cos(theta) * r;
+		ss->pos_y = sin(theta) * r;
+		ss->pos_z = UnivGen->generate_galaxypos_gauss_random(thickness * 0.5);
 	}
 
 	m_galaxies[m_next_galaxy_id] = galaxy;

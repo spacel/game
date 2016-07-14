@@ -131,7 +131,7 @@ public:
 	Galaxy *CreateGalaxy(const uint64_t &max_solar_systems);
 	bool RemoveGalaxy(const uint64_t &id);
 
-	void CreateSolarSystem(Galaxy *galaxy);
+	SolarSystem *CreateSolarSystem(Galaxy *galaxy);
 	void CreateSolarSystemPhase2(SolarSystem *ss);
 	bool RemoveSolarSystem(const uint64_t &id);
 
