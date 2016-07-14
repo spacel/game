@@ -68,11 +68,9 @@ SolarSystem *Universe::CreateSolarSystem(Galaxy *galaxy)
 
 	SolarSystem *ss = new SolarSystem();
 	ss->id = m_next_solarsystem_id;
-	ss->name = UniverseGenerator::instance()->generate_world_name();
-	ss->radius = UniverseGenerator::instance()->
-		generate_solarsystem_radius(m_next_solarsystem_id);
-	ss->type = (SolarType) UniverseGenerator::instance()->
-			generate_solarsystem_type(m_next_solarsystem_id);
+	ss->name = UnivGen->generate_world_name();
+	ss->radius = UnivGen->generate_solarsystem_radius(m_next_solarsystem_id);
+	ss->type = (SolarType) UnivGen->generate_solarsystem_type(m_next_solarsystem_id);
 
 	// @TODO generate coordinates properly
 	ss->pos_x = 1;
@@ -88,8 +86,7 @@ SolarSystem *Universe::CreateSolarSystem(Galaxy *galaxy)
 
 void Universe::CreateSolarSystemPhase2(SolarSystem *ss)
 {
-	uint8_t planet_number = UniverseGenerator::instance()->
-		generate_solarsystem_planetnumber(ss);
+	uint8_t planet_number = UnivGen->generate_solarsystem_planetnumber(ss);
 
 	for (uint8_t i = 0; i < planet_number; ++i) {
 		/*
@@ -100,12 +97,10 @@ void Universe::CreateSolarSystemPhase2(SolarSystem *ss)
 
 		Planet *planet = new Planet();
 		planet->id = m_next_planet_id;
-		planet->name = UniverseGenerator::instance()->generate_world_name();
-		planet->type = (PlanetType) UniverseGenerator::instance()->
-			generate_planet_type(planet->id);
-		planet->radius = UniverseGenerator::instance()->
-			generate_planet_radius(planet->id, planet->type);
-		planet->distance_to_parent = UniverseGenerator::instance()->
+		planet->name = UnivGen->generate_world_name();
+		planet->type = (PlanetType) UnivGen->generate_planet_type(planet->id);
+		planet->radius = UnivGen->generate_planet_radius(planet->id, planet->type);
+		planet->distance_to_parent = UnivGen->
 			generate_planet_distance(planet->id, planet->type, ss);
 		planet->moons = {};
 

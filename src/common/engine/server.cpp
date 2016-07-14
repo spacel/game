@@ -58,7 +58,7 @@ const bool Server::InitServer()
 		m_loading_step = SERVERLOADINGSTEP_DB_INITED;
 
 		// @TODO get the seed from database
-		UniverseGenerator::instance()->SetSeed(180);
+		UnivGen->SetSeed(180);
 		bool galaxy_generated = m_db->IsUniverseGenerated(m_universe_name);
 
 		const auto start = std::chrono::system_clock::now();
