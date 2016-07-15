@@ -24,6 +24,7 @@
 #include <queue>
 #include <common/threadsafe_utils.h>
 #include <common/engine/network/networkprotocol.h>
+#include <common/engine/space.h>
 
 namespace spacel {
 
@@ -108,5 +109,7 @@ private:
 
 	SafeQueue<engine::network::NetworkPacket *> m_packet_sending_queue;
 	SafeQueue<engine::network::NetworkPacket *> m_packet_receive_queue;
+
+	engine::SolarSystemMap m_solar_systems;
 };
 }

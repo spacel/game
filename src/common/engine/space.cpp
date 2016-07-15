@@ -141,6 +141,15 @@ bool Universe::SetGalaxy(Galaxy *galaxy)
 	return true;
 }
 
+Galaxy *Universe::GetGalaxy(const uint64_t &id)
+{
+	if (m_galaxies.find(id) == m_galaxies.end()) {
+		return nullptr;
+	}
+
+	return m_galaxies[id];
+}
+
 Galaxy *Universe::CreateGalaxy(const uint64_t &max_solar_systems)
 {
 	// Increment id if there is galaxies

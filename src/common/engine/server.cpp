@@ -312,6 +312,22 @@ void Server::handlePacket_Auth(NetworkPacket *packet)
 	resp_packet->WriteUByte(1); // Gender
 	resp_packet->WriteString("TestCharacter");
 	SendPacket(resp_packet);
+
+	// @TODO Change this place in the future
+	NetworkPacket *galaxy_packet = new NetworkPacket(SMSG_GALAXY_SYSTEMS);
+	Galaxy *galaxy = Universe::instance()->GetGalaxy(1);
+	assert(galaxy);
+	galaxy_packet->WriteUInt(galaxy->solar_systems.size());
+	for (const auto &ss: galaxy->solar_systems) {
+		galaxy_packet->WriteUInt(ss.first); // ID
+		galaxy_packet->WriteUByte(ss.second->type);
+		galaxy_packet->WriteDouble(ss.second->radius);
+		galaxy_packet->WriteDouble(ss.second->pos_x);
+		galaxy_packet->WriteDouble(ss.second->pos_y);
+		galaxy_packet->WriteDouble(ss.second->pos_z);
+		galaxy_packet->WriteString(Urho3D::String(ss.second->name.c_str()));
+	}
+	SendPacket(galaxy_packet);
 }
 
 void Server::handlePacket_Chat(NetworkPacket *packet)

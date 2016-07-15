@@ -182,7 +182,26 @@ void Client::handlePacket_Chat(NetworkPacket *packet)
 
 void Client::handlePacket_GalaxySystems(NetworkPacket *packet)
 {
+	// When receive this packet we should clear received solar systems
+	for (auto &ss: m_solar_systems) {
+		delete ss.second;
+	}
+	m_solar_systems.clear();
 
+	uint32_t ss_number = packet->ReadUInt();
+	for (uint32_t i = 0; i < ss_number; i++) {
+		engine::SolarSystem *ss = new engine::SolarSystem();
+		ss->id = packet->ReadUInt();
+		ss->type = (engine::SolarType) packet->ReadUByte();
+		ss->radius = packet->ReadDouble();
+		ss->pos_x = packet->ReadDouble();
+		ss->pos_y = packet->ReadDouble();
+		ss->pos_z = packet->ReadDouble();
+		ss->name = std::string(packet->ReadString().CString());
+		m_solar_systems[ss->id] = ss;
+	}
+
+	URHO3D_LOGINFOF("Received %d solar systems from server", ss_number);
 }
 
 void Client::handlePacket_CharacterList(NetworkPacket *packet)

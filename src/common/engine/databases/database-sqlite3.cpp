@@ -289,7 +289,7 @@ SolarSystem *DatabaseSQLite3::LoadSolarSystem(const uint64_t &ss_id)
 void DatabaseSQLite3::LoadSolarSystemsForGalaxy(Galaxy *galaxy)
 {
 	uint64_to_sqlite(SQLITE3STMT_LOAD_SOLARSYSTEMS_FOR_GALAXY, 1, galaxy->id);
-	if (stmt_step(SQLITE3STMT_LOAD_SOLARSYSTEMS_FOR_GALAXY) == SQLITE_ROW) {
+	while (stmt_step(SQLITE3STMT_LOAD_SOLARSYSTEMS_FOR_GALAXY) == SQLITE_ROW) {
 		SolarSystem *solar_system = new SolarSystem();
 		solar_system->id = sqlite_to_uint64(SQLITE3STMT_LOAD_SOLARSYSTEMS_FOR_GALAXY, 0);
 		solar_system->name = sqlite_to_string(SQLITE3STMT_LOAD_SOLARSYSTEMS_FOR_GALAXY, 1);
