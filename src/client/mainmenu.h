@@ -71,7 +71,12 @@ private:
 	void HandleDeleteUniversePressed(StringHash eventType, VariantMap &eventData);
 	void HandleGenerateSeedPressed(StringHash eventType, VariantMap &eventData);
 	void HandleDeleteUniverse(StringHash eventType, VariantMap &eventData);
+	void HandleCharacterList(StringHash eventType, VariantMap &eventData);
+	void HandleInfosCharacterClicked(StringHash eventType, VariantMap &eventData);
+	void HandleCreateCharacter(StringHash eventType, VariantMap &eventData);
+	void HandleNewCharacter(StringHash eventType, VariantMap &eventData);
 	void Background();
+	void ChangeBackground(const String &background);
 	void Title();
 	void HandleMasterMenu(StringHash, VariantMap &);
 	void ShowErrorBubble(const String &message);

@@ -6,7 +6,11 @@
 	<element type="AudioImage" >
 	    <attribute name="Texture" value="Texture2D;Textures/audio_icons.png" />
 	</element>
-	    <element type="Text">
+	<element type="window_character">
+ +		<attribute name="Horiz Alignment" value="Center" />
+ +		<attribute name="Vert Alignment" value="Center" />
+ +	</element>
+	<element type="Text">
 		<attribute name="Font" value="Font;Fonts/ethnocentric rg.ttf" />
 	</element>
 	<element type="Button" style="BorderImage">
