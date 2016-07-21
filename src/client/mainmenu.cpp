@@ -789,9 +789,9 @@ void MainMenu::HandleCharacterList(StringHash eventType, VariantMap &eventData) 
 
 	SetTitle("");
 
-	Vector<String> list_character;
-	const String path_character = GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "character");
-	GetSubsystem<FileSystem>()->ScanDir(list_character, path_character, "*", SCAN_DIRS, false);
+	Vector<String> character_list;
+	const String character_path = GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "character");
+	GetSubsystem<FileSystem>()->ScanDir(character_list, character_path, "*", SCAN_DIRS, false);
 
 	ListView *character_listview = new ListView(context_);
 	m_window_menu->AddChild(character_listview);
@@ -799,8 +799,8 @@ void MainMenu::HandleCharacterList(StringHash eventType, VariantMap &eventData) 
 	character_listview->SetName("Loading_character_listview");
 	character_listview->SetSize(m_window_menu->GetSize().x_ / 2, m_window_menu->GetSize().y_ - 125);
 
-	if (!list_character.Empty()) {
-		for (Vector<String>::Iterator it = list_character.Begin(); it != list_character.End(); ++it) {
+	if (!character_list.Empty()) {
+		for (Vector<String>::Iterator it = character_list.Begin(); it != character_list.End(); ++it) {
 			if (it->Compare(".") != 0 && it->Compare("..") != 0) {
 				Text *text = new Text(context_);
 				character_listview->AddItem(text);
