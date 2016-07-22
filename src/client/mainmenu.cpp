@@ -54,6 +54,8 @@ enum MainMenuIds
 	MAINMENUID_SETTINGS_GRAPHICS,
 	MAINMENUID_SETTINGS_SOUND,
 	MAINMENUID_SETTINGS_KEYBOARD,
+	MAINMENUID_CHARACTER_LIST,
+	MAINMENUID_CHARACTER_CREATE,
 };
 
 // UI components defined in this menu
@@ -205,6 +207,11 @@ void MainMenu::HandleKeyDown(StringHash, VariantMap &eventData)
 				case MAINMENUID_SETTINGS_KEYBOARD:
 					HandleSettingsPressed(StringHash(), eventData);
 					break;
+				case MAINMENUID_CHARACTER_LIST:
+					HandleLoadGamePressed(StringHash(), eventData);
+					break;
+				case MAINMENUID_CHARACTER_CREATE:
+					HandleCharacterList(StringHash(), eventData);
 				default:
 					break;
 			}
@@ -768,6 +775,7 @@ void MainMenu::HandleDeleteUniverse(StringHash, VariantMap &eventData)
 }
 
 void MainMenu::HandleCharacterList(StringHash eventType, VariantMap &eventData) {
+	m_menu_id = MAINMENUID_CHARACTER_LIST;
 	LineEdit *name_le = dynamic_cast<LineEdit *>(m_window_menu->GetChild("universe_name", true));
 	LineEdit *seed_le = dynamic_cast<LineEdit *>(m_window_menu->GetChild("create_universe_seed", true));
 
@@ -884,7 +892,7 @@ void MainMenu::HandleInfosCharacterClicked(StringHash eventType, VariantMap &eve
 
 void MainMenu::HandleNewCharacter(StringHash eventType, VariantMap &eventData)
 {
-
+	m_menu_id = MAINMENUID_CHARACTER_CREATE;
 	m_window_menu->RemoveAllChildren();
 	UnsubscribeFromAllEventsExcept(except_unsubscribe, true);
 
