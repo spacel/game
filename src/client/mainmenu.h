@@ -29,6 +29,7 @@
 #include <Urho3D/UI/Text.h>
 #include <Urho3D/UI/Window.h>
 #include <Urho3D/UI/Slider.h>
+#include <Urho3D/UI/DropDownList.h>
 
 #include <common/engine/databases/database-sqlite3.h>
 #include "genericmenu.h"
@@ -96,6 +97,8 @@ private:
 			const float value = 100, const float range = 100, const String &style = "Slider");
 	Slider *CreateSliderWithLabels(const String &name, const String &label,
 			const int x, const int y, const int SETTING);
+	DropDownList *CreateDropDownList(const String &name, const String &label,
+			const int x, const int y, const PODVector<String> list);
 	void SetTitle(const String &t);
 
 	// Attributes

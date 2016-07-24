@@ -901,6 +901,14 @@ void MainMenu::HandleNewCharacter(StringHash eventType, VariantMap &eventData)
 	LineEdit *character_name = CreateMainMenuLineEdit("character_name", "Character Name: ", 0, 65);
 	character_name->SetMaxLength(32);
 
+
+
+	PODVector<String> sexe_choice;
+	sexe_choice.Push(Urho3D::String("Male"));
+	//sexe_choice.Push(Urho3D::String("Female"));
+
+	DropDownList *list_sex = CreateDropDownList("Sex", "Sex", MAINMENU_BUTTON_SPACE * 2, character_name->GetPosition().y_ + character_name->GetSize().y_ + MAINMENU_BUTTON_SPACE, sexe_choice);
+
 	Button *create = CreateMainMenuButton("Create", "ButtonInLine", "TextButtonInLine");
 	create->SetPosition(0 + 50, m_window_menu->GetSize().y_ - create->GetSize().y_ - MAINMENU_BUTTON_SPACE);
 	create->SetHorizontalAlignment(HA_LEFT);
@@ -998,6 +1006,26 @@ Slider *MainMenu::CreateSliderWithLabels(const String &name, const String &label
 	slider_sound->SetHorizontalAlignment(HA_RIGHT);
 
 	return slider_sound;
+}
+
+DropDownList *MainMenu::CreateDropDownList(const String &name, const String &label, const int x, const int y,
+										   const PODVector<String> list)
+{
+	Text *text_list = CreateText(label);
+	text_list->SetPosition(x, y);
+	m_window_menu->AddChild(text_list);
+
+	DropDownList *drop_down_list = new DropDownList(context_);
+	m_window_menu->AddChild(drop_down_list);
+	drop_down_list->SetStyleAuto();
+	drop_down_list->SetPosition(text_list->GetWidth() + 50, text_list->GetPosition().y_ - (text_list->GetSize().y_ / 2));
+	drop_down_list->SetName(label);
+
+	for (const auto &item: list) {
+		Text *text = CreateText(item);
+		drop_down_list->AddItem(text);
+	}
+	return drop_down_list;
 }
 
 void MainMenu::UpdateUniverseInfos(const uint32_t &birth, const uint64_t &seed)
