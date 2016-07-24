@@ -82,4 +82,4 @@ This hook will permit you to prevent some coding style errors before commit.
 
 ### UI/Client/Server communication
 
-![UI_Client_Server_Communication](https://raw.githubusercontent.com/spacel/game/master/doc/communication_scheme.svg)
+![UI_Client_Server_Communication](https://raw.githubusercontent.com/spacel/game/master/doc/communication_scheme.png)
