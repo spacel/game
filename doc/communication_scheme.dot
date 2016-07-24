@@ -1,0 +1,20 @@
+# Current communication scheme is this
+
+digraph {
+    subgraph cluster_UI {
+        label = "UI";
+        UIThread_Connection -> Client_Creation;
+        UIThread_Event_Queue -> UIThread_Event_Handling;
+    }
+
+    subgraph cluster_Client {
+        label = "Client";
+        Client_Creation -> Client_Connection;
+        Client_Handling -> UIThread_Event_Queue;
+    }
+
+    subgraph cluster_Server {
+        label = "Server";
+        Client_Connection -> Server_Handling -> Server_Response -> Client_Handling;
+    }
+}
