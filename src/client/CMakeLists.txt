@@ -43,7 +43,7 @@ set(client_sources
 	mainmenu.cpp
 	settings.cpp
 	spacelgame.cpp
-	)
+	uievents.cpp)
 
 # Hack due to the current cmake implementation of Urho3D library
 remove_definitions(-DURHO3D_SSE -DURHO3D_OPENGL)

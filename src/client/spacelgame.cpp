@@ -35,6 +35,8 @@
 #include <common/engine/server.h>
 #include <common/engine/objectmanager.h>
 #include <common/engine/generators.h>
+#include <Urho3D/Core/CoreEvents.h>
+#include <iostream>
 
 #include "game.h"
 #include "loadingscreen.h"
@@ -79,6 +81,7 @@ void SpacelGame::Setup()
 
 void SpacelGame::Start()
 {
+	SubscribeToEvent(E_BEGINFRAME, URHO3D_HANDLER(SpacelGame, HandleBeginFrame));
 	ChangeGameGlobalUI(GLOBALUI_MAINMENU);
 }
 
@@ -118,7 +121,9 @@ void SpacelGame::ChangeGameGlobalUI(const GlobalUIId ui_id, void *param)
 			Client::instance()->SetGameDataPath(std::string(gamedatapath.CString()));
 			Client::instance()->SetDataPath(std::string(path_universe.CString()));
 			Client::instance()->SetUniverseName(universe_name.CString());
+			Client::instance()->SetUIEventHandler(this);
 			Client::instance()->Run();
+
 			LoadingScreen *loading_screen = new LoadingScreen(context_, m_config, this);
 			GetSubsystem<UI>()->GetRoot()->AddChild(loading_screen);
 			loading_screen->Start();
@@ -132,5 +137,36 @@ void SpacelGame::ChangeGameGlobalUI(const GlobalUIId ui_id, void *param)
 		}
 		default: assert(false);
 	}
+}
+
+
+/**
+ * This function handle UI events pushed from Client
+ * @param eventData
+ */
+void SpacelGame::HandleBeginFrame(StringHash, VariantMap &eventData)
+{
+	{
+		static const uint8_t MAX_UI_EVENT_ITERATIONS = 5;
+		uint8_t i = 0;
+		while (!m_ui_event_queue.empty() && i < MAX_UI_EVENT_ITERATIONS) {
+			i++;
+			UIEventPtr event = m_ui_event_queue.pop_front();
+
+			// Invalid event, ignore it
+			if (event->id >= UI_EVENT_MAX) {
+				URHO3D_LOGWARNINGF("Invalid UI event id %d received, ignoring", event->id);
+				continue;
+			}
+
+			const UIEventHandler &eventHandle = UIEventHandlerTable[event->id];
+			(this->*eventHandle.handler)(event->id, event->data);
+		}
+	}
+}
+
+void SpacelGame::HandleCharacterList(UIEventID event_id, void *data)
+{
+	// @TODO handle this
 }
 }

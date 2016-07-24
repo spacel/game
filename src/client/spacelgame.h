@@ -25,6 +25,7 @@
 #include <Urho3D/Resource/ResourceCache.h>
 
 #include "settings.h"
+#include "uievents.h"
 
 using namespace Urho3D;
 
@@ -51,11 +52,20 @@ public:
 	virtual void Start();
 	virtual void Stop();
 
+	// Urho handlers
+	void HandleBeginFrame(StringHash, VariantMap &eventData);
+
+	// UI event handlers
+	void HandleCharacterList(UIEventID event_id, void *data);
+
 	void ChangeGameGlobalUI(const GlobalUIId ui_id, void *param = nullptr);
+	void QueueUiEvent(UIEventPtr e) { m_ui_event_queue.push_back(e); }
+
 private:
 	void InitLocales();
 
 	ClientSettings *m_config = nullptr;
+	UIEventQueue m_ui_event_queue;
 };
 
 }

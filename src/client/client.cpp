@@ -21,7 +21,6 @@
 #include "network/clientpackethandler.h"
 #include "project_defines.h"
 #include <Urho3D/IO/Log.h>
-#include <Urho3D/IO/MemoryBuffer.h>
 #include <common/engine/server.h>
 #include <thread>
 
@@ -207,6 +206,9 @@ void Client::handlePacket_GalaxySystems(NetworkPacket *packet)
 void Client::handlePacket_CharacterList(NetworkPacket *packet)
 {
 	m_loading_step = CLIENTLOADINGSTEP_AUTHED;
+
+	// @TODO forge some datas and send it
+	QueueUIEvent(UI_EVENT_CHARACTER_LIST, nullptr);
 }
 
 void Client::handlePacket_CharacterCreate(NetworkPacket *packet)

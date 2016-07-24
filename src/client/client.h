@@ -25,6 +25,7 @@
 #include <common/threadsafe_utils.h>
 #include <common/engine/network/networkprotocol.h>
 #include <common/engine/space.h>
+#include "spacelgame.h"
 
 namespace spacel {
 
@@ -73,6 +74,7 @@ public:
 	void SetUniverseName(const std::string &universe_name) { m_universe_name = universe_name; }
 	void SetGameDataPath(const std::string &data_path) { m_gamedata_path = data_path; }
 	void SetDataPath(const std::string &data_path) { m_data_path = data_path; }
+	void SetUIEventHandler(SpacelGame *event_handler) { m_ui_event_handler = event_handler; }
 
 	void ReceivePacket(NetworkPacket *packet)
 	{
@@ -96,6 +98,12 @@ private:
 
 	void SendInitPacket();
 
+	inline void QueueUIEvent(UIEventID id, void *data)
+	{
+		m_ui_event_handler->QueueUiEvent(
+			UIEventPtr(new UIEvent(UI_EVENT_CHARACTER_LIST, nullptr)));
+	}
+
 	static Client *s_client;
 	std::atomic<ClientLoadingStep> m_loading_step;
 	SessionState m_state = SESSION_STATE_NONE;
@@ -104,6 +112,7 @@ private:
 	std::string m_universe_name = "";
 	std::string m_gamedata_path = "";
 	std::string m_data_path = "";
+	SpacelGame *m_ui_event_handler = nullptr;
 
 	engine::Server *m_server = nullptr;
 
