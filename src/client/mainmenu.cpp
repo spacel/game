@@ -903,9 +903,9 @@ void MainMenu::HandleNewCharacter(StringHash eventType, VariantMap &eventData)
 
 
 
-	PODVector<String> sexe_choice;
-	sexe_choice.Push(Urho3D::String("Male"));
-	//sexe_choice.Push(Urho3D::String("Female"));
+	std::vector<Urho3D::String> sexe_choice;
+	sexe_choice.push_back(Urho3D::String("Male"));
+	sexe_choice.push_back(Urho3D::String("Female"));
 
 	DropDownList *list_sex = CreateDropDownList("Sex", "Sex", MAINMENU_BUTTON_SPACE * 2, character_name->GetPosition().y_ + character_name->GetSize().y_ + MAINMENU_BUTTON_SPACE, sexe_choice);
 
@@ -1009,7 +1009,7 @@ Slider *MainMenu::CreateSliderWithLabels(const String &name, const String &label
 }
 
 DropDownList *MainMenu::CreateDropDownList(const String &name, const String &label, const int x, const int y,
-										   const PODVector<String> list)
+										   const std::vector<Urho3D::String> &list)
 {
 	Text *text_list = CreateText(label);
 	text_list->SetPosition(x, y);

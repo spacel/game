@@ -98,7 +98,7 @@ private:
 	Slider *CreateSliderWithLabels(const String &name, const String &label,
 			const int x, const int y, const int SETTING);
 	DropDownList *CreateDropDownList(const String &name, const String &label,
-			const int x, const int y, const PODVector<String> list);
+			const int x, const int y, const std::vector<Urho3D::String> &list);
 	void SetTitle(const String &t);
 
 	// Attributes
