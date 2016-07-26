@@ -26,25 +26,69 @@
 namespace spacel {
 
 class SpacelGame;
+class Client;
 
+/*
+ * Client -> UI
+ */
 enum UIEventID {
 	UI_EVENT_CHARACTER_LIST,
 	UI_EVENT_MAX,
 };
 
 struct UIEvent {
-	UIEvent(UIEventID _id, void *_data): id(_id), data(_data) {}
+	UIEvent(UIEventID _id): id(_id) {}
+	virtual ~UIEvent() {}
+
 	UIEventID id;
-	void *data;
+};
+typedef std::shared_ptr<UIEvent> UIEventPtr;
+
+struct UIEvent_CharacterList: public UIEvent {
+	UIEvent_CharacterList(): UIEvent(UI_EVENT_CHARACTER_LIST) {}
 };
 
 struct UIEventHandler
 {
-	void (SpacelGame::*handler)(UIEventID event_id, void *data);
+	void (SpacelGame::*handler)(UIEventPtr event);
 };
 
 extern const UIEventHandler UIEventHandlerTable[UI_EVENT_MAX];
 
-typedef std::shared_ptr<UIEvent> UIEventPtr;
+
 typedef SafeQueue<UIEventPtr> UIEventQueue;
+
+/*
+ * UI -> Client
+ */
+enum ClientUIEventID {
+	CLIENT_UI_EVENT_CHARACTER_ADD,
+	CLIENT_UI_EVENT_CHARACTER_REMOVE,
+	CLIENT_UI_EVENT_MAX,
+};
+
+struct ClientUIEvent {
+	ClientUIEvent(ClientUIEventID _id): id(_id) {}
+	virtual ~ClientUIEvent() {}
+
+	ClientUIEventID id;
+};
+typedef std::shared_ptr<ClientUIEvent> ClientUIEventPtr;
+
+struct ClientUIEvent_CharacterAdd: public ClientUIEvent {
+	ClientUIEvent_CharacterAdd(): ClientUIEvent(CLIENT_UI_EVENT_CHARACTER_ADD) {}
+};
+struct ClientUIEvent_CharacterRemove: public ClientUIEvent {
+	ClientUIEvent_CharacterRemove(): ClientUIEvent(CLIENT_UI_EVENT_CHARACTER_REMOVE) {}
+};
+
+struct ClientUIEventHandler
+{
+	void (Client::*handler)(ClientUIEventPtr event);
+};
+
+extern const ClientUIEventHandler ClientUIEventHandlerTable[CLIENT_UI_EVENT_MAX];
+typedef SafeQueue<ClientUIEventPtr> ClientUIEventQueue;
+
+
 }

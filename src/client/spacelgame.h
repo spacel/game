@@ -56,10 +56,12 @@ public:
 	void HandleBeginFrame(StringHash, VariantMap &eventData);
 
 	// UI event handlers
-	void HandleCharacterList(UIEventID event_id, void *data);
+	void HandleCharacterList(UIEventPtr event);
 
 	void ChangeGameGlobalUI(const GlobalUIId ui_id, void *param = nullptr);
 	void QueueUiEvent(UIEventPtr e) { m_ui_event_queue.push_back(e); }
+
+	void QueueClientUIEvent(ClientUIEvent *event);
 
 private:
 	void InitLocales();

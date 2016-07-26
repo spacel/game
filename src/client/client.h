@@ -90,6 +90,14 @@ public:
 	void handlePacket_CharacterCreate(engine::network::NetworkPacket *packet);
 	void handlePacket_CharacterRemove(engine::network::NetworkPacket *packet);
 	void handlePacket_Kick(engine::network::NetworkPacket *packet);
+
+	void QueueClientUiEvent(ClientUIEventPtr e)
+	{
+		m_clientui_event_queue.push_back(e);
+	}
+
+	void handleClientUiEvent_ChararacterAdd(ClientUIEventPtr event);
+	void handleClientUiEvent_ChararacterRemove(ClientUIEventPtr event);
 private:
 	void Step(const float dtime);
 	void ProcessPacket(engine::network::NetworkPacket *packet);
@@ -98,10 +106,10 @@ private:
 
 	void SendInitPacket();
 
-	inline void QueueUIEvent(UIEventID id, void *data)
+	inline void QueueUIEvent(UIEvent* event)
 	{
 		m_ui_event_handler->QueueUiEvent(
-			UIEventPtr(new UIEvent(UI_EVENT_CHARACTER_LIST, nullptr)));
+			UIEventPtr(event));
 	}
 
 	static Client *s_client;
@@ -118,6 +126,8 @@ private:
 
 	SafeQueue<engine::network::NetworkPacket *> m_packet_sending_queue;
 	SafeQueue<engine::network::NetworkPacket *> m_packet_receive_queue;
+
+	ClientUIEventQueue m_clientui_event_queue;
 
 	engine::SolarSystemMap m_solar_systems;
 };

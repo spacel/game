@@ -3,18 +3,33 @@
 digraph {
     subgraph cluster_UI {
         label = "UI";
-        UIThread_Connection -> Client_Creation;
+        UIThread_Connection;
         UIThread_Event_Queue -> UIThread_Event_Handling;
+        UIThread_Action;
     }
 
     subgraph cluster_Client {
         label = "Client";
         Client_Creation -> Client_Connection;
-        Client_Handling -> UIThread_Event_Queue;
+        Client_Handling;
+        Client_UIEvent_Handling;
     }
 
     subgraph cluster_Server {
         label = "Server";
-        Client_Connection -> Server_Handling -> Server_Response -> Client_Handling;
+        Server_Handling;
+        Server_Handling -> Server_Response;
     }
+
+    # UI -> Client
+    UIThread_Connection -> Client_Creation;
+    UIThread_Action -> Client_UIEvent_Handling
+
+    # Client -> UI/Server
+    Client_UIEvent_Handling -> Server_Handling;
+    Client_Connection -> Server_Handling;
+    Client_Handling -> UIThread_Event_Queue;
+
+    # Server -> Client
+    Server_Response -> Client_Handling;
 }

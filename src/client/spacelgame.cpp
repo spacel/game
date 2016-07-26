@@ -139,6 +139,12 @@ void SpacelGame::ChangeGameGlobalUI(const GlobalUIId ui_id, void *param)
 	}
 }
 
+void SpacelGame::QueueClientUIEvent(ClientUIEvent *event)
+{
+	assert(Client::instance()->GetLoadingStep() >= CLIENTLOADINGSTEP_CONNECTED);
+	Client::instance()->QueueClientUiEvent(ClientUIEventPtr(event));
+}
+
 
 /**
  * This function handle UI events pushed from Client
@@ -160,12 +166,12 @@ void SpacelGame::HandleBeginFrame(StringHash, VariantMap &eventData)
 			}
 
 			const UIEventHandler &eventHandle = UIEventHandlerTable[event->id];
-			(this->*eventHandle.handler)(event->id, event->data);
+			(this->*eventHandle.handler)(event);
 		}
 	}
 }
 
-void SpacelGame::HandleCharacterList(UIEventID event_id, void *data)
+void SpacelGame::HandleCharacterList(UIEventPtr event)
 {
 	// @TODO handle this
 }

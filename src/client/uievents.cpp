@@ -20,10 +20,16 @@
 
 #include "uievents.h"
 #include "spacelgame.h"
+#include "client.h"
 
 namespace spacel {
 
 const UIEventHandler UIEventHandlerTable[UI_EVENT_MAX] = {
 	&SpacelGame::HandleCharacterList,
+};
+
+const ClientUIEventHandler ClientUIEventHandlerTable[CLIENT_UI_EVENT_MAX] = {
+	&Client::handleClientUiEvent_ChararacterAdd,
+	&Client::handleClientUiEvent_ChararacterRemove,
 };
 }

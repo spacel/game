@@ -106,6 +106,10 @@ bool Client::InitClient()
 	return true;
 }
 
+/**
+ * main Client loop for routing and processing events incoming from UI or server
+ * @param dtime
+ */
 void Client::Step(const float dtime)
 {
 	// Singleplayer mode read server queue instead of client receive queue
@@ -124,8 +128,25 @@ void Client::Step(const float dtime)
 			ProcessPacket(pkt.get());
 		}
 	}
+
+	{
+		static const uint8_t MAX_CLIENT_UI_EVENT_TO_PROCESS = 20;
+		uint8_t i = 0;
+		while (!m_clientui_event_queue.empty() && i < MAX_CLIENT_UI_EVENT_TO_PROCESS) {
+			i++;
+			ClientUIEventPtr event = m_clientui_event_queue.pop_front();
+			assert(event->id < CLIENT_UI_EVENT_MAX);
+
+			const ClientUIEventHandler &eventHandler = ClientUIEventHandlerTable[event->id];
+			(this->*eventHandler.handler)(event);
+		}
+	}
 }
 
+/**
+ * Packet processing verifications before routing
+ * @param packet
+ */
 void Client::ProcessPacket(NetworkPacket *packet)
 {
 	// Ignore invalid opcode
@@ -138,7 +159,7 @@ void Client::ProcessPacket(NetworkPacket *packet)
 	RoutePacket(packet);
 }
 
-void Client::RoutePacket(NetworkPacket *packet)
+inline void Client::RoutePacket(NetworkPacket *packet)
 {
 	const CMsgHandler &opHandle = cmsgHandlerTable[packet->GetOpcode()];
 	(this->*opHandle.handler)(packet);
@@ -208,7 +229,7 @@ void Client::handlePacket_CharacterList(NetworkPacket *packet)
 	m_loading_step = CLIENTLOADINGSTEP_AUTHED;
 
 	// @TODO forge some datas and send it
-	QueueUIEvent(UI_EVENT_CHARACTER_LIST, nullptr);
+	QueueUIEvent(new UIEvent_CharacterList());
 }
 
 void Client::handlePacket_CharacterCreate(NetworkPacket *packet)
@@ -235,4 +256,15 @@ void Client::SendInitPacket()
 	pkt->WriteUShort(PROTOCOL_VERSION);
 	SendPacket(pkt);
 }
+
+void Client::handleClientUiEvent_ChararacterAdd(ClientUIEventPtr event)
+{
+	// @TODO: send packet to server
+}
+
+void Client::handleClientUiEvent_ChararacterRemove(ClientUIEventPtr event)
+{
+	// @TODO: send packet to server
+}
+
 }
