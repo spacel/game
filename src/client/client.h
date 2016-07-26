@@ -106,7 +106,7 @@ private:
 
 	void SendInitPacket();
 
-	inline void QueueUIEvent(UIEvent* event)
+	inline void QueueUIEvent(UIEvent *event)
 	{
 		m_ui_event_handler->QueueUiEvent(
 			UIEventPtr(event));
