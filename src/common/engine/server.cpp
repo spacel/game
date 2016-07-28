@@ -31,6 +31,7 @@
 #include "objectmanager.h"
 #include "space.h"
 #include "../../project_defines.h"
+#include "player.h"
 
 namespace spacel {
 namespace engine {
@@ -337,7 +338,11 @@ void Server::handlePacket_Chat(NetworkPacket *packet)
 
 void Server::handlePacket_CharacterCreate(NetworkPacket *packet)
 {
+	PlayerRace playerRace = (PlayerRace) packet->ReadUByte();
+	PlayerSex playerSex = (PlayerSex) packet->ReadUByte();
+	Urho3D::String playerName = packet->ReadString();
 
+	// @TODO handle this packet
 }
 
 void Server::handlePacket_CharacterRemove(NetworkPacket *packet)

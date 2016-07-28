@@ -259,7 +259,14 @@ void Client::SendInitPacket()
 
 void Client::handleClientUiEvent_ChararacterAdd(ClientUIEventPtr event)
 {
-	// @TODO: send packet to server
+	ClientUIEvent_CharacterAdd *r_event = dynamic_cast<ClientUIEvent_CharacterAdd *>(event.get());
+	assert (r_event);
+
+	NetworkPacket *pkt = new NetworkPacket(CMSG_CHARACTER_CREATE);
+	pkt->WriteUByte(r_event->race);
+	pkt->WriteUByte(r_event->sex);
+	pkt->WriteString(r_event->name);
+	SendPacket(pkt);
 }
 
 void Client::handleClientUiEvent_ChararacterRemove(ClientUIEventPtr event)

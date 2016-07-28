@@ -21,6 +21,7 @@
 #pragma once
 
 #include <memory>
+#include <common/engine/player.h>
 #include "../common/threadsafe_utils.h"
 
 namespace spacel {
@@ -77,6 +78,9 @@ typedef std::shared_ptr<ClientUIEvent> ClientUIEventPtr;
 
 struct ClientUIEvent_CharacterAdd: public ClientUIEvent {
 	ClientUIEvent_CharacterAdd(): ClientUIEvent(CLIENT_UI_EVENT_CHARACTER_ADD) {}
+	Urho3D::String name;
+	engine::PlayerRace race;
+	engine::PlayerSex sex;
 };
 struct ClientUIEvent_CharacterRemove: public ClientUIEvent {
 	ClientUIEvent_CharacterRemove(): ClientUIEvent(CLIENT_UI_EVENT_CHARACTER_REMOVE) {}
