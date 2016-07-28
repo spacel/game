@@ -27,7 +27,36 @@ namespace spacel {
 
 namespace engine {
 
-class Player : public Unit {
+enum PlayerRace
+{
+	PLAYER_RACE_HUMAN,
+	PLAYER_RACE_KILBOG,
+	PLAYER_RACE_ARKYN,
+	PLAYER_RACE_SPACEELF,
+	PLAYER_RACE_MAX,
+};
+
+static const char* player_race_names[PLAYER_RACE_MAX] = {
+	"Human",
+	"Kilbog",
+	"Arkyn",
+	"Space Elf"
+};
+
+enum PlayerSex
+{
+	PLAYER_SEX_MALE,
+	PLAYER_SEX_FEMALE,
+	PLAYER_SEX_MAX,
+};
+
+static const char* player_sex_names[PLAYER_SEX_MAX] = {
+	"Male",
+	"Female"
+};
+
+class Player : public Unit
+{
 public:
 	Player(const std::string &username);
 	~Player() {};
