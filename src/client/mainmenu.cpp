@@ -213,6 +213,7 @@ void MainMenu::HandleKeyDown(StringHash, VariantMap &eventData)
 					break;
 				case MAINMENUID_CHARACTER_CREATE:
 					HandleCharacterList(StringHash(), eventData);
+					break;
 				default:
 					break;
 			}
@@ -808,15 +809,13 @@ void MainMenu::HandleCharacterList(StringHash eventType, VariantMap &eventData) 
 	character_listview->SetName("Loading_character_listview");
 	character_listview->SetSize(m_window_menu->GetSize().x_ / 2, m_window_menu->GetSize().y_ - 125);
 
-	if (!character_list.Empty()) {
-		for (Vector<String>::Iterator it = character_list.Begin(); it != character_list.End(); ++it) {
-			if (it->Compare(".") != 0 && it->Compare("..") != 0) {
-				Text *text = new Text(context_);
-				character_listview->AddItem(text);
-				text->SetStyle("ListViewText");
-				text->SetName(*it);
-				text->SetText(*it);
-			}
+	for (Vector<String>::Iterator it = character_list.Begin(); it != character_list.End(); ++it) {
+		if (it->Compare(".") != 0 && it->Compare("..") != 0) {
+			Text *text = new Text(context_);
+			character_listview->AddItem(text);
+			text->SetStyle("ListViewText");
+			text->SetName(*it);
+			text->SetText(*it);
 		}
 	}
 
@@ -825,7 +824,7 @@ void MainMenu::HandleCharacterList(StringHash eventType, VariantMap &eventData) 
 	if (!PreviewTexture) {
 		PreviewTexture = m_cache->GetResource<Texture2D>("Textures/no_preview.png");
 		if (!PreviewTexture) {
-			URHO3D_LOGERROR("No_Preview texture not loaded");
+			PreviewTexture = m_cache->GetResource<Texture2D>("Textures/preview.png");
 			return;
 		}
 	}
@@ -903,7 +902,7 @@ void MainMenu::HandleNewCharacter(StringHash eventType, VariantMap &eventData)
 	character_name->SetMaxLength(32);
 
 	std::vector<Urho3D::String> sexe_choice;
-	for(const auto &item : engine::player_sex_names) {
+	for (const auto &item : engine::player_sex_names) {
 		sexe_choice.push_back(item);
 	}
 
@@ -1033,6 +1032,7 @@ DropDownList *MainMenu::CreateDropDownList(const String &name, const String &lab
 		Text *text = CreateText(item);
 		drop_down_list->AddItem(text);
 	}
+	
 	return drop_down_list;
 }
 
