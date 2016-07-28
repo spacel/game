@@ -21,7 +21,6 @@
 #include "mainmenu.h"
 #include <iostream>
 #include <common/engine/generators.h>
-#include <common/engine/space.h>
 #include <common/time_utils.h>
 
 #include <Urho3D/Audio/Sound.h>
@@ -39,7 +38,6 @@
 #include <Urho3D/UI/CheckBox.h>
 #include <Urho3D/Graphics/Graphics.h>
 #include <Urho3D/UI/DropDownList.h>
-#include <stdlib.h>
 
 using namespace Urho3D;
 
@@ -57,6 +55,15 @@ enum MainMenuIds
 	MAINMENUID_SETTINGS_SOUND,
 	MAINMENUID_SETTINGS_KEYBOARD,
 };
+
+// UI components defined in this menu
+#define MAINMENU_ELEMENT_UNIVERSE_NAME "universe_name"
+#define MAINMENU_ELEMENT_CREATE_UNIVERSE_SEED "create_universe_seed"
+#define MAINMENU_ELEMENT_LOAD_UNIVERSE_LISTVIEW "loading_universe_listview"
+#define MAINMENU_ELEMENT_RESOLUTION "resolution"
+#define MAINMENU_ELEMENT_ERROR_WINDOW_BUBBLE "error_window_bubble"
+#define MAINMENU_ELEMENT_DELETE_UNIVERSE "delete_universe"
+#define MAINMENU_ELEMENT_ERROR_BUBBLE_TEXT "error_bubble_text"
 
 #define MAINMENU_BUTTON_SPACE 20
 
@@ -237,7 +244,7 @@ void MainMenu::HandleNewGamePressed(StringHash, VariantMap &eventData)
 
 	SetTitle("New universe");
 
-	LineEdit *universename = CreateMainMenuLineEdit("universe_name", "Universe Name: ", -15, 30 + (MAINMENU_BUTTON_SPACE * 2));
+	LineEdit *universename = CreateMainMenuLineEdit(MAINMENU_ELEMENT_UNIVERSE_NAME, "Universe Name: ", -15, 30 + (MAINMENU_BUTTON_SPACE * 2));
 	universename->SetMaxLength(32);
 
 	LineEdit *universeseed = CreateMainMenuLineEdit("create_universe_seed", "Seed: ", -15,
@@ -272,8 +279,10 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 	bool universe_creation = false;
 
 	// Universe creation
-	LineEdit *name_le = dynamic_cast<LineEdit *>(m_window_menu->GetChild("universe_name", true));
-	LineEdit *seed_le = dynamic_cast<LineEdit *>(m_window_menu->GetChild("create_universe_seed", true));
+	LineEdit *name_le = dynamic_cast<LineEdit *>(
+		m_window_menu->GetChild(MAINMENU_ELEMENT_UNIVERSE_NAME, true));
+	LineEdit *seed_le = dynamic_cast<LineEdit *>(
+		m_window_menu->GetChild(MAINMENU_ELEMENT_CREATE_UNIVERSE_SEED, true));
 	if (name_le != nullptr) {
 		universe_name = name_le->GetText();
 		universe_seed = seed_le->GetText();
@@ -281,7 +290,7 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 		universe_creation = true;
 	}
 	else {
-		ListView *lv = dynamic_cast<ListView *>(m_window_menu->GetChild("loading_universe_listview", true));
+		ListView *lv = dynamic_cast<ListView *>(m_window_menu->GetChild(MAINMENU_ELEMENT_LOAD_UNIVERSE_LISTVIEW, true));
 		assert(lv);
 
 		if (lv->GetSelectedItem() != nullptr) {
@@ -351,7 +360,7 @@ void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
 	ListView *universes_listview = new ListView(context_);
 	m_window_menu->AddChild(universes_listview);
 	universes_listview->SetStyle("ListView");
-	universes_listview->SetName("loading_universe_listview");
+	universes_listview->SetName(MAINMENU_ELEMENT_LOAD_UNIVERSE_LISTVIEW);
 	universes_listview->SetSize(m_window_menu->GetSize().x_ / 2, m_window_menu->GetSize().y_ - 150);
 
 	if (!list_universe.Empty()) {
@@ -391,7 +400,7 @@ void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
 	launch->SetVerticalAlignment(VA_BOTTOM);
 
 	Button *delete_univers = CreateMainMenuButton("Delete universe", "ButtonInLineInactive", "TextButtonInLine");
-	delete_univers->SetName("delete_universe");
+	delete_univers->SetName(MAINMENU_ELEMENT_DELETE_UNIVERSE);
 	delete_univers->SetPosition(0 - 100, -100);
 	delete_univers->SetHorizontalAlignment(HA_RIGHT);
 	delete_univers->SetVerticalAlignment(VA_BOTTOM);
@@ -487,7 +496,7 @@ void MainMenu::HandleGraphicsPressed(StringHash, VariantMap &eventData)
 	m_window_menu->AddChild(resolution);
 	resolution->SetStyleAuto();
 	resolution->SetPosition(text_resolution->GetPosition().x_ + 150, text_resolution->GetPosition().y_);
-	resolution->SetName("resolution");
+	resolution->SetName(MAINMENU_ELEMENT_RESOLUTION);
 
 	PODVector<IntVector2> list_coord = GetSubsystem<Graphics>()->GetResolutions();
 	for (const auto &coord: list_coord) {
@@ -512,19 +521,19 @@ void MainMenu::HandleGraphicsPressed(StringHash, VariantMap &eventData)
 	SubscribeToEvent(full_screen, E_TOGGLED, URHO3D_HANDLER(MainMenu, HandleFullScreenPressed));
 }
 
-void MainMenu::HandleFullScreenPressed(StringHash eventType, VariantMap &eventData)
+void MainMenu::HandleFullScreenPressed(StringHash, VariantMap &eventData)
 {
 	m_config->setBool(BSETTING_FULLSCREEN, !m_config->getBool(BSETTING_FULLSCREEN));
 }
 
-void MainMenu::HandleApplyGraphicsPressed(StringHash eventType, VariantMap &eventData)
+void MainMenu::HandleApplyGraphicsPressed(StringHash, VariantMap &eventData)
 {
 	if ((GetSubsystem<Graphics>()->GetFullscreen() && !m_config->getBool(BSETTING_FULLSCREEN)) ||
 		(!GetSubsystem<Graphics>()->GetFullscreen() && m_config->getBool(BSETTING_FULLSCREEN)))  {
 		GetSubsystem<Graphics>()->ToggleFullscreen();
 	}
 
-	DropDownList *resolution = static_cast<DropDownList *>(m_window_menu->GetChild("resolution", true));
+	DropDownList *resolution = static_cast<DropDownList *>(m_window_menu->GetChild(MAINMENU_ELEMENT_RESOLUTION, true));
 
 	PODVector<IntVector2> list_coord = GetSubsystem<Graphics>()->GetResolutions();
 	uint32_t selection_id = resolution->GetSelection();
@@ -635,7 +644,7 @@ void MainMenu::HandleSoundsVolume(StringHash eventType, VariantMap &eventData)
 void MainMenu::HandleGenerateSeedPressed(StringHash eventType, VariantMap &eventData)
 {
 	String seed_str = ToString(std::to_string(engine::UniverseGenerator::generate_seed()).c_str());
-	static_cast<LineEdit *>(m_window_menu->GetChild("create_universe_seed", true))->SetText(seed_str);
+	static_cast<LineEdit *>(m_window_menu->GetChild(MAINMENU_ELEMENT_CREATE_UNIVERSE_SEED, true))->SetText(seed_str);
 }
 
 void MainMenu::HandleUpdate(StringHash, VariantMap &eventData)
@@ -645,7 +654,7 @@ void MainMenu::HandleUpdate(StringHash, VariantMap &eventData)
 	if (m_enable_error_bubble_timer &&
 		m_error_bubble_timer->GetMSec(false) >= m_config->getFloat(FLOATSETTINGS_TIMER_ERROR_BUBBLE)) {
 		if (Window *error_bubble_window = dynamic_cast<Window *>(
-			m_window_menu->GetChild("error_window_bubble", true))) {
+			m_window_menu->GetChild(MAINMENU_ELEMENT_ERROR_WINDOW_BUBBLE, true))) {
 			error_bubble_window->SetVisible(false);
 		}
 
@@ -666,7 +675,7 @@ void MainMenu::HandleInfosUniverseClicked(StringHash, VariantMap &eventData)
 	ListView *lv = static_cast<ListView *>(eventData[ItemSelected::P_ELEMENT].GetPtr());
 	assert(lv);
 
-	Button *b = static_cast<Button *>(m_window_menu->GetChild("delete_universe", false));
+	Button *b = static_cast<Button *>(m_window_menu->GetChild(MAINMENU_ELEMENT_DELETE_UNIVERSE, false));
 	b->SetStyle("ButtonInLine");
 
 	String universe_name = lv->GetSelectedItem()->GetName();
@@ -680,10 +689,10 @@ void MainMenu::HandleInfosUniverseClicked(StringHash, VariantMap &eventData)
 		engine::Universe::instance()->GetUniverseSeed());
 }
 
-void MainMenu::HandleDeleteUniversePressed(StringHash eventType, VariantMap &eventData)
+void MainMenu::HandleDeleteUniversePressed(StringHash, VariantMap &eventData)
 {
 	if (eventData[MessageACK::P_OK].GetBool()) {
-		ListView *lv = dynamic_cast<ListView *>(m_window_menu->GetChild("loading_universe_listview", true));
+		ListView *lv = dynamic_cast<ListView *>(m_window_menu->GetChild(MAINMENU_ELEMENT_LOAD_UNIVERSE_LISTVIEW, true));
 		assert(lv);
 		String universe_name = lv->GetSelectedItem()->GetName();
 		Vector<String> list_files_universe;
@@ -710,7 +719,7 @@ void MainMenu::HandleDeleteUniversePressed(StringHash eventType, VariantMap &eve
 
 	UpdateUniverseInfos();
 
-	Button *b = static_cast<Button *>(m_window_menu->GetChild("delete_universe", false));
+	Button *b = static_cast<Button *>(m_window_menu->GetChild(MAINMENU_ELEMENT_DELETE_UNIVERSE, false));
 	b->SetStyle("ButtonInLineInactive");
 
 	if (m_modal_window != nullptr) {
@@ -722,9 +731,9 @@ void MainMenu::HandleDeleteUniversePressed(StringHash eventType, VariantMap &eve
 	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(MainMenu, HandleKeyDown));
 }
 
-void MainMenu::HandleDeleteUniverse(StringHash eventType, VariantMap &eventData)
+void MainMenu::HandleDeleteUniverse(StringHash, VariantMap &eventData)
 {
-	ListView *lv = dynamic_cast<ListView *>(m_window_menu->GetChild("loading_universe_listview", true));
+	ListView *lv = dynamic_cast<ListView *>(m_window_menu->GetChild(MAINMENU_ELEMENT_LOAD_UNIVERSE_LISTVIEW, true));
 	assert(lv);
 	if (lv->GetSelectedItem() == nullptr) {
 		return;
@@ -751,14 +760,14 @@ void MainMenu::ShowErrorBubble(const String &message)
 	m_enable_error_bubble_timer = true;
 	m_error_bubble_timer->Reset();
 
-	Window *error_bubble_window = dynamic_cast<Window *>(m_window_menu->GetChild("error_window_bubble", true));
+	Window *error_bubble_window = dynamic_cast<Window *>(m_window_menu->GetChild(MAINMENU_ELEMENT_ERROR_WINDOW_BUBBLE, true));
 	if (!error_bubble_window) {
 		error_bubble_window = new Window(context_);
 		m_window_menu->AddChild(error_bubble_window);
 		error_bubble_window->SetStyle("ErrorBubble");
-		error_bubble_window->SetName("error_window_bubble");
+		error_bubble_window->SetName(MAINMENU_ELEMENT_ERROR_WINDOW_BUBBLE);
 	}
-	static_cast<Text *>(m_window_menu->GetChild("error_bubble_text", true))->SetText(message);
+	static_cast<Text *>(m_window_menu->GetChild(MAINMENU_ELEMENT_ERROR_BUBBLE_TEXT, true))->SetText(message);
 	error_bubble_window->SetVisible(true);
 }
 
@@ -832,7 +841,7 @@ Slider *MainMenu::CreateSliderWithLabels(const String &name, const String &label
 
 void MainMenu::UpdateUniverseInfos(const uint32_t &birth, const uint64_t &seed)
 {
-	ListView *lv = dynamic_cast<ListView *>(m_window_menu->GetChild("loading_universe_listview", true));
+	ListView *lv = dynamic_cast<ListView *>(m_window_menu->GetChild(MAINMENU_ELEMENT_LOAD_UNIVERSE_LISTVIEW, true));
 	assert(lv);
 
 	String birth_str = (birth ? ToString("%s",
