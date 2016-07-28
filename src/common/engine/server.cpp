@@ -347,7 +347,7 @@ void Server::handlePacket_CharacterCreate(NetworkPacket *packet)
 
 void Server::handlePacket_CharacterRemove(NetworkPacket *packet)
 {
-
+	uint64_t characterId = packet->ReadUInt64();
 }
 
 void Server::handlePacket_CharacterConnect(NetworkPacket *packet)

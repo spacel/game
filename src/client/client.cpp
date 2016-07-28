@@ -271,7 +271,11 @@ void Client::handleClientUiEvent_ChararacterAdd(ClientUIEventPtr event)
 
 void Client::handleClientUiEvent_ChararacterRemove(ClientUIEventPtr event)
 {
-	// @TODO: send packet to server
+	ClientUIEvent_CharacterRemove *r_event = dynamic_cast<ClientUIEvent_CharacterRemove *>(event.get());
+	assert (r_event);
+
+	NetworkPacket *pkt = new NetworkPacket(CMSG_CHARACTER_REMOVE);
+	pkt->WriteUInt64(r_event->id);
 }
 
 }

@@ -36,7 +36,7 @@ enum PlayerRace
 	PLAYER_RACE_MAX,
 };
 
-static const char* player_race_names[PLAYER_RACE_MAX] = {
+static const char *player_race_names[PLAYER_RACE_MAX] = {
 	"Human",
 	"Kilbog",
 	"Arkyn",
@@ -50,7 +50,7 @@ enum PlayerSex
 	PLAYER_SEX_MAX,
 };
 
-static const char* player_sex_names[PLAYER_SEX_MAX] = {
+static const char *player_sex_names[PLAYER_SEX_MAX] = {
 	"Male",
 	"Female"
 };

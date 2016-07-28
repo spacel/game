@@ -84,6 +84,7 @@ struct ClientUIEvent_CharacterAdd: public ClientUIEvent {
 };
 struct ClientUIEvent_CharacterRemove: public ClientUIEvent {
 	ClientUIEvent_CharacterRemove(): ClientUIEvent(CLIENT_UI_EVENT_CHARACTER_REMOVE) {}
+	uint64_t id;
 };
 
 struct ClientUIEventHandler
