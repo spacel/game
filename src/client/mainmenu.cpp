@@ -19,6 +19,7 @@
  */
 
 #include "mainmenu.h"
+#include <common/engine/player.h>
 #include <iostream>
 #include <common/engine/generators.h>
 #include <common/time_utils.h>
@@ -902,14 +903,16 @@ void MainMenu::HandleNewCharacter(StringHash eventType, VariantMap &eventData)
 	character_name->SetMaxLength(32);
 
 	std::vector<Urho3D::String> sexe_choice;
-	sexe_choice.push_back(Urho3D::String("Male"));
-	sexe_choice.push_back(Urho3D::String("Female"));
+	for(const auto &item : engine::player_sex_names) {
+		sexe_choice.push_back(item);
+	}
 
 	DropDownList *list_sex = CreateDropDownList("Sex", "Sex", MAINMENU_BUTTON_SPACE * 2, character_name->GetPosition().y_ + character_name->GetSize().y_ + MAINMENU_BUTTON_SPACE, sexe_choice);
 
 	std::vector<Urho3D::String> race_choice;
-	race_choice.push_back(Urho3D::String("Humain"));
-	race_choice.push_back(Urho3D::String("Marsien"));
+	for(const auto &item : engine::player_race_names) {
+		race_choice.push_back(item);
+	}
 
 	DropDownList *list_race = CreateDropDownList("Race", "Race", MAINMENU_BUTTON_SPACE * 2, list_sex->GetPosition().y_ + list_sex->GetSize().y_ + MAINMENU_BUTTON_SPACE, race_choice);
 
@@ -926,7 +929,7 @@ void MainMenu::HandleNewCharacter(StringHash eventType, VariantMap &eventData)
 
 void MainMenu::HandleCreateCharacter(StringHash eventType, VariantMap &eventData)
 {
-	
+	int race_id = static_cast<DropDownList *>(m_window_menu->GetChild("Race", true))->GetSelection();
 }
 
 void MainMenu::ShowErrorBubble(const String &message)
