@@ -173,6 +173,11 @@ void SpacelGame::HandleBeginFrame(StringHash, VariantMap &eventData)
 
 void SpacelGame::HandleCharacterList(UIEventPtr event)
 {
-	// @TODO handle this
+	UIEvent_CharacterList *r_event = dynamic_cast<UIEvent_CharacterList *>(event.get());
+	assert(r_event);
+
+	for (const auto &player: r_event->player_list) {
+		// @TODO handle this properly in GUI or send this to proper UI component
+	}
 }
 }

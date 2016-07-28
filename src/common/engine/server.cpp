@@ -308,10 +308,16 @@ void Server::handlePacket_Auth(NetworkPacket *packet)
 #endif
 
 	NetworkPacket *resp_packet = new NetworkPacket(SMSG_CHARACTER_LIST);
-	resp_packet->WriteUInt(0); // GUID
-	resp_packet->WriteUByte(1); // Race
-	resp_packet->WriteUByte(1); // Gender
-	resp_packet->WriteString("TestCharacter");
+	static const uint8_t character_number = 1;
+	resp_packet->WriteUByte(character_number);
+
+	for (uint8_t i = 0; i < character_number; i++) {
+		resp_packet->WriteUInt64(6); // GUID
+		resp_packet->WriteUByte(PLAYER_RACE_HUMAN); // Race
+		resp_packet->WriteUByte(PLAYER_SEX_MALE); // Sex
+		resp_packet->WriteString("TestCharacter");
+	}
+
 	SendPacket(resp_packet);
 
 	// @TODO Change this place in the future
@@ -320,7 +326,7 @@ void Server::handlePacket_Auth(NetworkPacket *packet)
 	assert(galaxy);
 	galaxy_packet->WriteUInt(galaxy->solar_systems.size());
 	for (const auto &ss: galaxy->solar_systems) {
-		galaxy_packet->WriteUInt(ss.first); // ID
+		galaxy_packet->WriteUInt64(ss.first); // ID
 		galaxy_packet->WriteUByte(ss.second->type);
 		galaxy_packet->WriteDouble(ss.second->radius);
 		galaxy_packet->WriteDouble(ss.second->pos_x);

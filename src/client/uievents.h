@@ -23,6 +23,7 @@
 #include <memory>
 #include <common/engine/player.h>
 #include "../common/threadsafe_utils.h"
+#include "player.h"
 
 namespace spacel {
 
@@ -47,6 +48,7 @@ typedef std::shared_ptr<UIEvent> UIEventPtr;
 
 struct UIEvent_CharacterList: public UIEvent {
 	UIEvent_CharacterList(): UIEvent(UI_EVENT_CHARACTER_LIST) {}
+	std::vector<CharacterList_Player> player_list;
 };
 
 struct UIEventHandler

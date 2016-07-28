@@ -20,9 +20,11 @@
 #include "client.h"
 #include "network/clientpackethandler.h"
 #include "project_defines.h"
+#include "player.h"
 #include <Urho3D/IO/Log.h>
 #include <common/engine/server.h>
 #include <thread>
+#include <cassert>
 
 namespace spacel {
 
@@ -211,7 +213,7 @@ void Client::handlePacket_GalaxySystems(NetworkPacket *packet)
 	uint32_t ss_number = packet->ReadUInt();
 	for (uint32_t i = 0; i < ss_number; i++) {
 		engine::SolarSystem *ss = new engine::SolarSystem();
-		ss->id = packet->ReadUInt();
+		ss->id = packet->ReadUInt64();
 		ss->type = (engine::SolarType) packet->ReadUByte();
 		ss->radius = packet->ReadDouble();
 		ss->pos_x = packet->ReadDouble();
@@ -228,8 +230,21 @@ void Client::handlePacket_CharacterList(NetworkPacket *packet)
 {
 	m_loading_step = CLIENTLOADINGSTEP_AUTHED;
 
-	// @TODO forge some datas and send it
-	QueueUIEvent(new UIEvent_CharacterList());
+	uint8_t character_number = packet->ReadUByte();
+
+	UIEvent_CharacterList *event = new UIEvent_CharacterList();
+
+	for (uint8_t i = 0; i < character_number; i++) {
+		CharacterList_Player c_player;
+		c_player.guid = packet->ReadUInt64();
+		c_player.race = (engine::PlayerRace) packet->ReadUByte();
+		c_player.sex = (engine::PlayerSex) packet->ReadUByte();
+		c_player.name = packet->ReadString();
+
+		event->player_list.push_back(c_player);
+	}
+
+	QueueUIEvent(event);
 }
 
 void Client::handlePacket_CharacterCreate(NetworkPacket *packet)
@@ -260,7 +275,7 @@ void Client::SendInitPacket()
 void Client::handleClientUiEvent_ChararacterAdd(ClientUIEventPtr event)
 {
 	ClientUIEvent_CharacterAdd *r_event = dynamic_cast<ClientUIEvent_CharacterAdd *>(event.get());
-	assert (r_event);
+	assert(r_event);
 
 	NetworkPacket *pkt = new NetworkPacket(CMSG_CHARACTER_CREATE);
 	pkt->WriteUByte(r_event->race);
@@ -272,7 +287,7 @@ void Client::handleClientUiEvent_ChararacterAdd(ClientUIEventPtr event)
 void Client::handleClientUiEvent_ChararacterRemove(ClientUIEventPtr event)
 {
 	ClientUIEvent_CharacterRemove *r_event = dynamic_cast<ClientUIEvent_CharacterRemove *>(event.get());
-	assert (r_event);
+	assert(r_event);
 
 	NetworkPacket *pkt = new NetworkPacket(CMSG_CHARACTER_REMOVE);
 	pkt->WriteUInt64(r_event->id);
