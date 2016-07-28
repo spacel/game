@@ -901,13 +901,17 @@ void MainMenu::HandleNewCharacter(StringHash eventType, VariantMap &eventData)
 	LineEdit *character_name = CreateMainMenuLineEdit("character_name", "Character Name: ", 0, 65);
 	character_name->SetMaxLength(32);
 
-
-
 	std::vector<Urho3D::String> sexe_choice;
 	sexe_choice.push_back(Urho3D::String("Male"));
 	sexe_choice.push_back(Urho3D::String("Female"));
 
 	DropDownList *list_sex = CreateDropDownList("Sex", "Sex", MAINMENU_BUTTON_SPACE * 2, character_name->GetPosition().y_ + character_name->GetSize().y_ + MAINMENU_BUTTON_SPACE, sexe_choice);
+
+	std::vector<Urho3D::String> race_choice;
+	race_choice.push_back(Urho3D::String("Humain"));
+	race_choice.push_back(Urho3D::String("Marsien"));
+
+	DropDownList *list_race = CreateDropDownList("Race", "Race", MAINMENU_BUTTON_SPACE * 2, list_sex->GetPosition().y_ + list_sex->GetSize().y_ + MAINMENU_BUTTON_SPACE, race_choice);
 
 	Button *create = CreateMainMenuButton("Create", "ButtonInLine", "TextButtonInLine");
 	create->SetPosition(0 + 50, m_window_menu->GetSize().y_ - create->GetSize().y_ - MAINMENU_BUTTON_SPACE);
@@ -922,6 +926,7 @@ void MainMenu::HandleNewCharacter(StringHash eventType, VariantMap &eventData)
 
 void MainMenu::HandleCreateCharacter(StringHash eventType, VariantMap &eventData)
 {
+	
 }
 
 void MainMenu::ShowErrorBubble(const String &message)
@@ -1009,7 +1014,7 @@ Slider *MainMenu::CreateSliderWithLabels(const String &name, const String &label
 }
 
 DropDownList *MainMenu::CreateDropDownList(const String &name, const String &label, const int x, const int y,
-										   const std::vector<Urho3D::String> &list)
+		const std::vector<Urho3D::String> &list)
 {
 	Text *text_list = CreateText(label);
 	text_list->SetPosition(x, y);
