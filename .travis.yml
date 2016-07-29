@@ -3,18 +3,47 @@ compiler:
   - gcc
   - clang
 addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
+      - llvm-toolchain-precise-3.6
     packages:
       - libasound2-dev
       - libxrandr-dev
       - libcppunit-dev
+      - gcc-5
+      - g++-5
+      - clang-3.6
 
 dist: trusty
-before_install: ./util/travis/before_install.sh
 script: python ./util/travis/checkstyle.py && ./util/travis/script.sh && ./util/travis/unittests.sh
 sudo: required
 notifications:
   email: false
 
+matrix:
+  include:
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-5
+            - g++-5
+      env: COMPILER=g++-5
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.6
+          packages:
+            - clang-3.6
+      env: COMPILER=clang++-3.6
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.7
+          packages:
+            - clang-3.7
+      env: COMPILER=clang++-3.7
