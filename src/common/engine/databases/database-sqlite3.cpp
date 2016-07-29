@@ -66,7 +66,7 @@ void DatabaseSQLite3::Open()
 
 	for (uint16_t i = 0; i < SQLITE3STMT_COUNT; i++) {
 		URHO3D_LOGDEBUGF("Loading statement %d %s", i, stmt_list[i]);
-		sqlite3_verify(sqlite3_prepare(m_database, stmt_list[i], -1, &m_stmt[i], NULL));
+		sqlite3_verify(sqlite3_prepare_v2(m_database, stmt_list[i], -1, &m_stmt[i], NULL));
 	}
 }
 
