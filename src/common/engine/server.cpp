@@ -199,6 +199,7 @@ const bool Server::LoadGameDatas()
 void Server::StopServer()
 {
 	delete m_db;
+	m_db = nullptr;
 }
 
 void Server::ThreadFunction()

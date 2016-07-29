@@ -66,17 +66,23 @@ void DatabaseSQLite3::Open()
 
 	for (uint16_t i = 0; i < SQLITE3STMT_COUNT; i++) {
 		URHO3D_LOGDEBUGF("Loading statement %d %s", i, stmt_list[i]);
-		sqlite3_verify(sqlite3_prepare_v2(m_database, stmt_list[i], -1, &m_stmt[i], NULL));
+		sqlite3_verify(sqlite3_prepare(m_database, stmt_list[i], -1, &m_stmt[i], NULL));
 	}
 }
 
 bool DatabaseSQLite3::Close()
 {
 	try {
+		for (uint16_t i = 0; i < SQLITE3STMT_COUNT; i++) {
+			URHO3D_LOGDEBUGF("Closing statement %d %s", i, stmt_list[i]);
+			sqlite3_verify(sqlite3_finalize(m_stmt[i]));
+		}
 		sqlite3_verify(sqlite3_close(m_database));
+		URHO3D_LOGDEBUG("Database closed.");
 		return true;
 	}
-	catch (SQLiteException &) {
+	catch (SQLiteException &e) {
+		URHO3D_LOGERRORF("Database closing error %s", e.what());
 		return false;
 	}
 }
