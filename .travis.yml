@@ -8,7 +8,7 @@ notifications:
 
 matrix:
   include:
-    - compiler: gcc
+    - compiler: gcc-5
       addons:
         apt:
           sources:
@@ -19,8 +19,8 @@ matrix:
             - libasound2-dev
             - libxrandr-dev
             - libcppunit-dev
-      env: COMPILER=g++-5
-    - compiler: clang
+      env: COMPILER=g++-5 CXX=g++-5 CC=gcc-5
+    - compiler: clang-3.6
       addons:
         apt:
           sources:
@@ -32,7 +32,7 @@ matrix:
             - libxrandr-dev
             - libcppunit-dev
       env: COMPILER=clang++-3.6
-    - compiler: clang
+    - compiler: clang-3.7
       addons:
         apt:
           sources:
@@ -44,3 +44,15 @@ matrix:
             - libxrandr-dev
             - libcppunit-dev
       env: COMPILER=clang++-3.7
+    - compiler: clang-3.8
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.8
+          packages:
+            - clang-3.8
+            - libasound2-dev
+            - libxrandr-dev
+            - libcppunit-dev
+      env: COMPILER=clang++-3.8
