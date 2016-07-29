@@ -67,6 +67,9 @@ enum MainMenuIds
 #define MAINMENU_ELEMENT_ERROR_WINDOW_BUBBLE "error_window_bubble"
 #define MAINMENU_ELEMENT_DELETE_UNIVERSE "delete_universe"
 #define MAINMENU_ELEMENT_ERROR_BUBBLE_TEXT "error_bubble_text"
+#define MAINMENU_ELEMENT_CHARACTER_NAME "character_name"
+#define MAINMENU_ELEMENT_SEX "Sex"
+#define MAINMENU_ELEMENT_RACE "Race"
 
 #define MAINMENU_BUTTON_SPACE 20
 
@@ -898,7 +901,7 @@ void MainMenu::HandleNewCharacter(StringHash eventType, VariantMap &eventData)
 
 	SetTitle("Create Character");
 
-	LineEdit *character_name = CreateMainMenuLineEdit("character_name", "Character Name: ", 0, 65);
+	LineEdit *character_name = CreateMainMenuLineEdit(MAINMENU_ELEMENT_CHARACTER_NAME, "Character Name: ", 0, 65);
 	character_name->SetMaxLength(32);
 
 	std::vector<Urho3D::String> sexe_choice;
@@ -906,14 +909,14 @@ void MainMenu::HandleNewCharacter(StringHash eventType, VariantMap &eventData)
 		sexe_choice.push_back(item);
 	}
 
-	DropDownList *list_sex = CreateDropDownList("Sex", "Sex", MAINMENU_BUTTON_SPACE * 2, character_name->GetPosition().y_ + character_name->GetSize().y_ + MAINMENU_BUTTON_SPACE, sexe_choice);
+	DropDownList *list_sex = CreateDropDownList(MAINMENU_ELEMENT_SEX, "Sex", MAINMENU_BUTTON_SPACE * 2, character_name->GetPosition().y_ + character_name->GetSize().y_ + MAINMENU_BUTTON_SPACE, sexe_choice);
 
 	std::vector<Urho3D::String> race_choice;
 	for(const auto &item : engine::player_race_names) {
 		race_choice.push_back(item);
 	}
 
-	DropDownList *list_race = CreateDropDownList("Race", "Race", MAINMENU_BUTTON_SPACE * 2, list_sex->GetPosition().y_ + list_sex->GetSize().y_ + MAINMENU_BUTTON_SPACE, race_choice);
+	DropDownList *list_race = CreateDropDownList(MAINMENU_ELEMENT_RACE, "Race", MAINMENU_BUTTON_SPACE * 2, list_sex->GetPosition().y_ + list_sex->GetSize().y_ + MAINMENU_BUTTON_SPACE, race_choice);
 
 	Button *create = CreateMainMenuButton("Create", "ButtonInLine", "TextButtonInLine");
 	create->SetPosition(0 + 50, m_window_menu->GetSize().y_ - create->GetSize().y_ - MAINMENU_BUTTON_SPACE);
@@ -928,7 +931,10 @@ void MainMenu::HandleNewCharacter(StringHash eventType, VariantMap &eventData)
 
 void MainMenu::HandleCreateCharacter(StringHash eventType, VariantMap &eventData)
 {
-	int race_id = static_cast<DropDownList *>(m_window_menu->GetChild("Race", true))->GetSelection();
+	const String name = static_cast<LineEdit *>(m_window_menu->GetChild(MAINMENU_ELEMENT_CHARACTER_NAME, true))->GetText();
+	const uint32_t race_id = static_cast<DropDownList *>(m_window_menu->GetChild(MAINMENU_ELEMENT_RACE, true))->GetSelection();
+	const uint32_t sexe_id = static_cast<DropDownList *>(m_window_menu->GetChild(MAINMENU_ELEMENT_SEX, true))->GetSelection();
+
 }
 
 void MainMenu::ShowErrorBubble(const String &message)
