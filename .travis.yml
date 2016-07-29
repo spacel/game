@@ -1,10 +1,4 @@
 language: cpp
-addons:
-  apt:
-    packages:
-      - libasound2-dev
-      - libxrandr-dev
-      - libcppunit-dev
 
 dist: trusty
 script: python ./util/travis/checkstyle.py && ./util/travis/script.sh && ./util/travis/unittests.sh
@@ -22,6 +16,9 @@ matrix:
           packages:
             - gcc-5
             - g++-5
+            - libasound2-dev
+            - libxrandr-dev
+            - libcppunit-dev
       env: COMPILER=g++-5
     - compiler: clang
       addons:
@@ -31,6 +28,9 @@ matrix:
             - llvm-toolchain-precise-3.6
           packages:
             - clang-3.6
+            - libasound2-dev
+            - libxrandr-dev
+            - libcppunit-dev
       env: COMPILER=clang++-3.6
     - compiler: clang
       addons:
@@ -40,4 +40,7 @@ matrix:
             - llvm-toolchain-precise-3.7
           packages:
             - clang-3.7
+            - libasound2-dev
+            - libxrandr-dev
+            - libcppunit-dev
       env: COMPILER=clang++-3.7
