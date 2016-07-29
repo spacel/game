@@ -77,7 +77,7 @@ bool DatabaseSQLite3::Close()
 			URHO3D_LOGDEBUGF("Closing statement %d %s", i, stmt_list[i]);
 			sqlite3_verify(sqlite3_finalize(m_stmt[i]));
 		}
-		sqlite3_verify(sqlite3_close(m_database));
+		sqlite3_verify(sqlite3_close_v2(m_database));
 		URHO3D_LOGDEBUG("Database closed.");
 		return true;
 	}
