@@ -17,6 +17,8 @@
  * along with Spacel.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#pragma once
+
 #include <chrono>
 #include <ctime>
 #include <string>

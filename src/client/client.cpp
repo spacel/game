@@ -290,7 +290,7 @@ void Client::handleClientUiEvent_ChararacterRemove(ClientUIEventPtr event)
 	assert(r_event);
 
 	NetworkPacket *pkt = new NetworkPacket(CMSG_CHARACTER_REMOVE);
-	pkt->WriteUInt64(r_event->id);
+	pkt->WriteUInt64(r_event->guid);
 }
 
 }

@@ -6,6 +6,7 @@
 #include "SettingsTests.h"
 #include "TimeTests.h"
 #include "GeneratorsTests.h"
+#include "UIEventTests.h"
 
 spacel::engine::UniverseGenerator *spacel::engine::UniverseGenerator::s_univgen = nullptr;
 uint64_t spacel::engine::UniverseGenerator::s_seed = 0;
@@ -17,6 +18,7 @@ int main() {
 	runner.addTest(spacel::unittests::TimeUnitTest::suite());
 	runner.addTest(spacel::unittests::SettingsTest::suite());
 	runner.addTest(spacel::unittests::GeneratorsUnitTest::suite());
+	runner.addTest(spacel::unittests::UIEventUnitTest::suite());
 	std::cout << "Running the unit tests." << std::endl;
 	return runner.run() ? 0 : 1;
 }
