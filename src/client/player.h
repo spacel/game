@@ -25,7 +25,7 @@
 
 namespace spacel {
 
-struct CharacterList_Player 
+struct CharacterList_Player
 {
 	uint64_t guid;
 	engine::PlayerRace race;
