@@ -79,7 +79,8 @@ struct ClientUIEvent {
 typedef std::shared_ptr<ClientUIEvent> ClientUIEventPtr;
 
 struct ClientUIEvent_CharacterAdd: public ClientUIEvent {
-	ClientUIEvent_CharacterAdd(): ClientUIEvent(CLIENT_UI_EVENT_CHARACTER_ADD) {}
+	ClientUIEvent_CharacterAdd(Urho3D::String name, engine::PlayerRace race, engine::PlayerSex sex):
+		ClientUIEvent(CLIENT_UI_EVENT_CHARACTER_ADD), name(name), race(race), sex(sex) {}
 	Urho3D::String name;
 	engine::PlayerRace race;
 	engine::PlayerSex sex;

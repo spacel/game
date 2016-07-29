@@ -19,6 +19,7 @@
  */
 
 #include "mainmenu.h"
+#include "client.h"
 #include <common/engine/player.h>
 #include <iostream>
 #include <common/engine/generators.h>
@@ -932,9 +933,14 @@ void MainMenu::HandleNewCharacter(StringHash eventType, VariantMap &eventData)
 void MainMenu::HandleCreateCharacter(StringHash eventType, VariantMap &eventData)
 {
 	const String name = static_cast<LineEdit *>(m_window_menu->GetChild(MAINMENU_ELEMENT_CHARACTER_NAME, true))->GetText();
-	const uint32_t race_id = static_cast<DropDownList *>(m_window_menu->GetChild(MAINMENU_ELEMENT_RACE, true))->GetSelection();
-	const uint32_t sexe_id = static_cast<DropDownList *>(m_window_menu->GetChild(MAINMENU_ELEMENT_SEX, true))->GetSelection();
+	const engine::PlayerRace race = (engine::PlayerRace) static_cast<DropDownList *>(m_window_menu->GetChild(MAINMENU_ELEMENT_RACE, true))->GetSelection();
+	const engine::PlayerSex sex = (engine::PlayerSex) static_cast<DropDownList *>(m_window_menu->GetChild(MAINMENU_ELEMENT_SEX, true))->GetSelection();
 
+	ClientUIEvent_CharacterAdd *ptr = new ClientUIEvent_CharacterAdd(name, race, sex);
+	ClientUIEventPtr event(ptr);
+	Client::instance()->QueueClientUiEvent(event);
+
+	//Client::instance()->QueueClientUiEvent(character);
 }
 
 void MainMenu::ShowErrorBubble(const String &message)

@@ -26,6 +26,8 @@
 #include <thread>
 #include <cassert>
 
+#include <iostream>
+
 namespace spacel {
 
 using namespace engine::network;
