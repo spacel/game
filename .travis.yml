@@ -1,16 +1,10 @@
 language: cpp
-compiler:
-  - gcc
-  - clang
 addons:
-      - llvm-toolchain-precise-3.6
+  apt:
     packages:
       - libasound2-dev
       - libxrandr-dev
       - libcppunit-dev
-      - gcc-5
-      - g++-5
-      - clang-3.6
 
 dist: trusty
 script: python ./util/travis/checkstyle.py && ./util/travis/script.sh && ./util/travis/unittests.sh
