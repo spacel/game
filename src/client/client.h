@@ -91,6 +91,7 @@ public:
 	void handlePacket_CharacterRemove(engine::network::NetworkPacket *packet);
 	void handlePacket_Kick(engine::network::NetworkPacket *packet);
 
+	// Queue event incoming from UI to client
 	void QueueClientUiEvent(ClientUIEventPtr e)
 	{
 		m_clientui_event_queue.push_back(e);
@@ -106,10 +107,11 @@ private:
 
 	void SendInitPacket();
 
+	// Queue event incoming from client to UI
 	inline void QueueUIEvent(UIEvent *event)
 	{
 		m_ui_event_handler->QueueUiEvent(
-			UIEventPtr(event));
+				UIEventPtr(event));
 	}
 
 	static Client *s_client;
