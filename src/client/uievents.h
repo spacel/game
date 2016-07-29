@@ -65,6 +65,7 @@ typedef SafeQueue<UIEventPtr> UIEventQueue;
  * UI -> Client
  */
 enum ClientUIEventID {
+	CLIENT_UI_EVENT_CONNECT,
 	CLIENT_UI_EVENT_CHARACTER_ADD,
 	CLIENT_UI_EVENT_CHARACTER_REMOVE,
 	CLIENT_UI_EVENT_MAX,
@@ -77,6 +78,10 @@ struct ClientUIEvent {
 	ClientUIEventID id;
 };
 typedef std::shared_ptr<ClientUIEvent> ClientUIEventPtr;
+
+struct ClientUIEvent_Connect: public ClientUIEvent {
+	ClientUIEvent_Connect(): ClientUIEvent(CLIENT_UI_EVENT_CONNECT) {}
+};
 
 struct ClientUIEvent_CharacterAdd: public ClientUIEvent {
 	ClientUIEvent_CharacterAdd(Urho3D::String name, engine::PlayerRace race, engine::PlayerSex sex):

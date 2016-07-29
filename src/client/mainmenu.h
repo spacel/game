@@ -50,11 +50,15 @@ public:
 	~MainMenu();
 	void Start();
 
+	// Handlers called from main class
+	void HandleCharacterList(StringHash eventType, VariantMap &eventData);
+
 private:
 	// Handlers
 	void HandleClosePressed(StringHash eventType, VariantMap &eventData);
 	void HandleKeyDown(StringHash eventType, VariantMap &eventData);
 	void HandleLaunchGamePressed(StringHash eventType, VariantMap &eventData);
+	void HandleDisconnectSinglePlayer(StringHash eventType, VariantMap &eventData);
 	void HandleSingleplayerPressed(StringHash eventType, VariantMap &eventData);
 	void HandleNewGamePressed(StringHash, VariantMap &eventData);
 	void HandleLoadGamePressed(StringHash, VariantMap &eventData);
@@ -72,7 +76,6 @@ private:
 	void HandleDeleteUniversePressed(StringHash eventType, VariantMap &eventData);
 	void HandleGenerateSeedPressed(StringHash eventType, VariantMap &eventData);
 	void HandleDeleteUniverse(StringHash eventType, VariantMap &eventData);
-	void HandleCharacterList(StringHash eventType, VariantMap &eventData);
 	void HandleInfosCharacterClicked(StringHash eventType, VariantMap &eventData);
 	void HandleCreateCharacter(StringHash eventType, VariantMap &eventData);
 	void HandleNewCharacter(StringHash eventType, VariantMap &eventData);

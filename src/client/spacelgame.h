@@ -42,6 +42,8 @@ enum GlobalUIId
 	GLOBALUI_GAME,
 };
 
+class GenericMenu;
+
 class SpacelGame : public Application
 {
 	URHO3D_OBJECT(SpacelGame, Application);
@@ -67,6 +69,7 @@ private:
 	void InitLocales();
 
 	ClientSettings *m_config = nullptr;
+	GenericMenu *m_current_menu = nullptr;
 	UIEventQueue m_ui_event_queue;
 };
 

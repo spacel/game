@@ -108,31 +108,21 @@ void SpacelGame::ChangeGameGlobalUI(const GlobalUIId ui_id, void *param)
 			MainMenu *main_menu = new MainMenu(context_, m_config, this);
 			GetSubsystem<UI>()->GetRoot()->AddChild(main_menu);
 			main_menu->Start();
+			m_current_menu = main_menu;
 			break;
 		}
 		case GLOBALUI_LOADINGSCREEN: {
-			assert(param != nullptr);
-			const String gamedatapath = GetSubsystem<FileSystem>()->GetProgramDir() + "Data/game/";
-			const String path_universe =
-				GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "universe");
-			const String universe_name((const char *) param);
-
-			Client::instance()->SetSinglePlayerMode(true);
-			Client::instance()->SetGameDataPath(std::string(gamedatapath.CString()));
-			Client::instance()->SetDataPath(std::string(path_universe.CString()));
-			Client::instance()->SetUniverseName(universe_name.CString());
-			Client::instance()->SetUIEventHandler(this);
-			Client::instance()->Run();
-
 			LoadingScreen *loading_screen = new LoadingScreen(context_, m_config, this);
 			GetSubsystem<UI>()->GetRoot()->AddChild(loading_screen);
 			loading_screen->Start();
+			m_current_menu = loading_screen;
 			break;
 		}
 		case GLOBALUI_GAME: {
 			Game *game = new Game(context_, m_config, this);
 			GetSubsystem<UI>()->GetRoot()->AddChild(game);
 			game->Start();
+			m_current_menu = game;
 			break;
 		}
 		default: assert(false);
@@ -141,7 +131,7 @@ void SpacelGame::ChangeGameGlobalUI(const GlobalUIId ui_id, void *param)
 
 void SpacelGame::QueueClientUIEvent(ClientUIEvent *event)
 {
-	assert(Client::instance()->GetLoadingStep() >= CLIENTLOADINGSTEP_CONNECTED);
+	assert(Client::instance()->GetLoadingStep() >= CLIENTLOADINGSTEP_BEGIN_START);
 	Client::instance()->QueueClientUiEvent(ClientUIEventPtr(event));
 }
 
@@ -173,11 +163,18 @@ void SpacelGame::HandleBeginFrame(StringHash, VariantMap &eventData)
 
 void SpacelGame::HandleCharacterList(UIEventPtr event)
 {
+	assert(m_current_menu);
+
 	UIEvent_CharacterList *r_event = dynamic_cast<UIEvent_CharacterList *>(event.get());
 	assert(r_event);
 
-	for (const auto &player: r_event->player_list) {
-		// @TODO handle this properly in GUI or send this to proper UI component
-	}
+
+	MainMenu *main_menu = dynamic_cast<MainMenu *>(m_current_menu);
+	assert(main_menu);
+
+	// Show the character list
+	VariantMap v;
+	main_menu->HandleCharacterList(StringHash(), v);
+
 }
 }

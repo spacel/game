@@ -29,6 +29,7 @@ const UIEventHandler UIEventHandlerTable[UI_EVENT_MAX] = {
 };
 
 const ClientUIEventHandler ClientUIEventHandlerTable[CLIENT_UI_EVENT_MAX] = {
+	&Client::handleClientUIEvent_Null,
 	&Client::handleClientUiEvent_ChararacterAdd,
 	&Client::handleClientUiEvent_ChararacterRemove,
 };

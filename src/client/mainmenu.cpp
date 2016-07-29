@@ -40,6 +40,7 @@
 #include <Urho3D/UI/CheckBox.h>
 #include <Urho3D/Graphics/Graphics.h>
 #include <Urho3D/UI/DropDownList.h>
+#include <thread>
 
 using namespace Urho3D;
 
@@ -236,6 +237,13 @@ void MainMenu::HandleKeyDown(StringHash, VariantMap &eventData)
 	}
 }
 
+void MainMenu::HandleDisconnectSinglePlayer(StringHash eventType, VariantMap &eventData)
+{
+	Client::instance()->Stop();
+	Client::deinstance();
+	HandleSingleplayerPressed(eventType, eventData);
+}
+
 void MainMenu::HandleSingleplayerPressed(StringHash, VariantMap &eventData)
 {
 	m_menu_id = MAINMENUID_SINGLEPLAYER;
@@ -366,7 +374,23 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 		return;
 	}
 
-	m_main->ChangeGameGlobalUI(GLOBALUI_LOADINGSCREEN, (void *)universe_name.CString());
+
+	const String gamedatapath = GetSubsystem<FileSystem>()->GetProgramDir() + "Data/game/";
+	const String path_universe_w_universe =
+		GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "universe");
+
+	Client::instance()->SetSinglePlayerMode(true);
+	Client::instance()->SetGameDataPath(std::string(gamedatapath.CString()));
+	Client::instance()->SetDataPath(std::string(path_universe_w_universe.CString()));
+	Client::instance()->SetUniverseName(universe_name.CString());
+	Client::instance()->SetUIEventHandler(m_main);
+	Client::instance()->Run();
+
+	// Wait 50ms to let client start
+	std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+	// Send event to client notifying we connect
+	Client::instance()->QueueClientUiEvent(ClientUIEventPtr(new ClientUIEvent_Connect()));
 }
 
 void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
@@ -437,7 +461,7 @@ void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
 
 	SubscribeToEvent(universes_listview, E_ITEMCLICKED, URHO3D_HANDLER(MainMenu, HandleInfosUniverseClicked));
 	SubscribeToEvent(universes_listview, E_ITEMDOUBLECLICKED, URHO3D_HANDLER(MainMenu, HandleLaunchGamePressed));
-	SubscribeToEvent(launch, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleCharacterList));
+	SubscribeToEvent(launch, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleLaunchGamePressed));
 	SubscribeToEvent(delete_univers, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleDeleteUniverse));
 	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSingleplayerPressed));
 }
@@ -780,16 +804,12 @@ void MainMenu::HandleDeleteUniverse(StringHash, VariantMap &eventData)
 	}
 }
 
-void MainMenu::HandleCharacterList(StringHash eventType, VariantMap &eventData) {
+void MainMenu::HandleCharacterList(StringHash, VariantMap &) {
 	m_menu_id = MAINMENUID_CHARACTER_LIST;
-	LineEdit *name_le = dynamic_cast<LineEdit *>(m_window_menu->GetChild("universe_name", true));
-	LineEdit *seed_le = dynamic_cast<LineEdit *>(m_window_menu->GetChild("create_universe_seed", true));
 
 	//m_menu_id = MAINMENUID_SINGLEPLAYER_LOADGAME;
 	m_window_menu->RemoveAllChildren();
 
-	m_window_menu->AddChild(name_le);
-	m_window_menu->AddChild(seed_le);
 	//m_window_menu->SetVisible(false);
 	//GetSubsystem<UI>()->GetRoot()->RemoveAllChildren();
 
@@ -886,15 +906,15 @@ void MainMenu::HandleCharacterList(StringHash eventType, VariantMap &eventData) 
 	SubscribeToEvent(character_listview, E_ITEMCLICKED, URHO3D_HANDLER(MainMenu, HandleInfosCharacterClicked));
 	SubscribeToEvent(character_listview, E_ITEMDOUBLECLICKED, URHO3D_HANDLER(MainMenu, HandleLaunchGamePressed));
 	SubscribeToEvent(launch, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleLaunchGamePressed));
-	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleSingleplayerPressed));
+	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleDisconnectSinglePlayer));
 	SubscribeToEvent(create, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleNewCharacter));
 }
 
-void MainMenu::HandleInfosCharacterClicked(StringHash eventType, VariantMap &eventData)
+void MainMenu::HandleInfosCharacterClicked(StringHash, VariantMap &eventData)
 {
 }
 
-void MainMenu::HandleNewCharacter(StringHash eventType, VariantMap &eventData)
+void MainMenu::HandleNewCharacter(StringHash, VariantMap &eventData)
 {
 	m_menu_id = MAINMENUID_CHARACTER_CREATE;
 	m_window_menu->RemoveAllChildren();
@@ -1044,7 +1064,7 @@ DropDownList *MainMenu::CreateDropDownList(const String &name, const String &lab
 		Text *text = CreateText(item);
 		drop_down_list->AddItem(text);
 	}
-	
+
 	return drop_down_list;
 }
 
