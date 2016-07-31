@@ -40,6 +40,7 @@
 #include <Urho3D/UI/CheckBox.h>
 #include <Urho3D/Graphics/Graphics.h>
 #include <Urho3D/UI/DropDownList.h>
+#include <Urho3D/UI/ToolTip.h>
 #include <thread>
 
 using namespace Urho3D;
@@ -374,6 +375,19 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 		return;
 	}
 
+
+	m_window_menu->RemoveAllChildren();
+	SetTitle("Connexion au serveur...");
+	Text *connexion = CreateText("Connexion en cours...");
+	connexion->SetAlignment(HA_CENTER, VA_CENTER);
+	m_window_menu->AddChild(connexion);
+
+	Button *back = CreateMainMenuButton("Back");
+	back->SetAlignment(HA_CENTER, VA_BOTTOM);
+	back->SetPosition(0, -20);
+	m_window_menu->AddChild(back);
+
+	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleBackMainMenu));
 
 	const String gamedatapath = GetSubsystem<FileSystem>()->GetProgramDir() + "Data/game/";
 	const String path_universe_w_universe =
@@ -948,6 +962,11 @@ void MainMenu::HandleNewCharacter(StringHash, VariantMap &eventData)
 
 	SubscribeToEvent(create, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleCreateCharacter));
 	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleMasterMenu));
+}
+
+void MainMenu::HandleBackMainMenu(StringHash eventType, VariantMap &eventData)
+{
+	m_main->ChangeGameGlobalUI(GLOBALUI_MAINMENU);
 }
 
 void MainMenu::HandleCreateCharacter(StringHash eventType, VariantMap &eventData)

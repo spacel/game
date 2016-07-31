@@ -79,6 +79,7 @@ private:
 	void HandleInfosCharacterClicked(StringHash eventType, VariantMap &eventData);
 	void HandleCreateCharacter(StringHash eventType, VariantMap &eventData);
 	void HandleNewCharacter(StringHash eventType, VariantMap &eventData);
+	void HandleBackMainMenu(StringHash eventType, VariantMap &eventData);
 	void Background();
 	void ChangeBackground(const String &background);
 	void Title();
