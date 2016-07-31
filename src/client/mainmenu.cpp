@@ -377,8 +377,8 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 
 
 	m_window_menu->RemoveAllChildren();
-	SetTitle("Connexion au serveur...");
-	Text *connexion = CreateText("Connexion en cours...");
+	SetTitle("Connexion...");
+	Text *connexion = CreateText("Connexion server...");
 	connexion->SetAlignment(HA_CENTER, VA_CENTER);
 	m_window_menu->AddChild(connexion);
 
