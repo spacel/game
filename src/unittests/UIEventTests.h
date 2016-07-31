@@ -62,16 +62,15 @@ public:
 protected:
 	void test_UIEventCharacterAdd_ID()
 	{
-		ClientUIEvent_CharacterAdd event;
-		event.race = engine::PLAYER_RACE_HUMAN;
+		ClientUIEvent_CharacterAdd event("test", engine::PLAYER_RACE_HUMAN, engine::PLAYER_SEX_FEMALE);
 		CPPUNIT_ASSERT(event.id == CLIENT_UI_EVENT_CHARACTER_ADD);
 	}
 
 	void test_UIEventCharacterAdd_Var()
 	{
-		ClientUIEvent_CharacterAdd event;
-		event.race = engine::PLAYER_RACE_HUMAN;
+		ClientUIEvent_CharacterAdd event("test", engine::PLAYER_RACE_HUMAN, engine::PLAYER_SEX_FEMALE);
 		CPPUNIT_ASSERT(event.race == engine::PLAYER_RACE_HUMAN);
+		CPPUNIT_ASSERT(event.sex == engine::PLAYER_SEX_FEMALE);
 	}
 
 	void test_UIEventCharacterAdd_SharedPtr()
