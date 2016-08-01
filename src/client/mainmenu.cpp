@@ -377,8 +377,8 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 
 
 	m_window_menu->RemoveAllChildren();
-	SetTitle("Connexion...");
-	Text *connexion = CreateText("Connexion server...");
+	SetTitle("Connection...");
+	Text *connexion = CreateText("Connection...");
 	connexion->SetAlignment(HA_CENTER, VA_CENTER);
 	m_window_menu->AddChild(connexion);
 
@@ -387,7 +387,7 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 	back->SetPosition(0, -20);
 	m_window_menu->AddChild(back);
 
-	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleBackMainMenu));
+	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleDisconnectSinglePlayer));
 
 	const String gamedatapath = GetSubsystem<FileSystem>()->GetProgramDir() + "Data/game/";
 	const String path_universe_w_universe =
@@ -947,7 +947,7 @@ void MainMenu::HandleNewCharacter(StringHash, VariantMap &eventData)
 	DropDownList *list_sex = CreateDropDownList(MAINMENU_ELEMENT_SEX, "Sex", MAINMENU_BUTTON_SPACE * 2, character_name->GetPosition().y_ + character_name->GetSize().y_ + MAINMENU_BUTTON_SPACE, sexe_choice);
 
 	std::vector<Urho3D::String> race_choice;
-	for(const auto &item : engine::player_race_names) {
+	for (const auto &item : engine::player_race_names) {
 		race_choice.push_back(item);
 	}
 
@@ -962,11 +962,6 @@ void MainMenu::HandleNewCharacter(StringHash, VariantMap &eventData)
 
 	SubscribeToEvent(create, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleCreateCharacter));
 	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleMasterMenu));
-}
-
-void MainMenu::HandleBackMainMenu(StringHash eventType, VariantMap &eventData)
-{
-	m_main->ChangeGameGlobalUI(GLOBALUI_MAINMENU);
 }
 
 void MainMenu::HandleCreateCharacter(StringHash eventType, VariantMap &eventData)

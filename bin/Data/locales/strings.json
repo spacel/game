@@ -143,13 +143,13 @@
   "Control":{
     "fr": "Controle"
   },
-  "Connexion server...":{
-    "fr": "Connection au serveur..."
+  "Connection...":{
+    "fr": "Connexion en cours..."
   },
   "Create character":{
     "fr": "Créer un personnage"
   },
-  "Character Name: ":{
+  "Character name: ":{
     "fr": "Nom du personnage"
   },
   "Sex":{
@@ -165,7 +165,7 @@
     "fr": "Humain"
   },
   "Space Elf":{
-    "fr": "Elf de l'espace"
+    "fr": "Elfe de l'espace"
   }
 
 }
