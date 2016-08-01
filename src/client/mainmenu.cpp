@@ -40,7 +40,7 @@
 #include <Urho3D/UI/CheckBox.h>
 #include <Urho3D/Graphics/Graphics.h>
 #include <Urho3D/UI/DropDownList.h>
-#include <Urho3D/UI/ToolTip.h>
+#include <Urho3D/UI/MessageBox.h>
 #include <thread>
 
 using namespace Urho3D;
@@ -240,6 +240,8 @@ void MainMenu::HandleKeyDown(StringHash, VariantMap &eventData)
 
 void MainMenu::HandleDisconnectSinglePlayer(StringHash eventType, VariantMap &eventData)
 {
+	m_ui_elem->RemoveChild(m_ui_elem->GetChild("Connection...", true));
+	std::cout << "ICI CLIQUER SUR CANCEL IIIICCCII" << std::endl;
 	Client::instance()->Stop();
 	Client::deinstance();
 	HandleSingleplayerPressed(eventType, eventData);
@@ -375,19 +377,15 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 		return;
 	}
 
+	MessageBox *msg = new MessageBox(context_, "Connection...", "Connection...");
+	msg->GetWindow()->SetName("Connection...");
+	msg->GetWindow()->SetPosition(0, 0);
+	Button *cancel = static_cast<Button *>(msg->GetWindow()->GetChild("CancelButton", true));
+	Button *close = static_cast<Button *>(msg->GetWindow()->GetChild("CloseButton", true));
 
-	m_window_menu->RemoveAllChildren();
-	SetTitle("Connection...");
-	Text *connexion = CreateText("Connection...");
-	connexion->SetAlignment(HA_CENTER, VA_CENTER);
-	m_window_menu->AddChild(connexion);
 
-	Button *back = CreateMainMenuButton("Back");
-	back->SetAlignment(HA_CENTER, VA_BOTTOM);
-	back->SetPosition(0, -20);
-	m_window_menu->AddChild(back);
-
-	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleDisconnectSinglePlayer));
+	SubscribeToEvent(cancel, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleDisconnectSinglePlayer));
+	SubscribeToEvent(close, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleDisconnectSinglePlayer));
 
 	const String gamedatapath = GetSubsystem<FileSystem>()->GetProgramDir() + "Data/game/";
 	const String path_universe_w_universe =
@@ -823,6 +821,7 @@ void MainMenu::HandleCharacterList(StringHash, VariantMap &) {
 
 	//m_menu_id = MAINMENUID_SINGLEPLAYER_LOADGAME;
 	m_window_menu->RemoveAllChildren();
+	m_ui_elem->RemoveChild(m_ui_elem->GetChild("Connection...", true));
 
 	//m_window_menu->SetVisible(false);
 	//GetSubsystem<UI>()->GetRoot()->RemoveAllChildren();
