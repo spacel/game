@@ -55,6 +55,13 @@ static const char *player_sex_names[PLAYER_SEX_MAX] = {
 	"Female"
 };
 
+enum PlayerStat
+{
+	PLAYER_STAT_HP,
+	PLAYER_STAT_STAMINA,
+	PLAYER_STAT_MAX,
+};
+
 class Player : public Unit
 {
 public:
@@ -63,8 +70,14 @@ public:
 
 private:
 	std::string m_username = "";
-	uint32_t m_hp = 100;
-	uint32_t m_stamina = 100;
+
+	PlayerSex m_sex = PLAYER_SEX_MALE;
+	PlayerRace m_race = PLAYER_RACE_HUMAN;
+
+	uint32_t m_player_stats[PLAYER_STAT_MAX];
+	uint64_t m_xp = 0;
+	uint16_t m_level = 1;
+
 	std::unordered_map<uint32_t, InventoryPtr> m_inventories;
 };
 }

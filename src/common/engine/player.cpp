@@ -28,6 +28,9 @@ Player::Player(const std::string &username) : m_username(username)
 {
 	m_object_typemask |= OBJECT_TYPEMASK_PLAYER;
 	m_type = OBJECT_TYPE_PLAYER;
+
+	m_player_stats[PLAYER_STAT_HP] = 100;
+	m_player_stats[PLAYER_STAT_STAMINA] = 100;
 }
 
 }
