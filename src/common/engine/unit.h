@@ -34,6 +34,7 @@ public:
 	};
 	virtual ~Unit() {};
 protected:
+	uint32_t m_hp = 100;
 	float m_velocity = 100;
 
 };

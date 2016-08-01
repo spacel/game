@@ -57,7 +57,6 @@ static const char *player_sex_names[PLAYER_SEX_MAX] = {
 
 enum PlayerStat
 {
-	PLAYER_STAT_HP,
 	PLAYER_STAT_STAMINA,
 	PLAYER_STAT_MAX,
 };
