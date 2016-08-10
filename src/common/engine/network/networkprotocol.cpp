@@ -96,29 +96,6 @@ unsigned NetworkPacket::Write(const void *data, unsigned size)
 	return size;
 }
 
-bool NetworkPacket::WriteUInt64(unsigned long value)
-{
-	return Write(&value, sizeof value) == sizeof value;
-}
-
-bool NetworkPacket::WriteInt64(long value)
-{
-	return Write(&value, sizeof value) == sizeof value;
-}
-
-unsigned long NetworkPacket::ReadUInt64()
-{
-	unsigned long ret;
-	Read(&ret, sizeof ret);
-	return ret;
-}
-
-long NetworkPacket::ReadInt64()
-{
-	long ret;
-	Read(&ret, sizeof ret);
-	return ret;
-}
 }
 }
 }

@@ -45,11 +45,6 @@ public:
 	/// Write bytes to the memory area.
 	virtual unsigned Write(const void *data, unsigned size);
 
-	bool WriteUInt64(unsigned long value);
-	bool WriteInt64(long value);
-	unsigned long ReadUInt64();
-	long ReadInt64();
-
 private:
 	uint32_t m_session_id = 0;
 

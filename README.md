@@ -63,17 +63,10 @@ make
 
 ## Contribute
 
-For contributing please add the following hook to .git/hooks/pre-commit file (it should be executable)
+Before pushing, please execute the following hook to ensure the code style is good:
 
 ```
-#! /bin/sh
-git-clang-format -f
-
 python2.7 ./util/travis/checkstyle.py
-if [ "$?" != "0" ]; then
-	echo "Code formatting was wrong !"
-	exit 1;
-fi
 ```
 
 This hook will permit you to prevent some coding style errors before commit.
@@ -83,3 +76,18 @@ This hook will permit you to prevent some coding style errors before commit.
 ### UI/Client/Server communication
 
 ![UI_Client_Server_Communication](https://raw.githubusercontent.com/spacel/game/master/doc/communication_scheme.png)
+
+## Tricks
+
+### Build
+
+#### Rebuild Urho3D easily
+
+To rebuild Urho3D easily after an update, you can add the following function into your .bashrc, .zshrc or another shellrc to build urho3d without think about options
+
+```shell
+rebuild_urho3d () {
+	make clean && cmake .. -DURHO3D_SAMPLES=0 -DURHO3D_C++11=1 -DURHO3D_DATABASE_SQLITE=1 -DURHO3D_TOOLS=0 && make -j8
+}
+```
+
