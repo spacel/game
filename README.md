@@ -58,7 +58,7 @@ make
 
 ## Included libraries
 
-* Urho3D 1.6-HEAD
+* Urho3D 1.6
 * jsoncpp 1.7.2
 
 ## Contribute

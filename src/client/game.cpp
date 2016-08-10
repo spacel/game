@@ -285,7 +285,7 @@ void Game::HandleKeyDown(StringHash eventType, VariantMap &eventData)
 		case KEY_F10: {
 			DebugHud *debugHud = GetSubsystem<DebugHud>();
 			if (debugHud->GetMode() == 0 ||
-				debugHud->GetMode() == DEBUGHUD_SHOW_ALL_MEMORY) {
+				debugHud->GetMode() ==  DEBUGHUD_SHOW_MEMORY) {
 				debugHud->SetMode(DEBUGHUD_SHOW_ALL);
 			}
 			else {
@@ -296,7 +296,7 @@ void Game::HandleKeyDown(StringHash eventType, VariantMap &eventData)
 		case KEY_F11: {
 				DebugHud *debugHud = GetSubsystem<DebugHud>();
 				if (debugHud->GetMode() == 0 || debugHud->GetMode() == DEBUGHUD_SHOW_ALL) {
-					debugHud->SetMode(DEBUGHUD_SHOW_ALL_MEMORY);
+					debugHud->SetMode(DEBUGHUD_SHOW_MEMORY);
 				}
 				else {
 					debugHud->SetMode(DEBUGHUD_SHOW_NONE);
