@@ -36,6 +36,7 @@ set(client_sources
 	network/clientpackethandler.cpp
 	ui/ModalWindow.cpp
 	ui/ProgressBar.cpp
+	character.cpp
 	client.cpp
 	genericmenu.cpp
 	game.cpp
@@ -49,7 +50,7 @@ set(client_sources
 remove_definitions(-DURHO3D_SSE -DURHO3D_OPENGL)
 
 link_directories(${URHO3D_HOME}/lib
-		${URHO3D_HOME}/Source/ThirdParty/SQLite
+	    ${URHO3D_HOME}/Source/ThirdParty/SQLite
 		${URHO3D_HOME}/Source/ThirdParty/kNet)
 add_executable(${PROJECT_NAME} ${client_sources})
 

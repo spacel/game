@@ -27,6 +27,7 @@
 #include <Urho3D/UI/Sprite.h>
 #include <Urho3D/UI/Window.h>
 
+#include "character.h"
 #include "genericmenu.h"
 #include "settings.h"
 #include "spacelgame.h"
@@ -51,15 +52,15 @@ private:
 	void SetupViewport();
 	void SubscribeToEvents();
 	void HandleUpdate(StringHash eventType, VariantMap &eventData);
-	void HandleKeyDown(StringHash eventType, VariantMap &eventData);
 	void HandlePostUpdate(StringHash eventType, VariantMap &eventData);
+	void HandleKeyDown(StringHash eventType, VariantMap &eventData);
 	void HandleMouseClicked(StringHash eventType, VariantMap &eventData);
 	void HandleMenu(StringHash eventType, VariantMap &eventData);
 	void HandleResume(StringHash eventType, VariantMap &eventData);
 	void HandleBackMainMenu(StringHash eventType, VariantMap &eventData);
 	void HandleExitGame(StringHash eventType, VariantMap &eventData);
 	void CreateMenu();
-	void MoveCamera(float timeStep);
+	void CreateCharacter();
 
 	//Helper
 	Button *CreateMenuButton(const String &label,
@@ -74,6 +75,7 @@ private:
 	SharedPtr<Node> m_stone_node;
 	SharedPtr<UIElement> m_ui_elem;
 	SharedPtr<Window> m_window_menu;
+	WeakPtr<Character> m_character;
 
 	SharedPtr<Node> m_reflection_camera_node;
 	/// Water body scene node.
@@ -87,5 +89,6 @@ private:
 	float m_pitch;
 	bool m_move_camera = true;
 	bool m_gamemenu_created = false;
+	bool m_first_person;
 };
 }
