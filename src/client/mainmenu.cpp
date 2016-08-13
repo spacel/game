@@ -19,6 +19,8 @@
  */
 
 #include "mainmenu.h"
+#include "client.h"
+#include <common/engine/player.h>
 #include <iostream>
 #include <common/engine/generators.h>
 #include <common/time_utils.h>
@@ -38,6 +40,8 @@
 #include <Urho3D/UI/CheckBox.h>
 #include <Urho3D/Graphics/Graphics.h>
 #include <Urho3D/UI/DropDownList.h>
+#include <Urho3D/UI/MessageBox.h>
+#include <thread>
 
 using namespace Urho3D;
 
@@ -54,6 +58,8 @@ enum MainMenuIds
 	MAINMENUID_SETTINGS_GRAPHICS,
 	MAINMENUID_SETTINGS_SOUND,
 	MAINMENUID_SETTINGS_KEYBOARD,
+	MAINMENUID_CHARACTER_LIST,
+	MAINMENUID_CHARACTER_CREATE,
 };
 
 // UI components defined in this menu
@@ -64,6 +70,9 @@ enum MainMenuIds
 #define MAINMENU_ELEMENT_ERROR_WINDOW_BUBBLE "error_window_bubble"
 #define MAINMENU_ELEMENT_DELETE_UNIVERSE "delete_universe"
 #define MAINMENU_ELEMENT_ERROR_BUBBLE_TEXT "error_bubble_text"
+#define MAINMENU_ELEMENT_CHARACTER_NAME "character_name"
+#define MAINMENU_ELEMENT_SEX "Sex"
+#define MAINMENU_ELEMENT_RACE "Race"
 
 #define MAINMENU_BUTTON_SPACE 20
 
@@ -119,6 +128,18 @@ void MainMenu::Background()
 	m_menu_background->SetTexture(logoTexture);
 	m_menu_background->SetSize(m_ui_elem->GetSize().x_, m_ui_elem->GetSize().y_);
 	m_menu_background->SetPriority(-100);
+}
+
+void MainMenu::ChangeBackground(const String &background)
+{
+	Texture2D *texture_logo = m_cache->GetResource<Texture2D>(background);
+
+	if (!texture_logo) {
+		URHO3D_LOGERROR("Background menu texture not loaded");
+		return;
+	}
+
+	m_menu_background->SetTexture(texture_logo);
 }
 
 void MainMenu::Title()
@@ -193,6 +214,12 @@ void MainMenu::HandleKeyDown(StringHash, VariantMap &eventData)
 				case MAINMENUID_SETTINGS_KEYBOARD:
 					HandleSettingsPressed(StringHash(), eventData);
 					break;
+				case MAINMENUID_CHARACTER_LIST:
+					HandleLoadGamePressed(StringHash(), eventData);
+					break;
+				case MAINMENUID_CHARACTER_CREATE:
+					HandleCharacterList(StringHash(), eventData);
+					break;
 				default:
 					break;
 			}
@@ -209,6 +236,15 @@ void MainMenu::HandleKeyDown(StringHash, VariantMap &eventData)
 		default:
 			break;
 	}
+}
+
+void MainMenu::HandleDisconnectSinglePlayer(StringHash eventType, VariantMap &eventData)
+{
+	m_ui_elem->RemoveChild(m_ui_elem->GetChild("Connection...", true));
+	std::cout << "ICI CLIQUER SUR CANCEL IIIICCCII" << std::endl;
+	Client::instance()->Stop();
+	Client::deinstance();
+	HandleSingleplayerPressed(eventType, eventData);
 }
 
 void MainMenu::HandleSingleplayerPressed(StringHash, VariantMap &eventData)
@@ -341,7 +377,32 @@ void MainMenu::HandleLaunchGamePressed(StringHash, VariantMap &eventData)
 		return;
 	}
 
-	m_main->ChangeGameGlobalUI(GLOBALUI_LOADINGSCREEN, (void *)universe_name.CString());
+	MessageBox *msg = new MessageBox(context_, "Connection...", "Connection...");
+	msg->GetWindow()->SetName("Connection...");
+	msg->GetWindow()->SetPosition(0, 0);
+	Button *cancel = static_cast<Button *>(msg->GetWindow()->GetChild("CancelButton", true));
+	Button *close = static_cast<Button *>(msg->GetWindow()->GetChild("CloseButton", true));
+
+
+	SubscribeToEvent(cancel, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleDisconnectSinglePlayer));
+	SubscribeToEvent(close, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleDisconnectSinglePlayer));
+
+	const String gamedatapath = GetSubsystem<FileSystem>()->GetProgramDir() + "Data/game/";
+	const String path_universe_w_universe =
+		GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "universe");
+
+	Client::instance()->SetSinglePlayerMode(true);
+	Client::instance()->SetGameDataPath(std::string(gamedatapath.CString()));
+	Client::instance()->SetDataPath(std::string(path_universe_w_universe.CString()));
+	Client::instance()->SetUniverseName(universe_name.CString());
+	Client::instance()->SetUIEventHandler(m_main);
+	Client::instance()->Run();
+
+	// Wait 50ms to let client start
+	std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+	// Send event to client notifying we connect
+	Client::instance()->QueueClientUiEvent(ClientUIEventPtr(new ClientUIEvent_Connect()));
 }
 
 void MainMenu::HandleLoadGamePressed(StringHash, VariantMap &eventData)
@@ -755,6 +816,166 @@ void MainMenu::HandleDeleteUniverse(StringHash, VariantMap &eventData)
 	}
 }
 
+void MainMenu::HandleCharacterList(StringHash, VariantMap &) {
+	m_menu_id = MAINMENUID_CHARACTER_LIST;
+
+	//m_menu_id = MAINMENUID_SINGLEPLAYER_LOADGAME;
+	m_window_menu->RemoveAllChildren();
+	m_ui_elem->RemoveChild(m_ui_elem->GetChild("Connection...", true));
+
+	//m_window_menu->SetVisible(false);
+	//GetSubsystem<UI>()->GetRoot()->RemoveAllChildren();
+
+	/*Window *window_menu = new Window(context_);
+	window_menu->SetName("menu_character");
+	GetSubsystem<UI>()->GetRoot()->AddChild(window_menu);*/
+	m_window_menu->SetSize(GetSubsystem<UI>()->GetRoot()->GetSize().x_, GetSubsystem<UI>()->GetRoot()->GetSize().y_);
+
+	//m_window_menu->SetStyle("window_character");*/
+	UnsubscribeFromAllEventsExcept(except_unsubscribe, true);
+
+	SetTitle("");
+
+	Vector<String> character_list;
+	const String character_path = GetSubsystem<FileSystem>()->GetAppPreferencesDir("spacel", "character");
+	GetSubsystem<FileSystem>()->ScanDir(character_list, character_path, "*", SCAN_DIRS, false);
+
+	ListView *character_listview = new ListView(context_);
+	m_window_menu->AddChild(character_listview);
+	character_listview->SetStyle("ListView");
+	character_listview->SetName("Loading_character_listview");
+	character_listview->SetSize(m_window_menu->GetSize().x_ / 2, m_window_menu->GetSize().y_ - 125);
+
+	for (Vector<String>::Iterator it = character_list.Begin(); it != character_list.End(); ++it) {
+		if (it->Compare(".") != 0 && it->Compare("..") != 0) {
+			Text *text = new Text(context_);
+			character_listview->AddItem(text);
+			text->SetStyle("ListViewText");
+			text->SetName(*it);
+			text->SetText(*it);
+		}
+	}
+
+	//Preview character
+	Texture2D *PreviewTexture = m_cache->GetResource<Texture2D>("Textures/character.png");
+	if (!PreviewTexture) {
+		PreviewTexture = m_cache->GetResource<Texture2D>("Textures/no_preview.png");
+		if (!PreviewTexture) {
+			PreviewTexture = m_cache->GetResource<Texture2D>("Textures/preview.png");
+			return;
+		}
+	}
+
+	m_preview = m_window_menu->CreateChild<Sprite>();
+	m_preview->SetTexture(PreviewTexture);
+	m_preview->SetSize(150, 150);
+	m_preview->SetPosition(character_listview->GetSize().x_ + (character_listview->GetSize().x_ / 2),
+						   m_window_menu->GetPosition().y_ + MAINMENU_BUTTON_SPACE);
+	//m_preview->SetPriority(-90);
+
+	//Information
+	Text *character_info = new Text(context_);
+	m_window_menu->AddChild(character_info);
+	character_info->SetStyle("Text");
+	character_info->SetPosition(character_listview->GetSize().x_ + 50,
+								m_preview->GetPosition().y_ + m_preview->GetSize().y_ + 50);
+	character_info->SetText("Pseudo : ");
+
+	//Button
+	Button *launch = new Button(context_);
+	launch->SetStyle("ButtonInLine");
+	launch->SetHorizontalAlignment(HA_CENTER);
+	m_window_menu->AddChild(launch);
+	Text *text_launch = new Text(context_);
+	launch->AddChild(text_launch);
+	text_launch->SetStyle("TextButtonInLine");
+	text_launch->SetText(m_l10n->Get("Launch"));
+	launch->SetPosition(0 - 50, m_window_menu->GetSize().y_ - launch->GetSize().y_ - MAINMENU_BUTTON_SPACE);
+	launch->SetHorizontalAlignment(HA_RIGHT);
+
+	Button *create = new Button(context_);
+	create->SetStyle("ButtonInLine");
+	create->SetHorizontalAlignment(HA_CENTER);
+	m_window_menu->AddChild(create);
+	Text *text_create = new Text(context_);
+
+	create->AddChild(text_create);
+	text_create->SetStyle("TextButtonInLine");
+	text_create->SetText(m_l10n->Get("Create character"));
+	create->SetPosition(0, m_window_menu->GetSize().y_ - create->GetSize().y_ - MAINMENU_BUTTON_SPACE);
+	create->SetHorizontalAlignment(HA_CENTER);
+
+	Button *back = new Button(context_);
+	back->SetStyle("ButtonInLine");
+	back->SetHorizontalAlignment(HA_CENTER);
+	m_window_menu->AddChild(back);
+	Text *text_back = new Text(context_);
+	back->AddChild(text_back);
+	text_back->SetStyle("TextButtonInLine");
+	text_back->SetText(m_l10n->Get("Back"));
+	back->SetPosition(0 + 50, m_window_menu->GetSize().y_ - back->GetSize().y_ - MAINMENU_BUTTON_SPACE);
+	back->SetHorizontalAlignment(HA_LEFT);
+
+	SubscribeToEvent(character_listview, E_ITEMCLICKED, URHO3D_HANDLER(MainMenu, HandleInfosCharacterClicked));
+	SubscribeToEvent(character_listview, E_ITEMDOUBLECLICKED, URHO3D_HANDLER(MainMenu, HandleLaunchGamePressed));
+	SubscribeToEvent(launch, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleLaunchGamePressed));
+	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleDisconnectSinglePlayer));
+	SubscribeToEvent(create, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleNewCharacter));
+}
+
+void MainMenu::HandleInfosCharacterClicked(StringHash, VariantMap &eventData)
+{
+}
+
+void MainMenu::HandleNewCharacter(StringHash, VariantMap &eventData)
+{
+	m_menu_id = MAINMENUID_CHARACTER_CREATE;
+	m_window_menu->RemoveAllChildren();
+	UnsubscribeFromAllEventsExcept(except_unsubscribe, true);
+
+	SetTitle("Create Character");
+
+	LineEdit *character_name = CreateMainMenuLineEdit(MAINMENU_ELEMENT_CHARACTER_NAME, "Character Name: ", 0, 65);
+	character_name->SetMaxLength(32);
+
+	std::vector<Urho3D::String> sexe_choice;
+	for (const auto &item : engine::player_sex_names) {
+		sexe_choice.push_back(item);
+	}
+
+	DropDownList *list_sex = CreateDropDownList(MAINMENU_ELEMENT_SEX, "Sex", MAINMENU_BUTTON_SPACE * 2, character_name->GetPosition().y_ + character_name->GetSize().y_ + MAINMENU_BUTTON_SPACE, sexe_choice);
+
+	std::vector<Urho3D::String> race_choice;
+	for (const auto &item : engine::player_race_names) {
+		race_choice.push_back(item);
+	}
+
+	DropDownList *list_race = CreateDropDownList(MAINMENU_ELEMENT_RACE, "Race", MAINMENU_BUTTON_SPACE * 2, list_sex->GetPosition().y_ + list_sex->GetSize().y_ + MAINMENU_BUTTON_SPACE, race_choice);
+
+	Button *create = CreateMainMenuButton("Create", "ButtonInLine", "TextButtonInLine");
+	create->SetPosition(0 + 50, m_window_menu->GetSize().y_ - create->GetSize().y_ - MAINMENU_BUTTON_SPACE);
+	create->SetHorizontalAlignment(HA_LEFT);
+
+	Button *back = CreateMainMenuButton("Cancel", "ButtonInLine", "TextButtonInLine");
+	back->SetPosition(0 - 50, m_window_menu->GetSize().y_ - back->GetSize().y_ - MAINMENU_BUTTON_SPACE);
+
+	SubscribeToEvent(create, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleCreateCharacter));
+	SubscribeToEvent(back, E_RELEASED, URHO3D_HANDLER(MainMenu, HandleMasterMenu));
+}
+
+void MainMenu::HandleCreateCharacter(StringHash eventType, VariantMap &eventData)
+{
+	const String name = static_cast<LineEdit *>(m_window_menu->GetChild(MAINMENU_ELEMENT_CHARACTER_NAME, true))->GetText();
+	const engine::PlayerRace race = (engine::PlayerRace) static_cast<DropDownList *>(m_window_menu->GetChild(MAINMENU_ELEMENT_RACE, true))->GetSelection();
+	const engine::PlayerSex sex = (engine::PlayerSex) static_cast<DropDownList *>(m_window_menu->GetChild(MAINMENU_ELEMENT_SEX, true))->GetSelection();
+
+	ClientUIEvent_CharacterAdd *ptr = new ClientUIEvent_CharacterAdd(name, race, sex);
+	ClientUIEventPtr event(ptr);
+	Client::instance()->QueueClientUiEvent(event);
+
+	//Client::instance()->QueueClientUiEvent(character);
+}
+
 void MainMenu::ShowErrorBubble(const String &message)
 {
 	m_enable_error_bubble_timer = true;
@@ -837,6 +1058,27 @@ Slider *MainMenu::CreateSliderWithLabels(const String &name, const String &label
 	slider_sound->SetHorizontalAlignment(HA_RIGHT);
 
 	return slider_sound;
+}
+
+DropDownList *MainMenu::CreateDropDownList(const String &name, const String &label, const int x, const int y,
+		const std::vector<Urho3D::String> &list)
+{
+	Text *text_list = CreateText(label);
+	text_list->SetPosition(x, y);
+	m_window_menu->AddChild(text_list);
+
+	DropDownList *drop_down_list = new DropDownList(context_);
+	m_window_menu->AddChild(drop_down_list);
+	drop_down_list->SetStyleAuto();
+	drop_down_list->SetPosition(text_list->GetWidth() + 50, text_list->GetPosition().y_ - (text_list->GetSize().y_ / 2));
+	drop_down_list->SetName(label);
+
+	for (const auto &item: list) {
+		Text *text = CreateText(item);
+		drop_down_list->AddItem(text);
+	}
+
+	return drop_down_list;
 }
 
 void MainMenu::UpdateUniverseInfos(const uint32_t &birth, const uint64_t &seed)

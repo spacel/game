@@ -97,6 +97,7 @@ public:
 		m_clientui_event_queue.push_back(e);
 	}
 
+	void handleClientUIEvent_Null(ClientUIEventPtr event) {}
 	void handleClientUiEvent_ChararacterAdd(ClientUIEventPtr event);
 	void handleClientUiEvent_ChararacterRemove(ClientUIEventPtr event);
 private:

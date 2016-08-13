@@ -142,5 +142,30 @@
   },
   "Control":{
     "fr": "Controle"
+  },
+  "Connection...":{
+    "fr": "Connexion en cours..."
+  },
+  "Create character":{
+    "fr": "Créer un personnage"
+  },
+  "Character name: ":{
+    "fr": "Nom du personnage"
+  },
+  "Sex":{
+    "fr": "Sexe"
+  },
+  "Male":{
+    "fr": "Homme"
+  },
+  "Female":{
+    "fr": "Femme"
+  },
+  "Human":{
+    "fr": "Humain"
+  },
+  "Space Elf":{
+    "fr": "Elfe de l'espace"
   }
+
 }

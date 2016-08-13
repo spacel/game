@@ -29,6 +29,7 @@
 #include <Urho3D/UI/Text.h>
 #include <Urho3D/UI/Window.h>
 #include <Urho3D/UI/Slider.h>
+#include <Urho3D/UI/DropDownList.h>
 
 #include <common/engine/databases/database-sqlite3.h>
 #include "genericmenu.h"
@@ -49,11 +50,15 @@ public:
 	~MainMenu();
 	void Start();
 
+	// Handlers called from main class
+	void HandleCharacterList(StringHash eventType, VariantMap &eventData);
+
 private:
 	// Handlers
 	void HandleClosePressed(StringHash eventType, VariantMap &eventData);
 	void HandleKeyDown(StringHash eventType, VariantMap &eventData);
 	void HandleLaunchGamePressed(StringHash eventType, VariantMap &eventData);
+	void HandleDisconnectSinglePlayer(StringHash eventType, VariantMap &eventData);
 	void HandleSingleplayerPressed(StringHash eventType, VariantMap &eventData);
 	void HandleNewGamePressed(StringHash, VariantMap &eventData);
 	void HandleLoadGamePressed(StringHash, VariantMap &eventData);
@@ -71,7 +76,11 @@ private:
 	void HandleDeleteUniversePressed(StringHash eventType, VariantMap &eventData);
 	void HandleGenerateSeedPressed(StringHash eventType, VariantMap &eventData);
 	void HandleDeleteUniverse(StringHash eventType, VariantMap &eventData);
+	void HandleInfosCharacterClicked(StringHash eventType, VariantMap &eventData);
+	void HandleCreateCharacter(StringHash eventType, VariantMap &eventData);
+	void HandleNewCharacter(StringHash eventType, VariantMap &eventData);
 	void Background();
+	void ChangeBackground(const String &background);
 	void Title();
 	void HandleMasterMenu(StringHash, VariantMap &);
 	void ShowErrorBubble(const String &message);
@@ -91,6 +100,8 @@ private:
 			const float value = 100, const float range = 100, const String &style = "Slider");
 	Slider *CreateSliderWithLabels(const String &name, const String &label,
 			const int x, const int y, const int SETTING);
+	DropDownList *CreateDropDownList(const String &name, const String &label,
+			const int x, const int y, const std::vector<Urho3D::String> &list);
 	void SetTitle(const String &t);
 
 	// Attributes
